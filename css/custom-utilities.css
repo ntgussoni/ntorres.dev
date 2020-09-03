@@ -1,0 +1,44 @@
+/* html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div,
+div#__next > div > div {
+  @apply h-full;
+} */
+
+body {
+  @apply font-sans text-base bg-white text-gray-900;
+}
+
+b {
+  @apply font-bold;
+}
+
+h1 {
+  @apply text-4xl font-bold mb-3;
+}
+
+h2 {
+  @apply text-3xl mt-4 mb-3;
+}
+
+h3 {
+  @apply text-2xl mt-4 mb-3;
+}
+
+#content a {
+  @apply text-primary;
+}
+
+code {
+  @apply bg-gray-100 px-4 py-2 rounded-md;
+}
+
+.language {
+  @apply rounded-md w-full m-auto mb-8;
+}
+
+.language code {
+  @apply bg-transparent px-0 py-0;
+}

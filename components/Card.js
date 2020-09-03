@@ -1,24 +1,35 @@
-const Card = ({ post, forceBig = false }) => (
-  <div
-    className={`relative left-0 w-full ${
-      forceBig ? "pb-2/3" : ""
-    } md:pb-2/3 mb-2`}
-  >
-    <img
+import { BaseImage } from "./BaseImage";
+import { DateComponent } from "./DateComponent";
+
+const Card = ({ post: { metadata }, forceBig = false }) => (
+  <div className={`relative w-full ${forceBig ? "pb-2/3" : ""} mb-4 md:pb-2/3`}>
+    <BaseImage
+      alt={metadata.title}
       className={`${
-        forceBig ? "" : "hidden md:flex"
-      } absolute top-0 h-full w-full object-cover z-0`}
-      src={post.image}
+        forceBig ? "" : "hidden "
+      } md:flex absolute top-0 h-full w-full object-cover z-0`}
+      src={metadata.image}
     />
     <div
       className={`${
+        forceBig ? "" : "hidden "
+      } md:flex absolute w-full h-full left-0 top-0 bg-gray-900 opacity-25 z-10 bg-gradient-to-b from-teal-400 to-blue-900`}
+    ></div>
+
+    <div
+      className={`${
         forceBig ? "absolute text-white" : "relative"
-      } bottom-0 w-full flex flex-col p-1 md:absolute md:text-white  z-10 p-4`}
+      } bottom-0 w-full flex flex-col md:absolute md:text-white  z-20 p-4`}
     >
-      <div className="mb-1 font-bold text-base md:text-4xl font-bold tracking-wide mb-4">
-        {post.title}
+      <div className="font-bold tracking-wide mb-4 text-2xl md:text-4xl">
+        {metadata.title}
       </div>
-      <div className="text-xs">{post.description}</div>
+      <DateComponent
+        className="flex text-xs mb-1 items-center"
+        date={metadata.date}
+      />
+
+      <div className="text-xs md:text-sm">{metadata.description}</div>
     </div>
   </div>
 );
