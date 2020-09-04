@@ -5,6 +5,18 @@ module.exports = {
   purge: [],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Montserrat", "Helvetica", "Arial", "sans-serif"],
+      },
+      animation: {
+        "width-transform": "width-transform 1.2s ease-in forwards",
+      },
+      keyframes: {
+        "width-transform": {
+          0: { width: "200px" },
+          "100%": { width: "120px" },
+        },
+      },
       colors: {
         primary: "#00616d",
       },
