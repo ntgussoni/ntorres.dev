@@ -1,7 +1,5 @@
 import Link from "next/link";
 import LogoNico from "../public/logo.svg?include";
-import owl from "../public/owl.svg?original";
-import owlDown from "../public/owlDown.svg?original";
 
 import { useEffect, useState, useRef } from "react";
 
