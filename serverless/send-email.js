@@ -58,7 +58,7 @@ const sendEmail = async (req, res) => {
     res.status(200).json({ code: 200, message: "SENT", data });
   } catch (err) {
     err instanceof MailerError
-      ? res.status(200).json({ code: err.code, message: err.message })
+      ? res.status(500).json({ code: err.code, message: err.message })
       : res.status(500).json({ code: 500, message: err.message });
   }
 };
