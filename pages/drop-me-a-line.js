@@ -9,7 +9,7 @@ const DropMeALine = () => {
       </Head>
       <div className="flex flex-col w-full sm:align-middle sm:justify-center p-4 mt-8">
         <h1 className="font-bold mb-1 text-3xl">Something to say?</h1>
-        <p className="text-xl mb-1">Drop me a line, i'd love to talk to you</p>
+        <p className="text-xl mb-1">Drop me a line, I'd love to talk to you</p>
         <ContactForm />
       </div>
     </>

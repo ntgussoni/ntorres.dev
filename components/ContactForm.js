@@ -8,6 +8,10 @@ const ContactForm = () => {
   const onSubmit = async (formData) => {
     const data = await fetch("/api/email", {
       method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         subject: `Contact form at ntorres.dev`,
         text: `${formData.name} - ${formData.email} \n\n
