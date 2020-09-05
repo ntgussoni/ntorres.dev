@@ -37,13 +37,10 @@ const sendEmail = async (req, res) => {
   try {
     if (req.method !== "POST") throw new MailerError(405, "Method not allowed");
 
-    const {
-      recipient = EMAIL_SENDER,
-      sender = EMAIL_SENDER,
-      subject,
-      text,
-      html,
-    } = await req.body;
+    const recipient = EMAIL_SENDER; // We want to prevent someone from sending mails to random addresses
+    const sender = EMAIL_SENDER; // We want to prevent someone from sending mails to random addresses
+
+    const { subject, text, html } = await req.body;
 
     if (!recipient) throw new MailerError(500, "Missing recipient");
     if (!sender) throw new MailerError(500, "Missing sender");
@@ -58,7 +55,7 @@ const sendEmail = async (req, res) => {
       html,
     });
 
-    res.status(200).json({ code: 200, message: data.response, data });
+    res.status(200).json({ code: 200, message: "SENT", data });
   } catch (err) {
     err instanceof MailerError
       ? res.status(200).json({ code: err.code, message: err.message })
