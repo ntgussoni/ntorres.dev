@@ -42,3 +42,118 @@ code {
 .language code {
   @apply bg-transparent px-0 py-0;
 }
+
+:required:valid + .note {
+  @apply hidden;
+}
+:required:invalid + .note {
+  @apply block;
+}
+
+::selection {
+  @apply bg-highlight text-black;
+}
+
+::-moz-selection {
+  @apply bg-highlight text-black;
+}
+
+.highlight-animation {
+  @apply bg-white relative;
+}
+
+.highlight-animation::before,
+.highlight-animation::after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #2296aa;
+  border-radius: inherit;
+  z-index: -1;
+  animation: 1s clockwise infinite;
+}
+
+.highlight-animation::after {
+  background: #70eaff;
+  animation: 2s counterclockwise infinite;
+}
+
+@keyframes clockwise {
+  0% {
+    top: -4px;
+    left: 0;
+  }
+  12% {
+    top: -1px;
+    left: 1px;
+  }
+  25% {
+    top: 0;
+    left: 4px;
+  }
+  37% {
+    top: 1px;
+    left: 1px;
+  }
+  50% {
+    top: 4px;
+    left: 0;
+  }
+  62% {
+    top: 1px;
+    left: -1px;
+  }
+  75% {
+    top: 0;
+    left: -4px;
+  }
+  87% {
+    top: -1px;
+    left: -1px;
+  }
+  100% {
+    top: -4px;
+    left: 0;
+  }
+}
+
+@keyframes counterclockwise {
+  0% {
+    top: -5px;
+    right: 0;
+  }
+  12% {
+    top: -2px;
+    right: 2px;
+  }
+  25% {
+    top: 0;
+    right: 5px;
+  }
+  37% {
+    top: 2px;
+    right: 2px;
+  }
+  50% {
+    top: 5px;
+    right: 0;
+  }
+  62% {
+    top: 2px;
+    right: -2px;
+  }
+  75% {
+    top: 0;
+    right: -5px;
+  }
+  87% {
+    top: -2px;
+    right: -2px;
+  }
+  100% {
+    top: -5px;
+    right: 0;
+  }
+}

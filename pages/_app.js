@@ -1,9 +1,14 @@
 import React from "react";
 import App from "next/app";
 import "../css/tailwind.css";
+import dynamic from "next/dynamic";
 import Header from "../components/Header";
 import Layout from "../components/Layout";
-import { slide as Menu } from "react-burger-menu";
+
+const Menu = dynamic(() =>
+  import("react-burger-menu").then((mod) => mod.slide)
+);
+
 import { ContentWrapper } from "../components/ContentWrapper";
 import Link from "next/link";
 
@@ -42,12 +47,12 @@ class MyApp extends App {
               Home
             </a>
           </Link>
-          <Link href="/blog">
+          <Link href="/work">
             <a
               className="block mt-4 text-grey hover:text-black text-center py-4"
               onClick={() => this.setState({ open: false })}
             >
-              Examples
+              Work
             </a>
           </Link>
           <Link href="/blog">

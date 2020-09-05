@@ -3,7 +3,7 @@ export const Categories = ({ categories }) => {
   return (
     <div className="flex flex-row">
       {categories.map((i) => (
-        <Category key={i} id={i} className={"mr-2"} />
+        <Category key={i} id={i} />
       ))}
     </div>
   );

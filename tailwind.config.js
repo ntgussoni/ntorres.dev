@@ -12,6 +12,7 @@ module.exports = {
       colors: {
         primary: "#00616d",
         "primary-lighter": "#2296AA",
+        highlight: "#70eaff",
       },
       spacing: {
         "1/2": "50%",

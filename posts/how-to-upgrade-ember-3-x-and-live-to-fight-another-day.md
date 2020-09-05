@@ -1,10 +1,11 @@
 ---
-date: 01/03/2020
+date: 04/11/2018
 title: "How to upgrade ember 3.x and live to fight another day"
 description: "Upgrading the version of your libraries can be scary. Lets make it easy"
 image: posts/1.png
 categories:
   - technology
+  - emberjs
 ---
 
 Upgrading the version of your libraries can be scary. It's even worse when you have a huge project that depends on a framework like Ember.js and a client that will probably kill you if anything goes wrong.

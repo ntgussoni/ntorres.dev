@@ -41,7 +41,7 @@ const Header = ({ onMenuClick, onMenuClose }) => {
   });
 
   return (
-    <nav className="flex sticky top-0  bg-white w-full p-5 max-w-full justify-center border-b border-gray-light mb-4 z-40 shadow-base">
+    <nav className="flex sticky top-0  bg-white w-full p-5 max-w-full justify-center border-b border-gray-light z-40 shadow-base">
       <div className="flex w-full sm:max-w-screen-lg items-center justify-between flex-wrap">
         <div className="flex items-center flex-shrink-0 text-black mr-6">
           <Logo shrink={shrink} onMenuClose={onMenuClose}></Logo>
@@ -62,19 +62,17 @@ const Header = ({ onMenuClick, onMenuClose }) => {
           </button>
         </div>
         <div className="hidden flex-grow lg:flex items-center w-auto ">
-          <div className="text-sm flex flex-grow justify-end">
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4"
-            >
-              Docs
-            </a>
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4"
-            >
-              Examples
-            </a>
+          <div className="text-sm flex flex-grow justify-end items-center">
+            <Link href="/drop-me-a-line">
+              <a className="mr-4 px-2 py-2 border border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out">
+                Drop me a line
+              </a>
+            </Link>
+            <Link href="/work">
+              <a className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4">
+                Open Source
+              </a>
+            </Link>
             <Link href="/blog">
               <a className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black">
                 Blog
