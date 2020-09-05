@@ -18,7 +18,7 @@ const Home = () => {
           <div className="h-0 w-full pb-full relative">
             <BaseImage
               className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-white object-cover "
-              src="avatar.jpg"
+              src={"avatar.jpg"}
               alt="Nicolás Torres"
             />
           </div>
