@@ -42,7 +42,7 @@ const sendEmail = async (req, res) => {
 
     const { subject, text, html } = await req.body;
 
-    if (!recipient) throw new MailerError(500, "Missing recipient");
+    if (!a) throw new MailerError(500, "Missing recipient");
     if (!sender) throw new MailerError(500, "Missing sender");
     if (!subject) throw new MailerError(500, "Missing subject");
     if (!text && !html) throw new MailerError(500, "Missing email body");

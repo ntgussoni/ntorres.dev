@@ -3,7 +3,14 @@ import fetch from "isomorphic-fetch";
 import { useForm } from "react-hook-form";
 
 const ContactForm = () => {
-  const { register, handleSubmit, watch, errors } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState,
+    reset,
+    errors,
+  } = useForm();
 
   const onSubmit = async (formData) => {
     const data = await fetch(`/api/email`, {
@@ -18,7 +25,16 @@ const ContactForm = () => {
       }),
     });
 
-    const item = await data.json();
+    const { code } = await data.json();
+
+    if (code !== 200) {
+      setError("general", {
+        type: "manual",
+        message:
+          "An error occurred and the message could not be sent. Sorry!! Try again later",
+      });
+    }
+    reset();
   };
 
   return (
@@ -96,10 +112,23 @@ const ContactForm = () => {
           )}
         </div>
       </div>
+      {errors.general && (
+        <p className="text-red-500 text-xs italic note mb-4">
+          {errors.general.message}
+        </p>
+      )}
       <div className="md:flex md:items-center">
-        <Button width={"80px"} height={"40px"} onClick={handleSubmit(onSubmit)}>
-          Done!
-        </Button>
+        <Button
+          text={
+            formState.submitCount == 0
+              ? "Leave comment"
+              : "Leave another comment"
+          }
+          loadingText="Sending"
+          width={"80px"}
+          height={"40px"}
+          onClick={handleSubmit(onSubmit)}
+        />
       </div>
     </form>
   );
