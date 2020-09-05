@@ -51,14 +51,14 @@ const sendEmail = async (req, res) => {
     if (!text && !html) throw new MailerError(500, "Missing email body");
 
     const data = await send({
-      sender,
-      recipient,
+      from: sender,
+      to: recipient,
       subject,
       text,
       html,
     });
 
-    res.status(200).json({ code: 200, message: result.response, data });
+    res.status(200).json({ code: 200, message: data.response, data });
   } catch (err) {
     err instanceof MailerError
       ? res.status(200).json({ code: err.code, message: err.message })

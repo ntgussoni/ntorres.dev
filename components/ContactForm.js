@@ -6,7 +6,7 @@ const ContactForm = () => {
   const { register, handleSubmit, watch, errors } = useForm();
 
   const onSubmit = async (formData) => {
-    const data = await fetch("/api/email", {
+    const data = await fetch(`/api/email`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -14,9 +14,7 @@ const ContactForm = () => {
       },
       body: JSON.stringify({
         subject: `Contact form at ntorres.dev`,
-        text: `${formData.name} - ${formData.email} \n\n
-				${formData.message}
-				`,
+        text: `${formData.name} - ${formData.email} \n\n${formData.message}`,
       }),
     });
 
