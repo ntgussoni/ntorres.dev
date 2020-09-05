@@ -1,6 +1,7 @@
 module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
   },
   purge: {
     // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
@@ -23,6 +24,7 @@ module.exports = {
       },
       colors: {
         primary: "#00616d",
+        "primary-lighter": "#2296AA",
       },
       spacing: {
         "1/2": "50%",

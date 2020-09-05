@@ -9,6 +9,7 @@ import { Image } from "../../components/Image";
 import { CodeBlock } from "../../components/CodeBlock";
 import { BaseImage } from "../../components/BaseImage";
 import { DateComponent } from "../../components/DateComponent";
+import { Categories } from "../../components/Categories";
 
 const Post = ({ post: { metadata, content } }) => {
   return (
@@ -25,7 +26,15 @@ const Post = ({ post: { metadata, content } }) => {
         />
         <div className="w-screen md:max-w-2xl flex flex-col text-left px-4 md:px-0">
           <h1>{metadata.title}</h1>
-          <DateComponent date={metadata.date} />
+          <div className="flex flex-row align-middle mb-1">
+            <DateComponent
+              className="flex text-xs items-center mr-2"
+              date={metadata.date}
+            />
+            {metadata.categories && (
+              <Categories categories={metadata.categories} />
+            )}
+          </div>
           <ReactMarkdown
             escapeHtml={false}
             source={content}

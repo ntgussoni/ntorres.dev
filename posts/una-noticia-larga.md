@@ -3,6 +3,8 @@ date: 01/02/2020
 title: "Una noticia larga"
 description: "Upgrading the version of your libraries can be scary. Lets make it easy"
 image: posts/spacex.jpg
+categories:
+  - hydroponics
 ---
 
 Upgrading the version of your libraries can be scary. It's even worse when you have a huge project that depends on a framework like Ember.js and a client that will probably kill you if anything goes wrong.

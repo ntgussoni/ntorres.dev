@@ -1,11 +1,10 @@
 ---
 date: 01/02/2020
-title: "Flor de relos"
+title: "Otra noticia"
 description: "Upgrading the version of your libraries can be scary. Lets make it easy"
 image: posts/spacex.jpg
 categories:
-  - technology
-  - random
+  - hydroponics
 ---
 
 Upgrading the version of your libraries can be scary. It's even worse when you have a huge project that depends on a framework like Ember.js and a client that will probably kill you if anything goes wrong.
@@ -79,41 +78,6 @@ Now you can also use ember-cli-update which will download and run all available 
 `npx ember-modules-codemod`
 
 ![](posts/3.png)
-
-```javascript{2,10-13,8}
-import { useState, useRef, useEffect } from "react";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import ReactMarkdown from "react-markdown/with-html";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-
-const Paragraph = ({ children }) => {
-  if (
-    children &&
-    children[0] &&
-    children.length === 1 &&
-    children[0].props &&
-    children[0].props.src
-  ) {
-    // rendering media without p wrapper
-
-    return children;
-  }
-
-  return <p className="tracking-wider my-6">{children}</p>;
-};
-```
-
-```bash
-#!/bin/bash
-for (( counter=10; counter>0; counter-- ))
-do
-echo -n "$counter "
-done
-printf "\n"
-};
-```
 
 > Check MODULE_REPORT.md to see what couldn't be changed automatically
 
