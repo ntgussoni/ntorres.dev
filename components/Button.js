@@ -13,7 +13,7 @@ const Button = ({ text, loadingText, width, height, onClick }) => {
       onClick={() => !loading && handleClick()}
       className={`${
         loading ? "highlight-animation" : ""
-      } cursor-pointer mr-4 md:mr-0 px-2 py-2 border text-center border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out`}
+      } cursor-pointer mr-0 md:mr-4 px-2 py-2 border text-center border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out`}
     >
       {loading ? loadingText : text}
     </div>

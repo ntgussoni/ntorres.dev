@@ -55,7 +55,7 @@ const sendEmail = async (req, res) => {
       html,
     });
 
-    res.status(200).json({ code: 200, message: "SENT", data });
+    res.status(200).json({ code: 200, message: "SENT" });
   } catch (err) {
     err instanceof MailerError
       ? res.status(500).json({ code: err.code, message: err.message })
