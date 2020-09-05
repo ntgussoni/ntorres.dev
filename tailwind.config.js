@@ -3,24 +3,11 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-  // purge: {
-  //   // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
-  //   enabled: process.env.NODE_ENV === "production",
-  //   content: ["components/**/*.js", "pages/**/*.js", "css/**/*.*"],
-  // },
+  purge: false,
   theme: {
     extend: {
       fontFamily: {
         sans: ["Montserrat", "Helvetica", "Arial", "sans-serif"],
-      },
-      animation: {
-        "width-transform": "width-transform 1.2s ease-in forwards",
-      },
-      keyframes: {
-        "width-transform": {
-          0: { width: "200px" },
-          "100%": { width: "120px" },
-        },
       },
       colors: {
         primary: "#00616d",
