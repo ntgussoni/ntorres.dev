@@ -26,15 +26,15 @@ const ContactForm = () => {
     });
 
     const { code } = await data.json();
-
     if (code !== 200) {
       setError("general", {
         type: "manual",
         message:
           "An error occurred and the message could not be sent. Sorry!! Try again later",
       });
+    } else {
+      reset();
     }
-    reset();
   };
 
   return (
