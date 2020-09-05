@@ -43,7 +43,7 @@ const sendEmail = async (req, res) => {
       subject,
       text,
       html,
-    } = await JSON.parse(req.body);
+    } = await req.body;
 
     if (!recipient) throw new MailerError(500, "Missing recipient");
     if (!sender) throw new MailerError(500, "Missing sender");
