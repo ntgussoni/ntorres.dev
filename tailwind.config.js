@@ -14,6 +14,15 @@ module.exports = {
         "primary-lighter": "#2296AA",
         highlight: "#70eaff",
       },
+      inset: {
+        "-1": "-0.25rem",
+        "-2": "-0.5rem",
+        "-3": "-0.75rem",
+        "-4": "-1rem",
+        "-5": "-1.25rem",
+        "-6": "-1.5rem",
+        "-8": "-2rem",
+      },
       spacing: {
         "1/2": "50%",
         "1/3": "33.333333%",

@@ -32,35 +32,44 @@ class MyApp extends App {
         />
         <Menu
           width="100%"
-          className="w-full bg-white"
-          // onClose={() => this.setState({ open: false })}
+          styles={{
+            bmMenu: {
+              width: "100%",
+            },
+            bmItemList: {
+              display: "flex",
+              flexDirection: "column",
+            },
+          }}
+          className="w-full bg-white flex justify-center"
+          onClose={() => this.setState({ open: false })}
           isOpen={open}
           customBurgerIcon={false}
           customCrossIcon={false}
           right
         >
-          <Link href="/">
+          <Link href="/blog">
             <a
-              className="block mt-4 text-grey hover:text-black text-center py-4"
               onClick={() => this.setState({ open: false })}
+              className="text-center anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black p-8"
             >
-              Home
+              Blog
             </a>
           </Link>
           <Link href="/work">
             <a
-              className="block mt-4 text-grey hover:text-black text-center py-4"
               onClick={() => this.setState({ open: false })}
+              className="text-center anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black p-8"
             >
-              Work
+              Open Source
             </a>
           </Link>
-          <Link href="/blog">
+          <Link href="/drop-me-a-line">
             <a
-              className="block mt-4 text-grey hover:text-black text-center py-4"
               onClick={() => this.setState({ open: false })}
+              className="text-center button  px-2 py-2 border border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out m-8"
             >
-              Blog
+              Drop me a line
             </a>
           </Link>
         </Menu>

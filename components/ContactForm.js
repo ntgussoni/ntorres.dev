@@ -25,6 +25,8 @@ const ContactForm = () => {
       }),
     });
 
+    reset();
+
     const { code } = await data.json();
     if (code !== 200) {
       setError("general", {
@@ -32,18 +34,18 @@ const ContactForm = () => {
         message:
           "An error occurred and the message could not be sent. Sorry!! Try again later",
       });
-    } else {
-      reset();
     }
   };
+
+  const { isDirty, isSubmitting, touched, submitCount } = formState;
 
   return (
     <form className="w-full mt-16">
       <div className="flex flex-wrap -mx-3 mb-6">
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 relative">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="name"
+            htmlFor="name"
           >
             What's your name?
           </label>
@@ -57,15 +59,15 @@ const ContactForm = () => {
             required
           />
           {errors.name && (
-            <p className="text-red-500 text-xs italic note">
+            <p className="text-red-500 text-xs italic note absolute -bottom-3">
               {errors.name.message}
             </p>
           )}
         </div>
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 relative">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="email"
+            htmlFor="email"
           >
             E-mail
           </label>
@@ -85,17 +87,17 @@ const ContactForm = () => {
             required
           />
           {errors.email && (
-            <p className="text-red-500 text-xs italic note">
+            <p className="text-red-500 text-xs italic note absolute -bottom-3">
               {errors.email.message}
             </p>
           )}
         </div>
       </div>
       <div className="flex flex-wrap -mx-3 mb-6">
-        <div className="w-full px-3">
+        <div className="w-full px-3 relative">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="message"
+            htmlFor="message"
           >
             Message
           </label>
@@ -106,7 +108,7 @@ const ContactForm = () => {
             id="message"
           />
           {errors.message && (
-            <p className="text-red-500 text-xs italic note">
+            <p className="text-red-500 text-xs italic note absolute -bottom-3">
               {errors.message.message}
             </p>
           )}
@@ -119,14 +121,10 @@ const ContactForm = () => {
       )}
       <div className="md:flex md:items-center">
         <Button
-          text={
-            formState.submitCount == 0
-              ? "Leave comment"
-              : "Leave another comment"
-          }
+          tabIndex={4}
+          text="Leave comment"
+          loading={isSubmitting}
           loadingText="Sending"
-          width={"80px"}
-          height={"40px"}
           onClick={handleSubmit(onSubmit)}
         />
       </div>

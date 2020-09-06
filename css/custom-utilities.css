@@ -28,7 +28,14 @@ h3 {
 }
 
 #content a {
-  @apply text-primary;
+  @apply relative text-primary-lighter;
+}
+#content a::after {
+  content: "";
+  @apply h-px w-0 bg-primary absolute bottom-0 left-0;
+}
+#content a:hover::after {
+  @apply transition-all w-full duration-500;
 }
 
 code {
@@ -41,6 +48,43 @@ code {
 
 .language code {
   @apply bg-transparent px-0 py-0;
+}
+
+.button {
+  @apply relative;
+}
+
+.button::after {
+  content: "";
+  border-radius: inherit;
+  background: #70eaff;
+  bottom: -2px;
+  right: -2px;
+  z-index: -1;
+  @apply w-full h-full absolute;
+}
+
+.button:hover::after {
+  @apply opacity-0 transition-all delay-100;
+}
+
+.anchor-highlight {
+  @apply relative font-bold tracking-wide text-gray-700;
+}
+
+.anchor-highlight::after {
+  content: "";
+  border-radius: inherit;
+  background: #70eaff;
+  z-index: -1;
+  height: 5px;
+  left: 50%;
+  bottom: 2px;
+  @apply w-0 absolute transform -translate-x-6/12;
+}
+
+.anchor-highlight:hover::after {
+  @apply transition-all duration-500 w-full;
 }
 
 :required:valid + .note {

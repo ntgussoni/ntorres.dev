@@ -49,7 +49,7 @@ const Header = ({ onMenuClick, onMenuClose }) => {
         <div className="flex lg:hidden">
           <button
             onClick={onMenuClick}
-            className="flex items-center px-3 py-2 border rounded text-grey border-gray-600 hover:text-black hover:border-black"
+            className="button flex items-center px-3 py-2 border rounded text-grey border-gray-600 hover:text-black hover:border-black"
           >
             <svg
               className="fill-current h-3 w-3"
@@ -63,19 +63,19 @@ const Header = ({ onMenuClick, onMenuClose }) => {
         </div>
         <div className="hidden flex-grow lg:flex items-center w-auto ">
           <div className="text-sm flex flex-grow justify-end items-center">
-            <Link href="/drop-me-a-line">
-              <a className="mr-4 px-2 py-2 border border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out">
-                Drop me a line
+            <Link href="/blog">
+              <a className="anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4">
+                Blog
               </a>
             </Link>
             <Link href="/work">
-              <a className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4">
+              <a className="anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-8">
                 Open Source
               </a>
             </Link>
-            <Link href="/blog">
-              <a className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black">
-                Blog
+            <Link href="/drop-me-a-line">
+              <a className="button  px-2 py-2 border border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out">
+                Drop me a line
               </a>
             </Link>
           </div>
