@@ -1,15 +1,7 @@
 import Link from "next/link";
-import LogoNico from "../public/logo.svg?include";
+// import LogoNico from "../public/logo.svg?include";
 
 import { useEffect, useState, useRef } from "react";
-
-const val = (state) => {
-  return {
-    stop: "",
-    shrink: "animate",
-    expand: "animate reverse",
-  }[state];
-};
 
 const Logo = ({ shrink, onMenuClose }) => (
   <Link href="/">
@@ -18,25 +10,13 @@ const Logo = ({ shrink, onMenuClose }) => (
       onClick={onMenuClose}
     >
       <div
-        className={`flex text-right text-3xl leading-none animate-width-transform`}
-        key={shrink}
-        style={shrink == "expand" ? { animationDirection: "reverse" } : {}}
+        className={`flex text-xl ${
+          shrink == "expand" ? "md:text-3xl" : "md:text-xl"
+        } leading-none`}
       >
-        {/* <span>Nico</span>
-        <span className="font-bold">Torres</span> */}
-        <div
-          key={shrink}
-          className={val(shrink)}
-          style={{ width: "200px" }}
-          dangerouslySetInnerHTML={{ __html: LogoNico }}
-        />
+        <span>Nico</span>
+        <span className="font-bold">Torres</span>
       </div>
-      {/* {props.shrink !== "expand" && (
-        <img
-          src={owlDown}
-          className="w-12 mr-3 absolute transform translate-y-full"
-        />
-      )} */}
     </a>
   </Link>
 );
@@ -61,18 +41,15 @@ const Header = ({ onMenuClick, onMenuClose }) => {
   });
 
   return (
-    <nav className="flex sticky top-0  bg-white w-full p-5 max-w-full justify-center border-b border-gray-light mb-4 z-40 shadow-base">
+    <nav className="flex sticky top-0  bg-white w-full p-5 max-w-full justify-center border-b border-gray-light z-40 shadow-base">
       <div className="flex w-full sm:max-w-screen-lg items-center justify-between flex-wrap">
-        <div
-          style={{ width: "200px" }}
-          className="flex items-center flex-shrink-0 text-black mr-6 justify-end"
-        >
+        <div className="flex items-center flex-shrink-0 text-black mr-6">
           <Logo shrink={shrink} onMenuClose={onMenuClose}></Logo>
         </div>
         <div className="flex lg:hidden">
           <button
             onClick={onMenuClick}
-            className="flex items-center px-3 py-2 border rounded text-grey border-gray-600 hover:text-black hover:border-black"
+            className="button flex items-center px-3 py-2 border rounded text-grey border-gray-600 hover:text-black hover:border-black"
           >
             <svg
               className="fill-current h-3 w-3"
@@ -85,22 +62,20 @@ const Header = ({ onMenuClick, onMenuClose }) => {
           </button>
         </div>
         <div className="hidden flex-grow lg:flex items-center w-auto ">
-          <div className="text-sm flex flex-grow justify-end">
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4"
-            >
-              Docs
-            </a>
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4"
-            >
-              Examples
-            </a>
+          <div className="text-sm flex flex-grow justify-end items-center">
             <Link href="/blog">
-              <a className="block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black">
+              <a className="anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-4">
                 Blog
+              </a>
+            </Link>
+            <Link href="/work">
+              <a className="anchor-highlight block mt-4 lg:inline-block lg:mt-0 text-grey hover:text-black mr-8">
+                Open Source
+              </a>
+            </Link>
+            <Link href="/drop-me-a-line">
+              <a className="button  px-2 py-2 border border-gray-600 rounded-md hover:bg-primary-lighter hover:text-white hover:border-transparent transition-colors duration-300 ease-in-out">
+                Drop me a line
               </a>
             </Link>
           </div>

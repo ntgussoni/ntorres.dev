@@ -1,28 +1,27 @@
 module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
   },
-  purge: {
-    // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
-    enabled: process.env.NODE_ENV === "production",
-    content: ["components/**/*.js", "pages/**/*.vue"],
-  },
+  purge: false,
   theme: {
     extend: {
       fontFamily: {
         sans: ["Montserrat", "Helvetica", "Arial", "sans-serif"],
       },
-      animation: {
-        "width-transform": "width-transform 1.2s ease-in forwards",
-      },
-      keyframes: {
-        "width-transform": {
-          0: { width: "200px" },
-          "100%": { width: "120px" },
-        },
-      },
       colors: {
         primary: "#00616d",
+        "primary-lighter": "#2296AA",
+        highlight: "#70eaff",
+      },
+      inset: {
+        "-1": "-0.25rem",
+        "-2": "-0.5rem",
+        "-3": "-0.75rem",
+        "-4": "-1rem",
+        "-5": "-1.25rem",
+        "-6": "-1.5rem",
+        "-8": "-2rem",
       },
       spacing: {
         "1/2": "50%",

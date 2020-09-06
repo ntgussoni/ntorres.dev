@@ -1,5 +1,6 @@
 import { BaseImage } from "./BaseImage";
 import { DateComponent } from "./DateComponent";
+import { Categories } from "./Categories";
 
 const Card = ({ post: { metadata }, forceBig = false }) => (
   <div className={`relative w-full ${forceBig ? "pb-2/3" : ""} mb-4 md:pb-2/3`}>
@@ -13,7 +14,7 @@ const Card = ({ post: { metadata }, forceBig = false }) => (
     <div
       className={`${
         forceBig ? "" : "hidden "
-      } md:flex absolute w-full h-full left-0 top-0 bg-gray-900 opacity-25 z-10 bg-gradient-to-b from-teal-400 to-blue-900`}
+      } md:flex absolute w-full h-full left-0 top-0 bg-gray-900 opacity-75 z-10 bg-gradient-to-b from-primary to-black`}
     ></div>
 
     <div
@@ -24,11 +25,13 @@ const Card = ({ post: { metadata }, forceBig = false }) => (
       <div className="font-bold tracking-wide mb-4 text-2xl md:text-4xl">
         {metadata.title}
       </div>
-      <DateComponent
-        className="flex text-xs mb-1 items-center"
-        date={metadata.date}
-      />
-
+      <div className="flex flex-row align-middle mb-1">
+        <DateComponent
+          className="flex text-xs items-center mr-2"
+          date={metadata.date}
+        />
+        {metadata.categories && <Categories categories={metadata.categories} />}
+      </div>
       <div className="text-xs md:text-sm">{metadata.description}</div>
     </div>
   </div>
