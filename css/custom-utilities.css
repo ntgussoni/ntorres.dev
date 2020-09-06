@@ -20,11 +20,11 @@ h1 {
 }
 
 h2 {
-  @apply text-3xl mt-4 mb-3;
+  @apply text-3xl font-bold mt-4 mb-3;
 }
 
 h3 {
-  @apply text-2xl mt-4 mb-3;
+  @apply text-xl font-bold mt-4 mb-3;
 }
 
 #content a {
@@ -104,6 +104,10 @@ code {
 
 .highlight-animation {
   @apply bg-white relative;
+}
+
+a svg {
+  fill: currentColor;
 }
 
 .highlight-animation::before,
