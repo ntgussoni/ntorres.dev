@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .scroll-snap-mandatory {
+        scroll-snap-type: x mandatory;
+    }
+  .scroll-snap-center {
+    scroll-snap-align: center;
+  }
+}
+
+.children-spin:hover > :first-child {
+  @apply animate-spin-slow
+}
