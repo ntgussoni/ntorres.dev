@@ -70,7 +70,7 @@ export default function Home({ githubData, posts }) {
           </div>
         </a>
         {githubData && (
-          <div className="flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes bg-[#343434] p-5 ">
+          <div className="flex flex-1 flex-col w-full h-[273px] rounded-[16px] shadow-boxes bg-[#343434] p-5 ">
             <div className="overflow-x-auto">
               {githubData.repositoriesContributedTo.nodes.map(
                 ({ name, description, url }, index) => (
