@@ -26,8 +26,8 @@ const Headings = ({ headings, activeId }) => (
       <li
         key={heading.id}
         className={clsx(
-          'p-1',
-          heading.id === activeId ? 'text-gray-800 ' : 'text-headers'
+          'p-1 hover:text-gray-800',
+          heading.id === activeId ? 'text-gray-800 ' : 'text-gray-500'
         )}
       >
         <a
@@ -47,8 +47,8 @@ const Headings = ({ headings, activeId }) => (
               <li
                 key={child.id}
                 className={clsx(
-                  'p-1',
-                  child.id === activeId ? 'text-gray-800  ' : 'text-headers'
+                  'p-1 hover:text-gray-800',
+                  child.id === activeId ? 'text-gray-800  ' : 'text-gray-500'
                 )}
               >
                 <a
@@ -127,7 +127,7 @@ const ToC = () => {
   return (
     <nav
       aria-label="Table of contents"
-      className="text-black sticky top-8 ml-8 mt-8 text-sm max-h-[calc(100vh-40px)]"
+      className="text-black sticky top-[calc(66px+2rem)] ml-8 mt-8 text-xs max-h-[calc(100vh-40px)]"
     >
       <Headings headings={nestedHeadings} activeId={activeId} />
     </nav>

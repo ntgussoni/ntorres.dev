@@ -14,3 +14,7 @@
 .children-spin:hover > :first-child {
   @apply animate-spin-slow
 }
+
+.card:hover  .image {
+  @apply animate-zoom-up
+}

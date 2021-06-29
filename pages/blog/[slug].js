@@ -47,7 +47,7 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
 
-      <div className="flex flex-row min-w-[280px] w-full h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] px-8 items-center">
+      <div className="flex flex-row min-w-[210px] w-full h-[273px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] px-8 items-center">
         <div className="w-full flex-[30%]">
           <PostImage
             folderName={folderName}
@@ -56,10 +56,10 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
           />
         </div>
         <div className="flex-2 lg:ml-8">
-          <div className="font-roboto font-bold text-3xl md:text-4xl mb-4">
+          <div className="font-roboto font-bold text-3xl md:text-3xl mb-4">
             {metadata.title}
           </div>
-          <div className="font-roboto font-light text-xl">
+          <div className="font-roboto font-light text-lg">
             {metadata.description}
           </div>
           <div className="inline-flex flex-col font-roboto font-light text-base mb-6 mt-2">

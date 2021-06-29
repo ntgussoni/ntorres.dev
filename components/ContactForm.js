@@ -113,6 +113,7 @@ const ContactForm = () => {
       )}
       <div className="md:flex md:items-center">
         <Button
+          hot={false}
           text="Leave comment"
           loading={isSubmitting}
           loadingText="Sending"

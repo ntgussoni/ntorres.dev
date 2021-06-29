@@ -15,8 +15,8 @@ export default function Home({ githubData, posts }) {
     <Layout>
       <div className="flex flex-row items-center mb-20">
         <div className="flex-1 ">
-          <h1 className="text-2xl md:text-7xl font-bold mb-4">Welcome!</h1>
-          <p className="text-1xl max-w-[800px] md:text-3xl">{githubData.bio}</p>
+          <h1 className="text-xl md:text-6xl font-bold mb-8">Welcome!</h1>
+          <p className="text-1xl max-w-[800px] md:text-2xl">{githubData.bio}</p>
         </div>
         <div className="hidden md:block">
           <Image
@@ -29,45 +29,47 @@ export default function Home({ githubData, posts }) {
           />
         </div>
       </div>
-      <h2 className="text-2xl text-headers mb-9">Latest blog posts</h2>
-      <div className="relative  after:z-50 after:flex after:top-0 after:right-0 after:absolute after:h-full after:shadow-scroll mb-12">
-        <div className="flex flex-row  overflow-x-auto scroll-snap-mandatory">
-          {posts.map(({ folderName, post }) => (
-            <Link key={folderName} href={`/blog/${folderName}`} passHref>
-              <a className="scroll-snap-center flex flex-1 flex-col min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-9 items-center justify-center mr-5 last:mr-0">
-                <div className="w-[160px] h-[160px]">
-                  <PostImage
-                    folderName={folderName}
-                    src={post.metadata.image}
-                    alt={post.metadata.title}
-                  />
-                </div>
-                <div className="font-roboto font-bold text-[27px] text-center leading-8 mb-4">
-                  {post.metadata.title}
-                </div>
-                <div className="font-roboto font-light text-xs text-center">
-                  {post.metadata.description}
-                </div>
-              </a>
-            </Link>
-          ))}
-        </div>
+      <h2 className="text-xl text-headers mb-9">Latest blog posts</h2>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-2 justify-items-center mb-12">
+        {posts.map(({ folderName, post }) => (
+          <Link key={folderName} href={`/blog/${folderName}`} passHref>
+            <a className="card hover:animate-zoom-down flex flex-1 flex-col min-w-[210px] w-[210px] h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-5 items-center justify-center ">
+              <div className="flex w-full h-full relative">
+                <PostImage
+                  className="image"
+                  folderName={folderName}
+                  src={post.metadata.image}
+                  alt={post.metadata.title}
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
+              <div className="font-roboto font-bold text-lg text-center leading-8 mb-4">
+                {post.metadata.title}
+              </div>
+              <div className="font-roboto font-light text-xs text-center">
+                {post.metadata.description}
+              </div>
+            </a>
+          </Link>
+        ))}
       </div>
-      <h2 className="text-2xl text-headers mb-9">Open source</h2>
-      <div className="flex flex-col md:flex-row mb-12 items-center">
+      <h2 className="text-xl text-headers mb-9">Open source</h2>
+      <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,1fr))] gap-2 justify-items-center">
         <a
           href="https://github.com/ntgussoni/blitz-guard"
-          className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#2F80ED] to-[#9B51E0] p-9 items-center justify-center mb-4 md:mb-0 md:mr-5 last:mr-0"
+          className="card hover:animate-zoom-down flex flex-1 flex-col  h-[273px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#2F80ED] to-[#9B51E0] p-5"
         >
-          <div className="h-[174px]">
+          <div className="h-full w-full relative">
             <Image
+              className="image"
               src={path.resolve('blitz-guard.png')}
               alt="Blitz Guard"
-              width={524}
-              height={174}
+              layout="fill"
+              objectFit="contain"
             />
           </div>
-          <div className="w-full font-roboto font-bold text-[27px] leading-8 mb-4 text-left">
+          <div className="w-full font-roboto font-bold text-lg leading-8 text-left">
             Blitz Guard
           </div>
           <div className="w-full font-roboto font-light text-lg text-left">
@@ -75,7 +77,7 @@ export default function Home({ githubData, posts }) {
           </div>
         </a>
         {githubData && (
-          <div className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-[#343434] p-9 ">
+          <div className="flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes bg-[#343434] p-5 ">
             <div className="overflow-x-auto">
               {githubData.repositoriesContributedTo.nodes.map(
                 ({ name, description, url }, index) => (
@@ -86,11 +88,11 @@ export default function Home({ githubData, posts }) {
                   >
                     <div className="flex flex-col flex-[70%]">
                       <a href={url} target="_blank" rel="nofollow noreferrer">
-                        <span className="font-roboto font-bold text-lg mb-2">
+                        <span className="font-roboto font-bold text-base mb-2">
                           {name}
                         </span>
                       </a>
-                      <span className="hidden xl:block font-roboto font-light text-lg">
+                      <span className="hidden xl:block font-roboto font-light text-base">
                         {description}
                       </span>
                     </div>
