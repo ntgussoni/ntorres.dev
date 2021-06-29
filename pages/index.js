@@ -1,55 +1,15 @@
-import Layout from '../components/Layout';
 import Image from 'next/image';
+import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
 import { getContributions } from '../components/github';
+import getPost from '../components/get-post';
+import { PostImage } from '../components/PostImage';
+import Link from 'next/link';
+
 const path = require('path');
+const fs = require('fs');
 
-const posts = [
-  {
-    title: 'Serverless email in Vercel',
-    description: '#technology #vercel #serverless',
-    image: path.resolve('card-image.png'),
-  },
-  {
-    title: 'Serverless email in Vercel',
-    description: '#technology #vercel #serverless',
-    image: path.resolve('card-image.png'),
-  },
-  {
-    title: 'Serverless email in Vercel',
-    description: '#technology #vercel #serverless',
-    image: path.resolve('card-image.png'),
-  },
-  {
-    title: 'Serverless email in Vercel',
-    description: '#technology #vercel #serverless',
-    image: path.resolve('card-image.png'),
-  },
-  {
-    title: 'Serverless email in Vercel',
-    description: '#technology #vercel #serverless',
-    image: path.resolve('card-image.png'),
-  },
-];
-
-export async function getServerSideProps(context) {
-  const githubData = await getContributions(
-    process.env.GITHUB_KEY,
-    'ntgussoni'
-  );
-
-  if (!githubData) {
-    return {
-      props: { githubData: [] },
-    };
-  }
-
-  return {
-    props: { githubData }, // will be passed to the page component as props
-  };
-}
-export default function Home({ githubData }) {
-  console.log(githubData);
+export default function Home({ githubData, posts }) {
   return (
     <Layout>
       <div className="flex flex-row items-center mb-20">
@@ -71,21 +31,27 @@ export default function Home({ githubData }) {
       <h2 className="text-2xl text-headers mb-9">Latest blog posts</h2>
       <div className="relative  after:z-50 after:flex after:top-0 after:right-0 after:absolute after:h-full after:shadow-scroll mb-12">
         <div className="flex flex-row  overflow-x-auto scroll-snap-mandatory">
-          {posts.map((p, index) => (
-            <div
-              key={index}
-              className="scroll-snap-center flex flex-1 flex-col min-w-[280px] w-[280px] h-[364px] rounded-[36px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-9 items-center justify-center mr-5 last:mr-0"
-            >
-              <div className="w-[160px] h-[160px]">
-                <Image src={p.image} alt={p.title} width={160} height={143} />
-              </div>
-              <div className="font-roboto font-bold text-[27px] text-center leading-8 mb-4">
-                {p.title}
-              </div>
-              <div className="font-roboto font-light text-xs text-center">
-                {p.description}
-              </div>
-            </div>
+          {posts.map(({ folderName, post }, index) => (
+            <Link href={`/blog/${folderName}`} passHref>
+              <a
+                key={index}
+                className="scroll-snap-center flex flex-1 flex-col min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-9 items-center justify-center mr-5 last:mr-0"
+              >
+                <div className="w-[160px] h-[160px]">
+                  <PostImage
+                    folderName={folderName}
+                    src={post.metadata.image}
+                    alt={post.metadata.title}
+                  />
+                </div>
+                <div className="font-roboto font-bold text-[27px] text-center leading-8 mb-4">
+                  {post.metadata.title}
+                </div>
+                <div className="font-roboto font-light text-xs text-center">
+                  {post.metadata.description}
+                </div>
+              </a>
+            </Link>
           ))}
         </div>
       </div>
@@ -93,7 +59,7 @@ export default function Home({ githubData }) {
       <div className="flex flex-col md:flex-row mb-12 items-center">
         <a
           href="https://github.com/ntgussoni/blitz-guard"
-          className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[36px] shadow-boxes bg-gradient-to-bl from-[#2F80ED] to-[#9B51E0] p-9 items-center justify-center mb-4 md:mb-0 md:mr-5 last:mr-0"
+          className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#2F80ED] to-[#9B51E0] p-9 items-center justify-center mb-4 md:mb-0 md:mr-5 last:mr-0"
         >
           <div className="h-[174px]">
             <Image
@@ -111,7 +77,7 @@ export default function Home({ githubData }) {
           </div>
         </a>
         {githubData && (
-          <div className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[36px] shadow-boxes bg-[#343434] p-9 ">
+          <div className="flex flex-1 flex-col max-w-[50%] min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-[#343434] p-9 ">
             <div className="overflow-x-auto">
               {githubData.repositoriesContributedTo.nodes.map(
                 ({ name, description, url }, index) => (
@@ -146,4 +112,26 @@ export default function Home({ githubData }) {
       </div>
     </Layout>
   );
+}
+
+export async function getStaticProps() {
+  const folders = fs.readdirSync(`${process.cwd()}/posts`);
+
+  const githubData = await getContributions(
+    process.env.GITHUB_KEY,
+    'ntgussoni'
+  );
+
+  const posts = await Promise.all(
+    folders.map(
+      (folder) =>
+        new Promise((resolve) =>
+          getPost(folder).then((post) => resolve({ folderName: folder, post }))
+        )
+    )
+  );
+
+  return {
+    props: { posts, githubData: githubData || [] }, // will be passed to the page component as props
+  };
 }
