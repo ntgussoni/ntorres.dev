@@ -48,7 +48,7 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
       </Head>
 
       <div className="flex flex-row min-w-[210px] w-full h-[273px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] px-8 items-center">
-        <div className="w-full flex-[30%]">
+        <div className="w-full flex-[30%] hidden lg:block">
           <PostImage
             folderName={folderName}
             src={metadata.image}
@@ -59,7 +59,7 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
           <div className="font-roboto font-bold text-3xl md:text-3xl mb-4">
             {metadata.title}
           </div>
-          <div className="font-roboto font-light text-lg">
+          <div className="hidden md:block font-roboto font-light text-lg">
             {metadata.description}
           </div>
           <div className="inline-flex flex-col font-roboto font-light text-base mb-6 mt-2">
