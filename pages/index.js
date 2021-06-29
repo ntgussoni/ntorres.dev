@@ -15,18 +15,11 @@ export default function Home({ githubData, posts }) {
     <Layout>
       <div className="flex flex-row items-center mb-20">
         <div className="flex-1 ">
-          <h1 className="text-xl md:text-6xl font-bold mb-8">Welcome!</h1>
-          <p className="text-1xl max-w-[800px] md:text-2xl">{githubData.bio}</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-8">Welcome!</h1>
+          <p className="text-xl max-w-[800px]">{githubData.bio}</p>
         </div>
-        <div className="hidden md:block">
-          <Image
-            src={profilePic}
-            alt="Nicolás Torres"
-            width={194}
-            height={194}
-            layout="fixed"
-            className=" ml-8 w-[194px] h-[194px]"
-          />
+        <div className="hidden ml-8  md:block w-[180px] h-[180px]">
+          <Image src={profilePic} alt="Nicolás Torres" />
         </div>
       </div>
       <h2 className="text-xl text-headers mb-9">Latest blog posts</h2>
