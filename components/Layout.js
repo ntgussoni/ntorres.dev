@@ -41,7 +41,7 @@ const Layout = ({ children, showGradient = true }) => (
           </Link>
         </div>
       </div>
-      <div className="w-full max-w-[1024px] px-4 md:px-20 pt-10">
+      <div className="w-full max-w-[1024px] px-4 md:px-20 pt-10 mb-8">
         {children}
       </div>
     </main>
