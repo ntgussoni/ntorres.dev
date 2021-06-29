@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
-import Button from './Button';
-
 import fetch from 'isomorphic-fetch';
 import { useForm } from 'react-hook-form';
+import Button from './Button';
 
 const ContactForm = () => {
   const { register, handleSubmit, setError, formState, reset } = useForm();
@@ -32,7 +31,7 @@ const ContactForm = () => {
     }
   };
 
-  const { isDirty, isSubmitting, errors, touched, submitCount } = formState;
+  const { isSubmitting, errors } = formState;
 
   return (
     <form className="w-full mt-16">
@@ -114,7 +113,6 @@ const ContactForm = () => {
       )}
       <div className="md:flex md:items-center">
         <Button
-          tabIndex={4}
           text="Leave comment"
           loading={isSubmitting}
           loadingText="Sending"

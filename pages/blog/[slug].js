@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { useMemo } from 'react';
 import fs from 'fs';
 import Head from 'next/head';
@@ -69,7 +70,9 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
               </span>
               <span className="ml-2 hidden md:inline-flex">
                 {metadata.categories.map((c) => (
-                  <span className="ml-2">#{c}</span>
+                  <span key={c} className="ml-2">
+                    #{c}
+                  </span>
                 ))}
               </span>
             </div>

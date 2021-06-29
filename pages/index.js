@@ -1,10 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
 import { getContributions } from '../components/github';
 import getPost from '../components/get-post';
 import { PostImage } from '../components/PostImage';
-import Link from 'next/link';
 
 const path = require('path');
 const fs = require('fs');
@@ -31,12 +32,9 @@ export default function Home({ githubData, posts }) {
       <h2 className="text-2xl text-headers mb-9">Latest blog posts</h2>
       <div className="relative  after:z-50 after:flex after:top-0 after:right-0 after:absolute after:h-full after:shadow-scroll mb-12">
         <div className="flex flex-row  overflow-x-auto scroll-snap-mandatory">
-          {posts.map(({ folderName, post }, index) => (
-            <Link href={`/blog/${folderName}`} passHref>
-              <a
-                key={index}
-                className="scroll-snap-center flex flex-1 flex-col min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-9 items-center justify-center mr-5 last:mr-0"
-              >
+          {posts.map(({ folderName, post }) => (
+            <Link key={folderName} href={`/blog/${folderName}`} passHref>
+              <a className="scroll-snap-center flex flex-1 flex-col min-w-[280px] w-[280px] h-[364px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-9 items-center justify-center mr-5 last:mr-0">
                 <div className="w-[160px] h-[160px]">
                   <PostImage
                     folderName={folderName}
@@ -64,7 +62,7 @@ export default function Home({ githubData, posts }) {
           <div className="h-[174px]">
             <Image
               src={path.resolve('blitz-guard.png')}
-              alt={'Blitz Guard'}
+              alt="Blitz Guard"
               width={524}
               height={174}
             />
@@ -82,11 +80,12 @@ export default function Home({ githubData, posts }) {
               {githubData.repositoriesContributedTo.nodes.map(
                 ({ name, description, url }, index) => (
                   <div
+                    // eslint-disable-next-line react/no-array-index-key
                     key={index}
                     className="flex flex-col lg:flex-row w-full items-start lg:items-center mb-4"
                   >
                     <div className="flex flex-col flex-[70%]">
-                      <a href={url} target="_blank" rel="nofollow">
+                      <a href={url} target="_blank" rel="nofollow noreferrer">
                         <span className="font-roboto font-bold text-lg mb-2">
                           {name}
                         </span>

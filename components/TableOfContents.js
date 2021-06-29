@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 const getNestedHeadings = (headingElements) => {
   const nestedHeadings = [];
 
-  headingElements.forEach((heading, index) => {
+  headingElements.forEach((heading) => {
     const { innerText: title, id } = heading;
 
     if (heading.nodeName === 'H2') {
@@ -75,6 +75,7 @@ const useIntersectionObserver = (setActiveId) => {
   useEffect(() => {
     const callback = (headings) => {
       headingElementsRef.current = headings.reduce((map, headingElement) => {
+        // eslint-disable-next-line no-param-reassign
         map[headingElement.target.id] = headingElement;
         return map;
       }, headingElementsRef.current);
@@ -86,6 +87,7 @@ const useIntersectionObserver = (setActiveId) => {
       });
 
       const getIndexFromId = (id) =>
+        // eslint-disable-next-line no-use-before-define
         headingElements.findIndex((heading) => heading.id === id);
 
       if (visibleHeadings.length === 1) {

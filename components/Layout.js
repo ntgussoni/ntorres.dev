@@ -1,7 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import clsx from 'clsx';
 import Head from 'next/head';
 import Link from 'next/link';
-
 import Logo from './Logo';
 
 const Layout = ({ children, showGradient = true }) => (

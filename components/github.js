@@ -1,4 +1,5 @@
-export async function getContributions(token, username) {
+/* eslint-disable import/prefer-default-export */
+export async function getContributions(token) {
   const headers = {
     Authorization: `bearer ${token}`,
   };
@@ -21,7 +22,7 @@ export async function getContributions(token, username) {
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: headers,
+      headers,
     });
 
     const { data } = await response.json();
