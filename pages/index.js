@@ -85,7 +85,7 @@ export default function Home({ githubData, posts }) {
                           {name}
                         </span>
                       </a>
-                      <span className="hidden xl:block font-roboto font-light text-base">
+                      <span className="hidden xl:block font-roboto font-light text-sm">
                         {description}
                       </span>
                     </div>
@@ -126,6 +126,11 @@ export async function getStaticProps() {
   );
 
   return {
-    props: { posts, githubData: githubData || [] }, // will be passed to the page component as props
+    props: {
+      posts: process.env.IS_DEVELOPMENT
+        ? posts
+        : posts.filter((p) => !p.post.metadata.draft),
+      githubData: githubData || [],
+    }, // will be passed to the page component as props
   };
 }
