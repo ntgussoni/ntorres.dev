@@ -23,11 +23,11 @@ export default function Home({ githubData, posts }) {
         </div>
       </div>
       <h2 className="text-xl text-headers mb-9">Latest blog posts</h2>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-2 justify-items-center mb-12">
+      <div className="grid md:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 justify-items-center mb-12">
         {posts.map(({ folderName, post }) => (
           <Link key={folderName} href={`/blog/${folderName}`} passHref>
-            <a className="card hover:animate-zoom-down flex flex-1 flex-col min-w-[210px] w-[210px] h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-5 items-center justify-center ">
-              <div className="flex w-full h-full relative">
+            <a className="card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-5 items-center justify-center ">
+              <div className="flex w-full h-full relative max-w-[60%]">
                 <PostImage
                   className="image"
                   folderName={folderName}
@@ -40,7 +40,7 @@ export default function Home({ githubData, posts }) {
               <div className="font-roboto font-bold text-lg text-center leading-8 mb-4">
                 {post.metadata.title}
               </div>
-              <div className="font-roboto font-light text-xs text-center">
+              <div className="hidden md:block font-roboto font-light text-xs text-center">
                 {post.metadata.description}
               </div>
             </a>
