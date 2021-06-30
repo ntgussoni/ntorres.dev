@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import ContactForm from '../components/ContactForm';
+// import ContactForm from '../components/ContactForm';
 import Layout from '../components/Layout';
 
 const ContactIcons = () => (
@@ -64,7 +64,7 @@ const ContactMe = () => (
       <h1 className="font-bold mb-1 text-3xl">Something to say?</h1>
       <p className="text-xl mb-1">Find me in one of these places</p>
       <ContactIcons />
-      <div className="w-full flex justify-center items-center align-middle mb-8">
+      {/* <div className="w-full flex justify-center items-center align-middle mb-8">
         <hr className="w-3/12" />
         <span className="font-thin px-4">or</span>
         <hr className="w-3/12" />
@@ -72,7 +72,7 @@ const ContactMe = () => (
       <p className="text-lg mb-1">
         Drop me a line, I&apos;d love to talk to you
       </p>
-      <ContactForm />
+      <ContactForm /> */}
     </div>
   </Layout>
 );

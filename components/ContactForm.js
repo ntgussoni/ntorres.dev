@@ -7,27 +7,31 @@ const ContactForm = () => {
   const { register, handleSubmit, setError, formState, reset } = useForm();
 
   const onSubmit = async (formData) => {
-    const data = await fetch(`/api/email`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subject: `Contact form at ntorres.dev`,
-        text: `${formData.name} - ${formData.email} \n\n${formData.message}`,
-      }),
-    });
-
-    reset();
-
-    const { code } = await data.json();
-    if (code !== 200) {
-      setError('general', {
-        type: 'manual',
-        message:
-          'An error occurred and the message could not be sent. Sorry!! Try again later',
+    try {
+      const data = await fetch(`/api/email`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subject: `Contact form at ntorres.dev`,
+          text: `${formData.name} - ${formData.email} \n\n${formData.message}`,
+        }),
       });
+
+      reset();
+
+      const { code } = await data.json();
+      if (code !== 200) {
+        setError('general', {
+          type: 'manual',
+          message:
+            'An error occurred and the message could not be sent. Sorry!! Try again later',
+        });
+      }
+    } catch (e) {
+      reset({ keepValues: true });
     }
   };
 
@@ -73,7 +77,6 @@ const ContactForm = () => {
               className=" bg-transparent block w-full  text-white border border-white  rounded py-3 px-4 mb-3 mt-2 leading-tight focus:outline-none  focus:border-primary-blue focus:drop-shadow-inputs"
               type="email"
               placeholder="jan@example.com"
-              required
             />
           </label>
 

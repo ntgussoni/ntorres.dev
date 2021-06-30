@@ -42,7 +42,7 @@ const sendEmail = async (req, res) => {
       refresh_token: EMAIL_REFRESH_TOKEN,
     });
 
-    const accessToken = oauth2.getAccessToken();
+    const accessToken = await oauth2.getAccessToken();
 
     const transport = createTransport({
       service: 'gmail',

@@ -80,7 +80,7 @@ const Post = ({ folderName, post: { metadata, mdxSource } }) => {
         </div>
       </div>
       <div className="flex ">
-        <div className="prose mt-8 lg:pl-4">
+        <div className="prose mt-8 pr-4">
           <MDXRemote {...mdxSource} components={components} />
         </div>
         <div className="relative hidden lg:flex">
