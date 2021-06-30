@@ -21,7 +21,7 @@ module.exports = {
         },
         'zoom-up': {
           from: { transform: 'scale(1)' },
-          to: { transform: 'scale(0.85)' },
+          to: { transform: 'scale(0.85) translateY(-20%)' },
         },
       },
       animation: {
