@@ -304,7 +304,7 @@ const CV = () => (
     </div>
     <div className="grid grid-cols-1 md:grid-cols-[1fr,3fr] gap-16">
       <div>
-        <Heading>EDUCATION</Heading>
+        <Heading>Education</Heading>
         <EducationItem
           title="Facultad de Arquitectura"
           text="Software Engineering and Robotics"
@@ -313,13 +313,13 @@ const CV = () => (
           title="Instituto tecnológico superior"
           text="Bachiller en Mantenimiento y Procesamiento Informático"
         />
-        <Heading>LANGUAGES</Heading>
+        <Heading>Languages</Heading>
         <EducationItem title="English" />
         <EducationItem title="Spanish" />
       </div>
       <div>
         <div className="relative">
-          <Heading>EXPERIENCE</Heading>
+          <Heading>Experience</Heading>
           <div className="timeline">
             <div className="mb-6">
               <Heading2>
