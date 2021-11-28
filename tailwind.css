@@ -3,11 +3,30 @@
 @tailwind utilities;
 
 @layer utilities {
-    .scroll-snap-mandatory {
-        scroll-snap-type: x mandatory;
-    }
+  .scroll-snap-mandatory {
+      scroll-snap-type: x mandatory;
+  }
   .scroll-snap-center {
     scroll-snap-align: center;
+  }
+
+  .project-section {
+    @apply mb-10 
+  }
+  .me p {
+    @apply mb-4 font-oxygen text-white max-w-[700px];
+  }
+
+  .project-section p {
+    @apply mb-4 font-oxygen text-[#D1D1D1] max-w-[700px]
+  }
+
+  .timeline::before {
+    @apply content-[""] w-[2px] h-[calc(100%-90px)] from-[#baa1568f] to-[#F2C94C] bg-gradient-to-t  absolute left-[-31px] top-[80px] shadow-xl
+  }
+
+  .dot {
+    @apply w-3 h-3 bg-[#F2C94C] rounded-full absolute -left-9 top-[12px] shadow-xl;
   }
 }
 

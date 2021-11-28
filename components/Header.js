@@ -11,10 +11,17 @@ export const Header = ({ showGradient }) => (
         'bg-[#4F4F4F] bg-gradient-to-b from-[#333333,28.89%] to-[rgba(79, 79, 79, 0.81),96.17%] sticky top-0 z-10 border-b-2 border-[#F2994A]'
     )}
   >
-    <div className="max-w-[1024px] px-4 md:px-20 flex items-center w-full py-2 ">
+    <div className="max-w-[1240px] px-4 md:px-20 flex items-center w-full py-2 ">
       <Link href="/" passHref>
         <a className="flex flex-1 ">
           <Logo />
+        </a>
+      </Link>
+      <Link href="/about-me" passHref>
+        <a className="overflow-hidden flex p-[1px] relative justify-center items-center hover:text-green-50 mr-4">
+          <span className="z-10 flex uppercase font-bold  text-xs px-3 py-3 rounded-lg">
+            About me
+          </span>
         </a>
       </Link>
       <Link href="/contact-me" passHref>
