@@ -36,6 +36,7 @@ module.exports = {
       fontFamily: {
         body: ['Montserrat', 'sans-serif'],
         roboto: ['Roboto', 'sans-serif'],
+        oxygen: ['Oxygen', 'sans-serif'],
       },
       boxShadow: {
         boxes: '0px 0px 30px rgba(0, 0, 0, 0.25)',

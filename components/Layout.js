@@ -18,7 +18,7 @@ const Layout = ({ children, showGradient = true }) => (
 
     <main className="flex flex-col w-full flex-1 items-center">
       <Header showGradient={showGradient} />
-      <div className="w-full max-w-[1024px] px-4 md:px-20 pt-10 mb-10">
+      <div className="w-full max-w-[1240px] px-4 md:px-20 pt-10 mb-10">
         {children}
       </div>
       <footer className="p-8">
