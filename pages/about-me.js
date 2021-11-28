@@ -80,10 +80,10 @@ function SoftwareCatalog() {
         <b>Software catalog</b> - Manage all your software, all in one place
       </Heading3>
       <p className="text-base font-body">
-        It's a centralized catalog that keeps track of our deliverables,
-        libraries, and teams that own them. It's the main source of truth for
-        our ecosystem and the go-to location for every team to see all services
-        that they own and related resources.
+        It&apos;s a centralized catalog that keeps track of our deliverables,
+        libraries, and teams that own them. It&apos;s the main source of truth
+        for our ecosystem and the go-to location for every team to see all
+        services that they own and related resources.
       </p>
 
       <p className="text-base font-body">
@@ -111,8 +111,8 @@ function Community() {
       </p>
 
       <p className="text-base font-body">
-        Built on top of Discourse forums with <b>Ember.js</b> and{' '}
-        <b>Ruby on Rails</b> using Engines.
+        Built on top of Discourse forums with <b>Ember.js</b> and
+        <b> Ruby on Rails</b> using Engines.
       </p>
     </div>
   );
@@ -132,9 +132,9 @@ function FertilityPro() {
       </p>
 
       <p className="text-base font-body">
-        It's a platform that's designed to minimize patient stress and empower
-        fertility doctors by providing them with the right information at the
-        right time.
+        It&apos;s a platform that&apos;s designed to minimize patient stress and
+        empower fertility doctors by providing them with the right information
+        at the right time.
       </p>
 
       <p className="text-base font-body">
@@ -161,8 +161,8 @@ function Trama() {
       </p>
 
       <p className="text-base font-body">
-        PWA built with <b>Next.js (React)</b> and <b>GraphQL</b> with{' '}
-        <b>Apollo</b>, <b>Ruby on Rails</b> as a backend.
+        PWA built with <b>Next.js (React)</b> and <b>GraphQL</b> with
+        <b> Apollo</b>, <b>Ruby on Rails</b> as a backend.
       </p>
     </div>
   );
@@ -202,7 +202,8 @@ function SrvMonitor() {
 
       <p className="text-base font-body">
         The software enables the company to manage its thousands of resources
-        and dependencies, it's used for daily planning and control of assets.
+        and dependencies, it&apos;s used for daily planning and control of
+        assets.
       </p>
 
       <p className="text-base font-body">
@@ -219,8 +220,8 @@ function FADU() {
         <b>FADU</b> - Institutional portal
       </Heading3>
       <p className="text-base font-body">
-        Maintained the online infrastructure for the university's portals and
-        took part in several internal projects.
+        Maintained the online infrastructure for the university&apos;s portals
+        and took part in several internal projects.
       </p>
     </div>
   );
@@ -234,8 +235,8 @@ function Forma() {
       </Heading3>
       <p className="text-base font-body">
         Developed FORMA; a platform that allows users to register to courses and
-        evaluate the teachers' performance. It enables the administrators to
-        manage the submissions, schedule new course registrations, and handle
+        evaluate the teachers&apos; performance. It enables the administrators
+        to manage the submissions, schedule new course registrations, and handle
         the course payments.
       </p>
 
@@ -287,14 +288,15 @@ const CV = () => (
           </p>
 
           <p>
-            With over 12 years of experience, I'm all about taking up challenges
-            and complex projects; I'm passionate about architecture, neat and
-            well-tested code, trying bleeding-edge technologies, and giving
-            something back through my open source contributions.
+            With over 12 years of experience, I&apos;m all about taking up
+            challenges and complex projects; I&apos;m passionate about
+            architecture, neat and well-tested code, trying bleeding-edge
+            technologies, and giving something back through my open source
+            contributions.
           </p>
 
           <p>
-            And because not everything is code, I'm also passionate about
+            And because not everything is code, I&apos;m also passionate about
             robotics, drones, and building stuff.
           </p>
         </div>
