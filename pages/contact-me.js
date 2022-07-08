@@ -16,7 +16,7 @@ const ContactIcons = () => (
       </a>
     </div>
     <div className="p-1 mr-3 w-8">
-      <a href="https://twitter.com/ntgussoni">
+      <a href="https://twitter.com/ntorresdev">
         <svg
           className="fill-current bg-current-white "
           role="img"
