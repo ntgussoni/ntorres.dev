@@ -306,11 +306,11 @@ const CV = () => (
       <div>
         <Heading>Education</Heading>
         <EducationItem
-          title="Facultad de Arquitectura"
+          title="Facultad de Ingeniería"
           text="Software Engineering and Robotics"
         />
         <EducationItem
-          title="Instituto tecnológico superior"
+          title="Instituto Tecnológico Superior"
           text="Bachiller en Mantenimiento y Procesamiento Informático"
         />
         <Heading>Languages</Heading>
