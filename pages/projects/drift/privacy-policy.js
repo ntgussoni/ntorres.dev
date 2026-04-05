@@ -35,7 +35,7 @@ const DriftPrivacyPolicy = () => (
         Privacy Policy — Drift
       </h1>
       <p className="text-sm text-gray-400 mb-10">
-        Last updated: March 30, 2026
+        Last updated: April 6, 2026
       </p>
 
       <P>
@@ -66,6 +66,14 @@ const DriftPrivacyPolicy = () => (
               Audio you hear is played from assets bundled inside the app
             </strong>
             , not streamed from our backend during normal use.
+          </li>
+          <li>
+            If you choose to enter your <strong>name</strong>, it is used{' '}
+            <strong>only for personalization</strong> (for example, a greeting
+            in the app). It stays on your device; we{' '}
+            <strong>do not upload it to our servers</strong> and we{' '}
+            <strong>never share it</strong> with third parties as part of the
+            App&apos;s design described here.
           </li>
           <li>
             We configure the App <strong>not to use the microphone</strong> for
@@ -116,6 +124,16 @@ const DriftPrivacyPolicy = () => (
           <li>
             <strong>Mute and playback state:</strong> handled locally by the
             audio engine.
+          </li>
+          <li>
+            <strong>Optional display name:</strong> If you enter a name for
+            personalization (e.g. nightly greetings), it is stored{' '}
+            <strong>only on your device</strong> and used solely to customize
+            your experience. We do <strong>not</strong> transmit this name to
+            our servers, and we do <strong>not</strong> share it with
+            advertisers, data brokers, or other third parties for marketing or
+            analytics. Uninstalling the App or clearing app data removes it,
+            subject to how your operating system handles local storage.
           </li>
         </ul>
         <P>

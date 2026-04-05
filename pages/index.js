@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
+import driftIcon from './projects/drift/adaptive-icon.png';
 import { getContributions } from '../components/github';
 import getPost from '../components/get-post';
 import { PostImage } from '../components/PostImage';
@@ -46,6 +47,27 @@ export default function Home({ githubData, posts }) {
             </a>
           </Link>
         ))}
+      </div>
+      <h2 className="text-xl text-headers mb-9">Projects</h2>
+      <div className="grid md:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 justify-items-center mb-12">
+        <Link href="/projects/drift" passHref>
+          <a className="card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-b from-[#3D3D3D] to-[#1A1A1A] p-5 items-center justify-center border border-white/10">
+            <div className="flex w-full flex-1 relative max-w-[120px] min-h-[100px]">
+              <Image
+                src={driftIcon}
+                alt="Drift — sleep app"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+            <div className="font-roboto font-bold text-lg text-center leading-8 mb-2 text-white">
+              Drift
+            </div>
+            <div className="font-roboto font-light text-xs text-center text-gray-400 max-w-[200px]">
+              One word at a time. Sleep science from SFU.
+            </div>
+          </a>
+        </Link>
       </div>
       <h2 className="text-xl text-headers mb-9">Open source</h2>
       <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,1fr))] gap-2 justify-items-center">
