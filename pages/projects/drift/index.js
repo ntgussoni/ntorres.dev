@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../../../components/Layout';
-import driftIcon from './adaptive-icon.png';
+import driftIcon from './icon.png';
 
 const Section = ({ id, title, children }) => (
   <section id={id} className="mb-20 scroll-mt-24">
@@ -50,7 +50,7 @@ export default function DriftLanding() {
             <div className="relative w-[120px] h-[120px] md:w-[140px] md:h-[140px] rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.35)]">
               <Image
                 src={driftIcon}
-                alt="Drift app icon — a calm sloth"
+                alt="Drift app icon"
                 layout="fill"
                 objectFit="cover"
                 priority
@@ -274,7 +274,22 @@ export default function DriftLanding() {
             no breathing exercises to remember, no content library to browse.
             Just words, one at a time, until you&apos;re gone.
           </P>
-          <div className="mt-8">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-5 sm:gap-6 mt-8">
+            <a
+              href="https://apps.apple.com/nl/app/drift-fall-asleep-in-minutes/id6762871366"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block opacity-90 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-white/40 rounded"
+            >
+              <Image
+                src="/projects/drift/app-store-badge.svg"
+                alt="Download on the App Store"
+                width={120}
+                height={40}
+                className="h-10 w-auto sm:h-11"
+                unoptimized
+              />
+            </a>
             <a
               href="https://play.google.com/store/apps/details?id=com.bedtimefable.drift"
               target="_blank"

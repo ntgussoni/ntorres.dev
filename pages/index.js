@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
-import driftIcon from './projects/drift/adaptive-icon.png';
+import driftIcon from './projects/drift/icon.png';
 import { getContributions } from '../components/github';
 import getPost from '../components/get-post';
 import { PostImage } from '../components/PostImage';
@@ -94,8 +94,9 @@ export default function Home({ githubData, posts }) {
         {githubData && (
           <div className="flex flex-1 flex-col w-full h-[273px] rounded-[16px] shadow-boxes bg-[#343434] p-5 ">
             <div className="overflow-x-auto">
-              {githubData.repositoriesContributedTo?.nodes.map(
-                ({ name, description, url }, index) => (
+              {(githubData?.repositoriesContributedTo?.nodes ?? [])
+                .filter(Boolean)
+                .map(({ name, description, url }, index) => (
                   <div
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
