@@ -4,12 +4,153 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
 import driftIcon from './projects/drift/icon.png';
+import bedtimefableIcon from '../public/projects/showcase/bedtimefable-icon.png';
+import socialrobotIcon from '../public/projects/showcase/socialrobot-icon.png';
+import clashofappsIcon from '../public/projects/showcase/clashofapps-icon.png';
+import maidofhonorIcon from '../public/projects/showcase/maidofhonor-icon.png';
+import bestmanIcon from '../public/projects/showcase/bestman-icon.png';
+import funeralspeechIcon from '../public/projects/showcase/funeralspeech-icon.png';
 import { getContributions } from '../components/github';
 import getPost from '../components/get-post';
 import { PostImage } from '../components/PostImage';
 
 const path = require('path');
 const fs = require('fs');
+
+const showcaseProjects = [
+  {
+    name: 'Drift',
+    description: 'One word at a time. Sleep science from SFU.',
+    href: '/projects/drift',
+    image: driftIcon,
+    cardClass:
+      'bg-gradient-to-b from-[#3D3D3D] to-[#1A1A1A] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'BedtimeFable',
+    description:
+      'Calming sleep stories for adults — narration and gentle music to wind down.',
+    href: 'https://bedtimefable.com',
+    image: bedtimefableIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#1e3a5f] to-[#0f172a] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'SocialRobot',
+    description:
+      'Create, schedule, and grow across every social platform in one place.',
+    href: 'https://socialrobot.io',
+    image: socialrobotIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#2F80ED] to-[#1a1a2e] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'Clash of Apps',
+    description:
+      'Analyze Play Store reviews — sentiment, competitors, and actionable insights.',
+    href: 'https://clashofapps.com',
+    image: clashofappsIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#4a3728] to-[#1a1a1a] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'Maid of Honor Speech',
+    description:
+      'AI speech generator — a personalized maid of honor toast in minutes.',
+    href: 'https://maidofhonorspeech.net',
+    image: maidofhonorIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#9b4d6a] to-[#2d1f24] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'How to Be Best Man',
+    description:
+      'Step-by-step help writing the perfect best man speech.',
+    href: 'https://howtobebestman.com',
+    image: bestmanIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#1e3a5f] to-[#0f1419] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'Funeral Speech',
+    description:
+      'Find the right words — heartfelt funeral speeches, step by step.',
+    href: 'https://funeralspeech.net',
+    image: funeralspeechIcon,
+    external: true,
+    cardClass:
+      'bg-gradient-to-bl from-[#3d4f5f] to-[#1a1a1a] border border-white/10',
+    titleClass: 'text-white',
+    descriptionClass: 'text-gray-400',
+  },
+];
+
+function ProjectCard({
+  name,
+  description,
+  href,
+  image,
+  external,
+  cardClass,
+  titleClass,
+  descriptionClass,
+}) {
+  const className = `card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight p-5 items-center justify-center ${cardClass}`;
+
+  const content = (
+    <>
+      <div className="flex w-full flex-1 relative max-w-[120px] min-h-[100px]">
+        <Image src={image} alt={name} layout="fill" objectFit="contain" />
+      </div>
+      <div
+        className={`font-roboto font-bold text-lg text-center leading-8 mb-2 ${titleClass}`}
+      >
+        {name}
+      </div>
+      <div
+        className={`font-roboto font-light text-xs text-center max-w-[200px] ${descriptionClass}`}
+      >
+        {description}
+      </div>
+    </>
+  );
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} passHref>
+      <a className={className}>{content}</a>
+    </Link>
+  );
+}
 
 export default function Home({ githubData, posts }) {
   return (
@@ -50,24 +191,9 @@ export default function Home({ githubData, posts }) {
       </div>
       <h2 className="text-xl text-headers mb-9">Projects</h2>
       <div className="grid md:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 justify-items-center mb-12">
-        <Link href="/projects/drift" passHref>
-          <a className="card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-b from-[#3D3D3D] to-[#1A1A1A] p-5 items-center justify-center border border-white/10">
-            <div className="flex w-full flex-1 relative max-w-[120px] min-h-[100px]">
-              <Image
-                src={driftIcon}
-                alt="Drift — sleep app"
-                layout="fill"
-                objectFit="contain"
-              />
-            </div>
-            <div className="font-roboto font-bold text-lg text-center leading-8 mb-2 text-white">
-              Drift
-            </div>
-            <div className="font-roboto font-light text-xs text-center text-gray-400 max-w-[200px]">
-              One word at a time. Sleep science from SFU.
-            </div>
-          </a>
-        </Link>
+        {showcaseProjects.map((project) => (
+          <ProjectCard key={project.name} {...project} />
+        ))}
       </div>
       <h2 className="text-xl text-headers mb-9">Open source</h2>
       <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,1fr))] gap-2 justify-items-center">
