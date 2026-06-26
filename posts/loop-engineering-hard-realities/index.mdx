@@ -22,6 +22,10 @@ Loops are early. The economics and verification challenges are real. Every conve
 
 # Token Economics: The Hidden Cost
 
+**PR Babysitter** (from the [patterns post](/blog/loop-engineering-patterns)): polls open PRs every few minutes. Cheap when nothing is wrong; expensive on a busy branch because every run may spawn sub-agents.
+
+**CI Sweeper**: only runs meaningful work when CI is red, but each incident can chain implementer + verifier + full test suite. That adds up fast at a 15-minute cadence.
+
 Token costs vary wildly depending on design:
 
 | Loop | Cadence | Runs/day | Rough daily tokens |
@@ -37,6 +41,20 @@ A 5-minute loop that spawns implementer + verifier on every run will burn throug
 - L1 only until one week of accurate triage
 - Log estimated tokens per run in `loop-run-log.md`
 - Active hours 08:00–20:00 Europe/Amsterdam
+
+---
+
+# How to read severity labels (S1, S2, S3)
+
+These are **not** the same as readiness levels (**L1**, **L2**, **L3** from the patterns post). **L** = how much autonomy you gave the loop. **S** = how bad things get if a failure mode is left alone.
+
+| Label | Meaning | Example |
+|-------|---------|---------|
+| **S1** | Early warning. Wasteful or annoying, but the loop is still basically under control. | Token bill creeping up; noisy Slack |
+| **S2** | Active problem. The loop is misleading you, stuck, or burning resources. Fix this week. | Infinite fix retries; stale `STATE.md` |
+| **S3** | Serious harm. Wrong code merged, denylisted paths touched, or production behaviour at risk. Stop the loop and roll back. | Auto-refactor on owned pricing code |
+
+An arrow like **S1 → S2** means: starts mild if you catch it early; becomes S2 if you ignore it.
 
 ---
 
@@ -115,7 +133,7 @@ A 5-minute loop that spawns implementer + verifier on every run will burn throug
 
 Never auto-edit without human approval:
 
-- `src/lib/pricing/*` (matcher, Nic-owned)
+- `src/lib/pricing/*` (matcher, ownership-sensitive)
 - Week generation / replan internals
 - `.env`, secrets, credentials
 - `drizzle/migrations/*`

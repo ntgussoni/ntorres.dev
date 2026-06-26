@@ -20,6 +20,27 @@ You have a working L1 loop on Souso. Now what else can you build? Seven producti
 
 ---
 
+# A few terms first
+
+This post assumes you built the **Daily Triage** loop from the previous article (scan once a day, write to `STATE.md`, change nothing). If any of the shorthand below is unfamiliar, read this block once:
+
+| Term | Plain meaning |
+|------|----------------|
+| **CI** (continuous integration) | Automated checks on every push or PR: tests, lint, typecheck, build. "CI is red" = something failed. |
+| **PR** (pull request) | A proposed code change on GitHub waiting for review and merge. |
+| **L1** | Report-only. The loop reads the repo and writes findings. No edits. |
+| **L2** | Assisted. Small fixes allowed, usually with a verifier or human approval. |
+| **L3** | Unattended. The loop may change code and open PRs without you watching. |
+
+Patterns **6** and **7** have informal nicknames you will see in ops chat and in the next post:
+
+- **PR Babysitter**: Checks open PRs every few minutes. Is CI green? Any merge conflicts? Reviews going stale? At L2 it only flags problems; at L3 it may try tiny fixes (lint, typos).
+- **CI Sweeper**: Reacts when CI fails. Read the log, attempt a fix, run tests, open or update a PR. High risk because it writes code on its own.
+
+The full **L0–L3** rollout table is at the end of this post.
+
+---
+
 # 1. Daily Triage (Start Here)
 
 **Cadence**: 1 day  
@@ -74,32 +95,32 @@ Check for outdated or vulnerable dependencies. Patch bumps only; minor/major esc
 
 **Souso example:** Souso runs on Cloudflare Workers with TanStack Start, Drizzle, and React 19. A patch bump to `wrangler` or `vitest` might be safe; a major React bump is **never** auto-merged. Workers compat and SSR behaviour need human review.
 
-# 6. PR Babysitter
+# 6. PR Babysitter (watch open PRs)
 
 **Cadence**: 5–15 min  
 **Risk**: Medium  
 **Readiness**: L2 (watch) → L3 (fix)
 
-Watch open PRs. Flag CI failures, merge conflicts, staleness. At L3, attempt small fixes.
+Think of a babysitter for your pull requests: something that keeps an eye on them while you are in meetings. Each run asks: Did CI pass? Is there a merge conflict with `develop`? Has this PR sat idle too long? At L2 it only writes alerts (to `STATE.md` or Slack). At L3 it may push a small fix and re-run CI.
 
 **Souso example:** A PR into `develop` fails the `gate` job (`pnpm quality`). Babysitter investigates: is it a lint error (maybe fixable) or a matcher eval regression (escalate, owned flow)? Early exit if no PRs need attention, under 5k tokens.
 
 **Critical:** Hard-cap at 3 fix attempts. Souso's active `develop` branch can have multiple PRs. A 5-minute cadence with full sub-agent chains burns tokens fast.
 
-# 7. CI Sweeper
+# 7. CI Sweeper (fix red CI)
 
 **Cadence**: 5–15 min  
 **Risk**: High  
 **Readiness**: L3 (cautious)
 
-When CI goes red, investigate, fix, verify, open PR.
+A sweeper cleans up messes. When CI turns red (a test fails, lint breaks, build errors), this loop investigates the failure, tries a fix, runs the same checks locally, and opens or updates a PR. You are not in the loop unless it escalates. That is why it is L3-only on most teams: one wrong guess can ship a bad patch.
 
 **Souso example:** Matcher eval fails after a pricing change. Sweeper might fix a golden test case. But **#401 RangeError on `/week`** is not a sweeper job: root cause is unknown, reproduce-first is required, and the week generation flow is ownership-sensitive. Sweeper **escalates**, never guesses.
 
 **Mandatory safeguards on Souso:**
 - Verifier runs `pnpm quality`, not just unit tests
 - Never disable evals to make CI green
-- Never auto-edit `src/lib/pricing/*` without Nic review
+- Never auto-edit `src/lib/pricing/*` without human review
 - 3 attempts → human
 
 ---
