@@ -27,7 +27,7 @@ function Heading({ children }) {
 
 function Heading2({ children }) {
   return (
-    <h2 className="relative mb-6 mt-3 text-xl font-semibold tracking-tight text-neutral-900">
+    <h2 className="relative mb-6 mt-3 break-words text-lg font-semibold tracking-tight text-neutral-900 sm:text-xl">
       <span className="dot" />
       {children}
     </h2>
@@ -58,9 +58,9 @@ function RoleMeta({ title, dates, location, fullTime = true }) {
     <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
       <span>{title}</span>
       {fullTime && <span className="block text-neutral-500">Full-time</span>}
-      <div>
+      <div className="mt-1 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
         <span className="text-neutral-400">{dates}</span>
-        {location && <span className="ml-4 text-neutral-400">{location}</span>}
+        {location && <span className="text-neutral-400">{location}</span>}
       </div>
     </div>
   );
@@ -68,14 +68,10 @@ function RoleMeta({ title, dates, location, fullTime = true }) {
 
 function ProjectMeta({ dates, location, fullTime = false }) {
   return (
-    <div className="mb-3 text-sm text-neutral-500">
+    <div className="mb-3 flex flex-col gap-1 text-sm text-neutral-500 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
       {fullTime && <span>Full-time</span>}
-      {dates && (
-        <span className={fullTime ? 'ml-4 text-neutral-400' : 'text-neutral-400'}>
-          {dates}
-        </span>
-      )}
-      {location && <span className="ml-4 text-neutral-400">{location}</span>}
+      {dates && <span className="text-neutral-400">{dates}</span>}
+      {location && <span className="text-neutral-400">{location}</span>}
     </div>
   );
 }
@@ -397,17 +393,17 @@ function Forma() {
 
 const CV = ({ calendar }) => (
   <>
-    <div className="mb-14 flex flex-col gap-8 rounded-xl border border-neutral-200 bg-neutral-50 p-8 md:flex-row md:items-start">
-      <div className="hidden shrink-0 lg:block">
+    <div className="mb-14 flex flex-col gap-8 rounded-xl border border-neutral-200 bg-neutral-50 p-5 sm:p-8 md:flex-row md:items-start">
+      <div className="flex shrink-0 items-center gap-4 md:block md:items-start">
         <Image
           src={profilePic}
           alt="Nicolás Torres"
           width={140}
           height={140}
-          className="rounded-full"
+          className="h-20 w-20 rounded-full sm:h-24 sm:w-24 md:h-[140px] md:w-[140px]"
         />
-        <div className="mt-4 space-y-1 text-sm text-neutral-600">
-          <p>ntorres.dev@gmail.com</p>
+        <div className="min-w-0 space-y-1 text-sm text-neutral-600 md:mt-4">
+          <p className="break-all">ntorres.dev@gmail.com</p>
           <p>Lelystad, Flevoland, The Netherlands</p>
         </div>
       </div>
@@ -463,7 +459,7 @@ const CV = ({ calendar }) => (
         <EducationItem title="Dutch (Basic)" />
       </div>
       <div>
-      <div className="relative md:pl-10">
+      <div className="relative pl-8 md:pl-10">
           <Heading>Experience</Heading>
           <div className="timeline">
             <div className="mb-6">
@@ -514,9 +510,9 @@ const CV = ({ calendar }) => (
             <div className="mb-6">
               <Heading2>
                 <span className="font-semibold text-neutral-900">INFOKE</span>
-                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+                <div className="mb-8 mt-2 flex flex-col gap-1 text-sm font-normal text-neutral-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
                   <span>Full Stack Engineer — Team Lead</span>
-                  <span className="ml-4 text-neutral-400">Mar 2015 — Apr 2017</span>
+                  <span className="text-neutral-400">Mar 2015 — Apr 2017</span>
                 </div>
               </Heading2>
               <SrvMonitor />
@@ -526,9 +522,9 @@ const CV = ({ calendar }) => (
                 <span className="font-semibold text-neutral-900">
                   FACULTAD DE ARQUITECTURA, DISEÑO Y URBANISMO
                 </span>
-                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+                <div className="mb-8 mt-2 flex flex-col gap-1 text-sm font-normal text-neutral-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
                   <span>Fullstack Engineer — Webmaster</span>
-                  <span className="ml-4 text-neutral-400">Jan 2013 — Jan 2017</span>
+                  <span className="text-neutral-400">Jan 2013 — Jan 2017</span>
                 </div>
               </Heading2>
               <FADU />
@@ -539,9 +535,9 @@ const CV = ({ calendar }) => (
                 <span className="font-semibold text-neutral-900">
                   FACULTAD DE VETERINARIA UDELAR
                 </span>
-                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+                <div className="mb-8 mt-2 flex flex-col gap-1 text-sm font-normal text-neutral-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
                   <span>Information Technology Network Manager</span>
-                  <span className="ml-4 text-neutral-400">Mar 2010 — Mar 2012</span>
+                  <span className="text-neutral-400">Mar 2010 — Mar 2012</span>
                 </div>
               </Heading2>
               <Veterinaria />

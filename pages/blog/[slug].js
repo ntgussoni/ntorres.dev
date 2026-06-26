@@ -100,7 +100,7 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
       </Head>
 
       <article>
-        <header className="mb-10 max-w-2xl border-b border-neutral-200 pb-10">
+        <header className="mb-8 max-w-2xl border-b border-neutral-200 pb-8 sm:mb-10 sm:pb-10">
           <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
             <Link
               href="/blog"
@@ -118,7 +118,7 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
             <time dateTime={metadata.dateRaw}>{metadata.date}</time>
           </div>
 
-          <h1 className="text-3xl font-semibold leading-tight tracking-tight text-neutral-900 md:text-[2.75rem] md:leading-[1.15]">
+          <h1 className="text-2xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-3xl md:text-[2.75rem] md:leading-[1.15]">
             {metadata.title}
           </h1>
 
@@ -131,8 +131,9 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
           <p className="mt-5 text-sm text-neutral-500">Nicolás Torres</p>
         </header>
 
-        <div className="flex gap-12 lg:gap-16">
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-12 xl:gap-16">
           <div className="prose-blog min-w-0 max-w-2xl flex-1">
+            <ToC variant="mobile" />
             {seriesNav && (
               <SeriesNav
                 posts={seriesNav.posts}
@@ -149,8 +150,8 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
               />
             )}
           </div>
-          <aside className="hidden w-44 shrink-0 xl:block">
-            <ToC />
+          <aside className="hidden w-44 shrink-0 lg:block">
+            <ToC variant="desktop" />
           </aside>
         </div>
       </article>

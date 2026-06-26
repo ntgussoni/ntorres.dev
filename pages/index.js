@@ -113,9 +113,9 @@ function ProjectCard({ name, description, href, image, external }) {
 export default function Home({ githubData, posts }) {
   return (
     <Layout wide>
-      <div className="mb-16 flex flex-col items-start gap-8 border-b border-neutral-200 pb-16 md:flex-row md:items-center">
-        <div className="flex-1">
-          <h1 className="mb-4 text-4xl font-semibold tracking-tight text-neutral-900 md:text-5xl">
+      <div className="mb-12 flex flex-col items-start gap-6 border-b border-neutral-200 pb-12 sm:mb-16 sm:gap-8 sm:pb-16 md:flex-row md:items-center">
+        <div className="min-w-0 flex-1">
+          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl md:text-5xl">
             Nicolás Torres
           </h1>
           <p className="max-w-2xl text-lg leading-relaxed text-neutral-600">

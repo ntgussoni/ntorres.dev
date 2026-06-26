@@ -7,8 +7,8 @@ import { sortPosts } from '../../lib/sort-posts';
 export default function BlogIndex({ posts }) {
   return (
     <BlogLayout title="Blog">
-      <header className="mb-12 border-b border-neutral-200 pb-10">
-        <h1 className="text-4xl font-semibold tracking-tight text-neutral-900 md:text-5xl">
+      <header className="mb-10 border-b border-neutral-200 pb-8 sm:mb-12 sm:pb-10">
+        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl md:text-5xl">
           Blog
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-neutral-600">

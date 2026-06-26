@@ -124,7 +124,7 @@ const useIntersectionObserver = (setActiveId) => {
   }, [setActiveId]);
 };
 
-const ToC = () => {
+const ToC = ({ variant = 'all' }) => {
   const [activeId, setActiveId] = useState();
   const [nestedHeadings, setNestedHeadings] = useState([]);
 
@@ -138,16 +138,38 @@ const ToC = () => {
 
   if (nestedHeadings.length === 0) return null;
 
+  const tocList = (
+    <Headings headings={nestedHeadings} activeId={activeId} />
+  );
+
+  const showMobile = variant === 'all' || variant === 'mobile';
+  const showDesktop = variant === 'all' || variant === 'desktop';
+
   return (
-    <nav
-      aria-label="Table of contents"
-      className="sticky top-20 text-xs"
-    >
-      <p className="mb-3 font-medium uppercase tracking-wider text-neutral-400">
-        On this page
-      </p>
-      <Headings headings={nestedHeadings} activeId={activeId} />
-    </nav>
+    <>
+      {showMobile && (
+        <details className="not-prose mb-8 rounded-lg border border-neutral-200 bg-neutral-50 lg:hidden">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-neutral-900">
+            On this page
+          </summary>
+          <div className="border-t border-neutral-200 px-4 py-3 text-xs">
+            {tocList}
+          </div>
+        </details>
+      )}
+
+      {showDesktop && (
+        <nav
+          aria-label="Table of contents"
+          className="sticky top-20 hidden text-xs lg:block"
+        >
+          <p className="mb-3 font-medium uppercase tracking-wider text-neutral-400">
+            On this page
+          </p>
+          {tocList}
+        </nav>
+      )}
+    </>
   );
 };
 

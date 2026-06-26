@@ -20,11 +20,11 @@
   }
 
   .prose-blog :where(h2):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-    @apply mt-12 mb-4 text-2xl font-semibold tracking-tight;
+    @apply mt-10 mb-4 text-xl font-semibold tracking-tight sm:mt-12 sm:text-2xl;
   }
 
   .prose-blog :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-    @apply mt-8 mb-3 text-xl font-semibold tracking-tight;
+    @apply mt-8 mb-3 text-lg font-semibold tracking-tight sm:text-xl;
   }
 
   .prose-blog :where(h4):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
@@ -36,7 +36,7 @@
   }
 
   .prose-blog :where(img):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-    @apply rounded-lg;
+    @apply h-auto max-w-full rounded-lg;
   }
 
   .prose-blog :where(blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
@@ -44,7 +44,12 @@
   }
 
   .prose-blog :where(table):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-    @apply text-sm;
+    @apply block w-full overflow-x-auto text-sm;
+  }
+
+  .prose-blog
+    :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply max-w-full overflow-x-auto;
   }
 
   .prose-blog
@@ -80,11 +85,11 @@
   }
 
   .timeline::before {
-    @apply absolute left-[-31px] top-[80px] h-[calc(100%-90px)] w-[2px] bg-neutral-200 content-[""];
+    @apply absolute left-[11px] top-[80px] h-[calc(100%-90px)] w-[2px] bg-neutral-200 content-[""] md:left-[15px];
   }
 
   .dot {
-    @apply absolute -left-9 top-[12px] h-3 w-3 rounded-full bg-neutral-900;
+    @apply absolute left-0 top-[12px] h-3 w-3 rounded-full bg-neutral-900;
   }
 }
 
