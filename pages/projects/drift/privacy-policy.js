@@ -3,7 +3,7 @@ import Layout from '../../../components/Layout';
 
 const Section = ({ title, children }) => (
   <div className="mb-8">
-    <h2 className="text-xl font-semibold font-roboto mb-3 text-white">
+    <h2 className="text-xl font-semibold font-roboto mb-3 text-neutral-900">
       {title}
     </h2>
     {children}
@@ -11,22 +11,22 @@ const Section = ({ title, children }) => (
 );
 
 const P = ({ children }) => (
-  <p className="text-sm font-body text-gray-300 mb-3 leading-relaxed">
+  <p className="text-sm font-body text-neutral-600 mb-3 leading-relaxed">
     {children}
   </p>
 );
 
 const TableRow = ({ area, purpose }) => (
-  <tr className="border-b border-gray-700">
-    <td className="py-2 pr-4 text-sm font-medium text-white align-top whitespace-nowrap">
+  <tr className="border-b border-neutral-200">
+    <td className="py-2 pr-4 text-sm font-medium text-neutral-900 align-top whitespace-nowrap">
       {area}
     </td>
-    <td className="py-2 text-sm text-gray-300 align-top">{purpose}</td>
+    <td className="py-2 text-sm text-neutral-600 align-top">{purpose}</td>
   </tr>
 );
 
 const DriftPrivacyPolicy = () => (
-  <Layout>
+  <Layout title="Drift — Privacy">
     <Head>
       <title>Privacy Policy — Drift</title>
     </Head>
@@ -34,7 +34,7 @@ const DriftPrivacyPolicy = () => (
       <h1 className="text-3xl font-bold font-roboto mb-2">
         Privacy Policy — Drift
       </h1>
-      <p className="text-sm text-gray-400 mb-10">
+      <p className="text-sm text-neutral-500 mb-10">
         Last updated: April 6, 2026
       </p>
 
@@ -45,10 +45,10 @@ const DriftPrivacyPolicy = () => (
         plays calm word-based audio from files included in the app.
       </P>
 
-      <hr className="border-gray-700 my-8" />
+      <hr className="border-neutral-200 my-8" />
 
       <Section title="Summary">
-        <ul className="list-disc list-inside text-sm font-body text-gray-300 space-y-2 leading-relaxed">
+        <ul className="list-disc list-inside text-sm font-body text-neutral-600 space-y-2 leading-relaxed">
           <li>
             The App is designed to work <strong>without sign-in</strong> and{' '}
             <strong>
@@ -108,10 +108,10 @@ const DriftPrivacyPolicy = () => (
       </Section>
 
       <Section title="Information the App processes on your device">
-        <h3 className="text-base font-semibold text-white mb-2">
+        <h3 className="text-base font-semibold text-neutral-900 mb-2">
           Session experience (local only)
         </h3>
-        <ul className="list-disc list-inside text-sm font-body text-gray-300 space-y-2 mb-4 leading-relaxed">
+        <ul className="list-disc list-inside text-sm font-body text-neutral-600 space-y-2 mb-4 leading-relaxed">
           <li>
             <strong>Timer choice</strong> (e.g. 15 / 30 / 45 minutes or
             unlimited): used only in memory to end or fade a session; not
@@ -142,8 +142,8 @@ const DriftPrivacyPolicy = () => (
           <strong>not</strong> intentionally transmit the above to our servers.
         </P>
 
-        <h3 className="text-base font-semibold text-white mb-2 mt-4">Audio</h3>
-        <ul className="list-disc list-inside text-sm font-body text-gray-300 space-y-2 mb-4 leading-relaxed">
+        <h3 className="text-base font-semibold text-neutral-900 mb-2 mt-4">Audio</h3>
+        <ul className="list-disc list-inside text-sm font-body text-neutral-600 space-y-2 mb-4 leading-relaxed">
           <li>
             Playback uses <strong>pre-recorded files</strong> shipped with the
             App (e.g. spoken words and short hints).
@@ -157,7 +157,7 @@ const DriftPrivacyPolicy = () => (
           </li>
         </ul>
 
-        <h3 className="text-base font-semibold text-white mb-2 mt-4">
+        <h3 className="text-base font-semibold text-neutral-900 mb-2 mt-4">
           Diagnostics
         </h3>
         <P>
@@ -175,13 +175,13 @@ const DriftPrivacyPolicy = () => (
           modules. Relevant behaviors include:
         </P>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-700 text-left">
+          <table className="w-full border-collapse border border-neutral-200 text-left">
             <thead>
-              <tr className="border-b border-gray-600 bg-gray-800">
-                <th className="py-2 pr-4 text-sm font-semibold text-white">
+              <tr className="border-b border-neutral-200 bg-neutral-100">
+                <th className="py-2 pr-4 text-sm font-semibold text-neutral-900">
                   Area
                 </th>
-                <th className="py-2 text-sm font-semibold text-white">
+                <th className="py-2 text-sm font-semibold text-neutral-900">
                   Purpose
                 </th>
               </tr>
@@ -223,7 +223,7 @@ const DriftPrivacyPolicy = () => (
       </Section>
 
       <Section title="Data sharing and third parties">
-        <ul className="list-disc list-inside text-sm font-body text-gray-300 space-y-2 leading-relaxed">
+        <ul className="list-disc list-inside text-sm font-body text-neutral-600 space-y-2 leading-relaxed">
           <li>
             <strong>We</strong> do not sell your personal information as part of
             the App&apos;s design described here.
@@ -248,7 +248,7 @@ const DriftPrivacyPolicy = () => (
       </Section>
 
       <Section title="Retention and security">
-        <ul className="list-disc list-inside text-sm font-body text-gray-300 space-y-2 leading-relaxed">
+        <ul className="list-disc list-inside text-sm font-body text-neutral-600 space-y-2 leading-relaxed">
           <li>
             Information that stays <strong>only on your device</strong> is
             removed when you uninstall the App or clear app data, subject to OS

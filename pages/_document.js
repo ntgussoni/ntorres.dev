@@ -33,7 +33,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             rel="stylesheet"
           />
           <link
-            href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,400;0,600;0,700;1,400;1,600;1,700&family=Roboto:wght@100;400;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:ital,wght@0,100;0,400;0,600;0,700;1,400;1,600;1,700&family=Roboto:wght@100;400;700&display=swap"
             rel="stylesheet"
           />
           <link

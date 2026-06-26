@@ -20,21 +20,26 @@ const getNestedHeadings = (headingElements) => {
   return nestedHeadings;
 };
 
+const headingKey = (heading, index, prefix) =>
+  heading.id || `${prefix}-${index}-${heading.title}`;
+
 const Headings = ({ headings, activeId }) => (
-  <ul>
-    {headings.map((heading) => (
+  <ul className="space-y-1">
+    {headings.map((heading, index) => (
       <li
-        key={heading.id}
+        key={headingKey(heading, index, 'h2')}
         className={clsx(
-          'p-1 hover:text-gray-800',
-          heading.id === activeId ? 'text-[#F2994A] ' : 'text-gray-500'
+          'leading-snug',
+          heading.id === activeId ? 'text-neutral-900' : 'text-neutral-400'
         )}
       >
         <a
-          href={`#${heading.id}`}
+          href={heading.id ? `#${heading.id}` : undefined}
+          className="hover:text-neutral-700"
           onClick={(e) => {
+            if (!heading.id) return;
             e.preventDefault();
-            document.querySelector(`#${heading.id}`).scrollIntoView({
+            document.querySelector(`#${heading.id}`)?.scrollIntoView({
               behavior: 'smooth',
             });
           }}
@@ -42,20 +47,21 @@ const Headings = ({ headings, activeId }) => (
           {heading.title}
         </a>
         {heading.items.length > 0 && (
-          <ul className="ml-4">
-            {heading.items.map((child) => (
+          <ul className="ml-3 mt-1 space-y-1 border-l border-neutral-200 pl-3">
+            {heading.items.map((child, childIndex) => (
               <li
-                key={child.id}
+                key={headingKey(child, childIndex, `h3-${index}`)}
                 className={clsx(
-                  'p-1 hover:text-gray-800',
-                  child.id === activeId ? 'text-[#F2994A]  ' : 'text-gray-500'
+                  child.id === activeId ? 'text-neutral-900' : 'text-neutral-400'
                 )}
               >
                 <a
-                  href={`#${child.id}`}
+                  href={child.id ? `#${child.id}` : undefined}
+                  className="hover:text-neutral-700"
                   onClick={(e) => {
+                    if (!child.id) return;
                     e.preventDefault();
-                    document.querySelector(`#${child.id}`).scrollIntoView({
+                    document.querySelector(`#${child.id}`)?.scrollIntoView({
                       behavior: 'smooth',
                     });
                   }}
@@ -70,33 +76,41 @@ const Headings = ({ headings, activeId }) => (
     ))}
   </ul>
 );
-const useIntersectionObserver = (setActiveId) => {
-  const headingElementsRef = useRef({});
-  useEffect(() => {
-    const callback = (headings) => {
-      headingElementsRef.current = headings.reduce((map, headingElement) => {
-        // eslint-disable-next-line no-param-reassign
-        map[headingElement.target.id] = headingElement;
-        return map;
-      }, headingElementsRef.current);
 
-      const visibleHeadings = [];
-      Object.keys(headingElementsRef.current).forEach((key) => {
-        const headingElement = headingElementsRef.current[key];
-        if (headingElement.isIntersecting) visibleHeadings.push(headingElement);
+const useIntersectionObserver = (setActiveId) => {
+  const headingElementsRef = useRef([]);
+  const observedEntriesRef = useRef({});
+
+  useEffect(() => {
+    const domHeadings = Array.from(document.querySelectorAll('h2, h3'));
+    headingElementsRef.current = domHeadings;
+
+    const callback = (entries) => {
+      entries.forEach((entry) => {
+        observedEntriesRef.current[entry.target.id] = entry;
       });
 
-      const getIndexFromId = (id) =>
-        // eslint-disable-next-line no-use-before-define
-        headingElements.findIndex((heading) => heading.id === id);
+      const visibleHeadings = Object.values(observedEntriesRef.current).filter(
+        (entry) => entry.isIntersecting
+      );
 
+      const getIndexFromId = (id) =>
+        headingElementsRef.current.findIndex((heading) => heading.id === id);
+
+      let nextActiveId;
       if (visibleHeadings.length === 1) {
-        setActiveId(visibleHeadings[0].target.id);
+        nextActiveId = visibleHeadings[0].target.id;
       } else if (visibleHeadings.length > 1) {
-        const sortedVisibleHeadings = visibleHeadings.sort(
-          (a, b) => getIndexFromId(a.target.id) > getIndexFromId(b.target.id)
+        const sortedVisibleHeadings = [...visibleHeadings].sort(
+          (a, b) => getIndexFromId(a.target.id) - getIndexFromId(b.target.id)
         );
-        setActiveId(sortedVisibleHeadings[0].target.id);
+        nextActiveId = sortedVisibleHeadings[0].target.id;
+      }
+
+      if (nextActiveId) {
+        setActiveId((current) =>
+          current === nextActiveId ? current : nextActiveId
+        );
       }
     };
 
@@ -104,9 +118,7 @@ const useIntersectionObserver = (setActiveId) => {
       rootMargin: '0px 0px -40% 0px',
     });
 
-    const headingElements = Array.from(document.querySelectorAll('h2, h3'));
-
-    headingElements.forEach((element) => observer.observe(element));
+    domHeadings.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
   }, [setActiveId]);
@@ -115,20 +127,25 @@ const useIntersectionObserver = (setActiveId) => {
 const ToC = () => {
   const [activeId, setActiveId] = useState();
   const [nestedHeadings, setNestedHeadings] = useState([]);
-  useIntersectionObserver(setActiveId);
 
   useEffect(() => {
     const headingElements = Array.from(document.querySelectorAll('h2, h3'));
-
-    const newNestedHeadings = getNestedHeadings(headingElements);
-    setNestedHeadings(newNestedHeadings);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM headings exist only after MDX mounts
+    setNestedHeadings(getNestedHeadings(headingElements));
   }, []);
+
+  useIntersectionObserver(setActiveId);
+
+  if (nestedHeadings.length === 0) return null;
 
   return (
     <nav
       aria-label="Table of contents"
-      className="text-black sticky top-[calc(66px+2rem)] mt-8 text-xs max-h-[calc(100vh-40px)]"
+      className="sticky top-20 text-xs"
     >
+      <p className="mb-3 font-medium uppercase tracking-wider text-neutral-400">
+        On this page
+      </p>
       <Headings headings={nestedHeadings} activeId={activeId} />
     </nav>
   );

@@ -2,20 +2,24 @@ import clsx from 'clsx';
 import Head from 'next/head';
 import Image from 'next/image';
 import Layout from '../components/Layout';
+import { ContributionGraph } from '../components/ContributionGraph';
+import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/github';
 import profilePic from '../public/avatar.png';
 
-const ContactMe = () => (
-  <Layout>
+const AboutMe = ({ githubData }) => (
+  <Layout title="About" wide>
     <Head>
-      <title>About me - Nicolás Torres</title>
+      <title>About — Nicolás Torres</title>
     </Head>
-    <CV />
+    <CV
+      calendar={githubData?.contributionsCollection?.contributionCalendar}
+    />
   </Layout>
 );
 
 function Heading({ children }) {
   return (
-    <h2 className=" text-headers font-roboto text-2xl font-normal filter drop-shadow-md mb-6 mt-3">
+    <h2 className="mb-6 mt-3 text-sm font-semibold uppercase tracking-wider text-neutral-500">
       {children}
     </h2>
   );
@@ -23,7 +27,7 @@ function Heading({ children }) {
 
 function Heading2({ children }) {
   return (
-    <h2 className="relative font-body text-[28px] font-normal filter drop-shadow-xl mb-6 mt-3">
+    <h2 className="relative mb-6 mt-3 text-xl font-semibold tracking-tight text-neutral-900">
       <span className="dot" />
       {children}
     </h2>
@@ -32,7 +36,7 @@ function Heading2({ children }) {
 
 function Heading3({ children }) {
   return (
-    <h3 className="font-oxygen text-lg font-normal mb-1 mt-3 filter drop-shadow-xl ">
+    <h3 className="mb-1 mt-3 text-base font-semibold text-neutral-900">
       {children}
     </h3>
   );
@@ -40,9 +44,38 @@ function Heading3({ children }) {
 
 function EducationItem({ title, text }) {
   return (
-    <div className={clsx('font-oxygen', text ? 'mb-6' : 'mb-2')}>
-      <div className={clsx(text && 'mb-2', ' font-bold text-sm')}>{title}</div>
-      {text && <div className="text-sm">{text}</div>}
+    <div className={clsx(text ? 'mb-6' : 'mb-2')}>
+      <div className={clsx(text && 'mb-1', 'text-sm font-medium text-neutral-900')}>
+        {title}
+      </div>
+      {text && <div className="text-sm text-neutral-600">{text}</div>}
+    </div>
+  );
+}
+
+function RoleMeta({ title, dates, location, fullTime = true }) {
+  return (
+    <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+      <span>{title}</span>
+      {fullTime && <span className="block text-neutral-500">Full-time</span>}
+      <div>
+        <span className="text-neutral-400">{dates}</span>
+        {location && <span className="ml-4 text-neutral-400">{location}</span>}
+      </div>
+    </div>
+  );
+}
+
+function ProjectMeta({ dates, location, fullTime = false }) {
+  return (
+    <div className="mb-3 text-sm text-neutral-500">
+      {fullTime && <span>Full-time</span>}
+      {dates && (
+        <span className={fullTime ? 'ml-4 text-neutral-400' : 'text-neutral-400'}>
+          {dates}
+        </span>
+      )}
+      {location && <span className="ml-4 text-neutral-400">{location}</span>}
     </div>
   );
 }
@@ -51,25 +84,25 @@ function AIAssistant() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>AI Assistant</b> - Bridging users to over a million pages of
+        <b>AI Assistant</b> — Bridging users to over a million pages of
         documentation
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Built the first iteration of an AI assistant bridging users to over a
         million pages of documentation, providing role- and project-specific
         answers.
       </p>
-      <p className="text-base font-body">
+      <p>
         Developed Agents, MCP servers, and Retrieval-Augmented Generation (RAG)
         pipelines to make documentation intuitively searchable and actionable.
       </p>
-      <p className="text-base font-body">
+      <p>
         Collaborated with technical writers and DevOps teams to transition the
         system from prototype to production, achieving adoption and usability at
         scale. Generated 10k+ user interactions in the first six months,
         demonstrating strong engagement and effectiveness.
       </p>
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>Azure Search AI</b>, <b>LangChain/LangGraph</b>,{' '}
         <b>Langfuse</b>, <b>AI SDK</b>, <b>DeepEval</b>.
       </p>
@@ -81,32 +114,32 @@ function BackbaseIO() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Backbase.io - Developer Platform</b> - Serving internal developers
+        <b>Backbase.io — Developer Platform</b> — Serving internal developers
         and clients
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Built a developer platform serving internal developers (1k+) and clients
         (~5k), consolidating technical documentation, APIs, and tools, to
         streamline onboarding and improve discoverability across 100k+ pages of
         content.
       </p>
-      <p className="text-base font-body">
+      <p>
         Reduced documentation release times from 2 days to instant builds,
         enabling frequent updates across the entire documentation and supporting
         30+ technical writers and developers.
       </p>
-      <p className="text-base font-body">
+      <p>
         Improved documentation findability, allowing users to get tailor-made
         answers instantly instead of browsing hundreds of nested pages, while
         enabling writers and developers to work efficiently using preview
         deployments, queues, custom multithreading tools, and caching.
       </p>
-      <p className="text-base font-body">
+      <p>
         Led the initial creation, setup, and architecture planning,
         collaborating closely with multiple teams across technical writing,
         development, and DevOps.
       </p>
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>Next.js</b>, <b>Angular</b>, <b>Node.js</b>,{' '}
         <b>Kubernetes</b>, <b>PostgreSQL</b>, <b>Prisma</b>, <b>Nginx</b>,{' '}
         <b>Docker</b>.
@@ -119,18 +152,19 @@ function DocumentationBuilder() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Documentation Builder</b> - In-house documentation building tool
+        <b>Documentation Builder</b> — In-house documentation building tool
         (SFE, Tech Lead)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Oct 2022 — Mar 2023" fullTime />
+      <p>
         Built an in-house documentation tool allowing 30+ technical writers to
         collaborate in real-time, preview, and build content consistently.
       </p>
-      <p className="text-base font-body">
+      <p>
         Supported 60k+ builds over three years, ensuring efficiency and quality
         across the platform.
       </p>
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>Node.js</b>, <b>Asciidoc</b>, <b>Multithreading</b>,{' '}
         <b>DevOps tools</b>.
       </p>
@@ -142,22 +176,23 @@ function DeveloperHub() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Developer Hub</b> - Powering the work of thousands of developers
+        <b>Developer Hub</b> — Powering the work of thousands of developers
         (SFE, Tech Lead)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Jan 2021 — Jan 2023" />
+      <p>
         Launched the next-gen knowledge center, powering 6k+ developers (1k
         internal, ~5k clients).
       </p>
-      <p className="text-base font-body">
+      <p>
         Improved documentation discoverability and search using Elasticsearch
         and a custom indexing system.
       </p>
-      <p className="text-base font-body">
+      <p>
         Led a company-wide shift in how developers accessed and used technical
         information.
       </p>
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>Next.js</b>, <b>Typescript</b>, <b>NX</b>, <b>Prisma</b>,{' '}
         <b>Express.js</b>, <b>Kubernetes</b>, <b>Nginx</b>.
       </p>
@@ -169,27 +204,25 @@ function SoftwareCatalog() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Software catalog</b> - Manage all your software, all in one place
+        <b>Software catalog</b> — Manage all your software, all in one place
         (Senior Full Stack Engineer)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Mar 2021 — Aug 2021" fullTime />
+      <p>
         Built a centralized software catalog tracking deliverables, libraries,
         and team ownership, serving as the main source of truth for the
         company&apos;s ecosystem.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Increased discoverability and accountability, eliminating software
         &quot;hidden&quot; in dark corners of the tech stack and enabling teams
         to see all services they own and related resources.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Led the initial prototype, architecture setup, deployment, and ongoing
         enhancements, contributing to open-source improvements on Backstage.io.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>React</b>, <b>Node.js</b>, <b>Docker</b>, <b>AWS</b>,{' '}
         <b>Kubernetes</b>, <b>GitHub Actions</b>, <b>Jenkins</b>.
       </p>
@@ -201,20 +234,19 @@ function Community() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Community and Documentation</b> - Legacy platform (Full Stack
+        <b>Community and Documentation</b> — Legacy platform (Full Stack
         Engineer)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Jan 2020 — Jan 2021" fullTime />
+      <p>
         Conducted impact analysis and migration planning for older documentation
         systems.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Led company-wide initiatives that seeded the Developer Hub and API
         Portal, laying the foundation for modern developer workflows.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Tech stack: <b>Discourse</b>, <b>Ember.js</b>, <b>Ruby on Rails</b>.
       </p>
     </div>
@@ -225,22 +257,21 @@ function FertilityPro() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>FertilityPro</b> - Improving IVF Experiences (SFE)
+        <b>FertilityPro</b> — Improving IVF Experiences (SFE)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Apr 2017 — Jan 2020" location="Montevideo" />
+      <p>
         Assisted fertility is a key driver for the life of most intended
         parents, but the regulations turn the process into a cumbersome
         experience, generating anxiety for parents and a tough environment for
         nurses and doctors to navigate in.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         It&apos;s a platform that&apos;s designed to minimize patient stress and
         empower fertility doctors by providing them with the right information
         at the right time.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         It consists of a set of <b>HIPAA compliant</b> multi-tenant applications
         built with <b>Ruby on Rails</b> and <b>Ember.js</b> and which design
         leverages behavioral design techniques.
@@ -253,17 +284,17 @@ function Trama() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Trama</b> - Connecting entrepreneurs and researchers with investors
+        <b>Trama</b> — Connecting entrepreneurs and researchers with investors
         and talent (SFE)
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Jan 2019 — Jan 2020" />
+      <p>
         It is a digital platform that connects talents, entrepreneurs,
         researchers, businessmen, and investors to share their projects and
         experiences, promoting joint work to promote research and innovation in
         the country.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         PWA built with <b>Next.js (React)</b> and <b>GraphQL</b> with
         <b> Apollo</b>, <b>Ruby on Rails</b> as a backend.
       </p>
@@ -275,15 +306,15 @@ function Adidas() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Adidas</b> - Energy to Suárez
+        <b>Adidas</b> — Energy to Suárez
       </Heading3>
-      <p className="text-base font-body">
+      <ProjectMeta dates="Apr 2017 — Jan 2020" />
+      <p>
         A publicity campaign for the World Cup 2018, consisted of an interactive
         experience where participants could send their energy to the shoes that
         were later going to be used by Luis Suarez in the world cup.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Developed the electronics and software needed for the solution; it
         consisted of lights, sensors, moving parts, and screens synced up to a
         visual experience.
@@ -296,16 +327,15 @@ function SrvMonitor() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>SRVMonitor</b> - ERP Software
+        <b>SRVMonitor</b> — ERP Software
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Building ERP software for Conaprole, one of the biggest companies in the
         country. The software enables the company to manage its thousands of
         resources and dependencies, it&apos;s used for daily planning and
         control of assets.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Built with <b>PHP</b>, <b>Javascript</b> and <b>.NET</b>
       </p>
     </div>
@@ -316,9 +346,9 @@ function FADU() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>FADU</b> - Institutional portal
+        <b>FADU</b> — Institutional portal
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Maintained the online infrastructure for the university&apos;s portals
         and took part in several internal projects.
       </p>
@@ -330,10 +360,10 @@ function Veterinaria() {
   return (
     <div className="project-section">
       <Heading3>
-        <b>Facultad de Veterinaria UdelaR</b> - Information Technology Network
+        <b>Facultad de Veterinaria UdelaR</b> — Information Technology Network
         Manager
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Managed the information technology network infrastructure for the
         university&apos;s veterinary faculty.
       </p>
@@ -347,60 +377,52 @@ function Forma() {
       <Heading3>
         <b>FORMA</b>
       </Heading3>
-      <p className="text-base font-body">
+      <p>
         Developed FORMA; a platform that allows users to register to courses and
         evaluate the teachers&apos; performance. It enables the administrators
         to manage the submissions, schedule new course registrations, and handle
         the course payments.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Software developed for Facultad de Arquitectura, Diseño y Urbanismo de
         la Universidad de la República at first but now being used in several
         other Universities.
       </p>
-
-      <p className="text-base font-body">
+      <p>
         Built with <b>PHP</b> and <b>Javascript</b>
       </p>
     </div>
   );
 }
-const CV = () => (
+
+const CV = ({ calendar }) => (
   <>
-    <div className="flex flex-row min-w-[210px] w-full min-h-[273px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#F2994A] to-[#EB5757] px-8 py-10 items-center mb-14">
-      <div className="w-full flex-[25%] hidden lg:block">
-        <div className="flex justify-center">
-          <Image
-            src={profilePic}
-            alt="Nicolás Torres"
-            width="140"
-            height="140"
-          />
-        </div>
-        <div className="ml-8 mt-4">
-          <p className="text-xs font-light mb-2 self-start">
-            ntorres.dev@gmail.com
-          </p>
-          <p className="text-xs font-light mb-2 self-start" />
-          <p className="text-xs font-light self-start">
-            Lelystad, Flevoland, The Netherlands
-          </p>
+    <div className="mb-14 flex flex-col gap-8 rounded-xl border border-neutral-200 bg-neutral-50 p-8 md:flex-row md:items-start">
+      <div className="hidden shrink-0 lg:block">
+        <Image
+          src={profilePic}
+          alt="Nicolás Torres"
+          width={140}
+          height={140}
+          className="rounded-full"
+        />
+        <div className="mt-4 space-y-1 text-sm text-neutral-600">
+          <p>ntorres.dev@gmail.com</p>
+          <p>Lelystad, Flevoland, The Netherlands</p>
         </div>
       </div>
-      <div className="flex-[75%] lg:ml-10">
-        <div className="font-roboto font-bold text-2xl md:text-2xl filter drop-shadow-md">
-          NICOLÁS TORRES GUSSONI
-        </div>
-        <div className="hidden md:block font-body font-light text-lg mb-4">
-          AI / FULLSTACK ENGINEER
-        </div>
-        <div className="me hidden md:block font-body font-light text-sm filter drop-shadow-xl">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 md:text-3xl">
+          Nicolás Torres Gussoni
+        </h1>
+        <p className="mt-1 text-sm font-medium uppercase tracking-wider text-neutral-500">
+          AI / Senior Fullstack Engineer
+        </p>
+        <div className="me mt-6 space-y-4 text-sm leading-relaxed text-neutral-600 md:text-base">
           <p>
             I&apos;m an AI / Full Stack engineer in The Netherlands working on
             software that makes an impact.
           </p>
-
           <p>
             With over 18 years of experience, leading development and
             coordinating multiple teams, I&apos;m all about taking up challenges
@@ -409,22 +431,22 @@ const CV = () => (
             ideas, and giving something back through my open source
             contributions.
           </p>
-
           <p>
             I have experience building complex projects since inception and MVP
             phase, as well as well-established software and teams. My current
             focus is mainly on AI, assistants and automation together with
             documentation and developer-oriented tooling.
           </p>
-
           <p>
             And because not everything is code, I&apos;m also passionate about
             robotics, drones, and building stuff in general.
           </p>
         </div>
+        <ContributionGraph calendar={calendar} className="mt-8 max-w-full" />
       </div>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-[1fr,3fr] gap-16">
+
+    <div className="grid grid-cols-1 gap-16 md:grid-cols-[1fr,3fr]">
       <div>
         <Heading>Education</Heading>
         <EducationItem
@@ -441,30 +463,32 @@ const CV = () => (
         <EducationItem title="Dutch (Basic)" />
       </div>
       <div>
-        <div className="relative">
+      <div className="relative md:pl-10">
           <Heading>Experience</Heading>
           <div className="timeline">
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto text-[#F2C94C]">
-                  <b>BACKBASE</b> - THE #1 DIGITAL BANKING PLATFORM
+                <span className="font-semibold text-neutral-900">
+                  BACKBASE — THE #1 DIGITAL BANKING PLATFORM
                 </span>
-                <div className="mb-8 text-sm">
-                  <span>AI Engineer</span>
-                  <span className="font-light ml-8">Jan 2025 - Present</span>
-                </div>
+                <RoleMeta
+                  title="AI / Senior Fullstack Engineer"
+                  dates="Jan 2025 — Present"
+                  location="Netherlands · Hybrid"
+                />
               </Heading2>
               <AIAssistant />
             </div>
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto text-[#F2C94C]">
-                  <b>BACKBASE</b> - THE #1 DIGITAL BANKING PLATFORM
+                <span className="font-semibold text-neutral-900">
+                  BACKBASE — THE #1 DIGITAL BANKING PLATFORM
                 </span>
-                <div className="mb-8 text-sm">
-                  <span>Senior Fullstack Engineer - Tech Lead</span>
-                  <span className="font-light ml-8">Jan 2020 - Present</span>
-                </div>
+                <RoleMeta
+                  title="Senior Fullstack Engineer"
+                  dates="Jan 2020 — Present"
+                  location="Amsterdam"
+                />
               </Heading2>
               <BackbaseIO />
               <DocumentationBuilder />
@@ -474,13 +498,14 @@ const CV = () => (
             </div>
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto  text-[#F2C94C]">
-                  <b>INGENIOUS</b> - FUELING THE NEXT HEALTHCARE INDUSTRY
+                <span className="font-semibold text-neutral-900">
+                  INGENIOUS — FUELING THE NEXT HEALTHCARE INDUSTRY
                 </span>
-                <div className="mb-8 text-sm">
-                  <span>Senior Fullstack Engineer - Team Lead</span>
-                  <span className="font-light ml-8">Apr 2017 - Jan 2020</span>
-                </div>
+                <RoleMeta
+                  title="Senior Fullstack Engineer"
+                  dates="Apr 2017 — Jan 2020"
+                  fullTime={false}
+                />
               </Heading2>
               <FertilityPro />
               <Trama />
@@ -488,24 +513,22 @@ const CV = () => (
             </div>
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto  text-[#F2C94C]">
-                  <b>INFOKE </b>
-                </span>
-                <div className="mb-8 text-sm">
-                  <span>Full Stack Engineer - Team Lead</span>
-                  <span className="font-light ml-8">Mar 2015 - Apr 2017</span>
+                <span className="font-semibold text-neutral-900">INFOKE</span>
+                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+                  <span>Full Stack Engineer — Team Lead</span>
+                  <span className="ml-4 text-neutral-400">Mar 2015 — Apr 2017</span>
                 </div>
               </Heading2>
               <SrvMonitor />
             </div>
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto  text-[#F2C94C]">
-                  <b>FACULTAD DE ARQUITECTURA, DISEÑO Y URBANISMO </b>
+                <span className="font-semibold text-neutral-900">
+                  FACULTAD DE ARQUITECTURA, DISEÑO Y URBANISMO
                 </span>
-                <div className="mb-8 text-sm">
-                  <span>Fullstack Engineer - Webmaster</span>
-                  <span className="font-light ml-8">Jan 2013 - Jan 2017</span>
+                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
+                  <span>Fullstack Engineer — Webmaster</span>
+                  <span className="ml-4 text-neutral-400">Jan 2013 — Jan 2017</span>
                 </div>
               </Heading2>
               <FADU />
@@ -513,12 +536,12 @@ const CV = () => (
             </div>
             <div className="mb-6">
               <Heading2>
-                <span className="font-roboto  text-[#F2C94C]">
-                  <b>FACULTAD DE VETERINARIA UDELAR </b>
+                <span className="font-semibold text-neutral-900">
+                  FACULTAD DE VETERINARIA UDELAR
                 </span>
-                <div className="mb-8 text-sm">
+                <div className="mb-8 mt-2 text-sm font-normal text-neutral-600">
                   <span>Information Technology Network Manager</span>
-                  <span className="font-light ml-8">Mar 2010 - Mar 2012</span>
+                  <span className="ml-4 text-neutral-400">Mar 2010 — Mar 2012</span>
                 </div>
               </Heading2>
               <Veterinaria />
@@ -526,15 +549,13 @@ const CV = () => (
           </div>
         </div>
         <div>
-          <Heading>VOLUNTARY WORK</Heading>
+          <Heading>Voluntary work</Heading>
           <div className="mb-6">
             <Heading2>
-              <b>Scouts de Uruguay</b>
-              <div className="mb-8">
-                <span className="font-light text-base">
-                  Jan 2013 - Jan 2017
-                </span>
-                <p className="text-sm">
+              Scouts de Uruguay
+              <div className="mb-8 mt-2 font-normal">
+                <span className="text-sm text-neutral-400">Jan 2013 — Jan 2017</span>
+                <p className="mt-2 text-sm text-neutral-600">
                   Group Leader working with kids and teenagers. Image area
                   coordinator at Scouts de Uruguay
                 </p>
@@ -547,4 +568,13 @@ const CV = () => (
   </>
 );
 
-export default ContactMe;
+export async function getStaticProps() {
+  const githubData = await getContributions(process.env.GITHUB_KEY);
+
+  return {
+    props: { githubData },
+    revalidate: GITHUB_REVALIDATE_SECONDS,
+  };
+}
+
+export default AboutMe;

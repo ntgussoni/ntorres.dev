@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" fill="none">
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <rect x="0" y="0" width="1200" height="56" fill="#f97316"/>
+  <text x="32" y="36" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700">SOUSO ENGINEERING BLOG</text>
+  <text x="1168" y="36" text-anchor="end" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600">BUILDING AGENT-NATIVE WORKFLOWS</text>
+
+  <rect x="0" y="56" width="1200" height="92" fill="#1f2937"/>
+  <text x="40" y="104" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700">Souso STATE.md: Daily Triage Output</text>
+  <text x="40" y="132" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="14">Canonical loop memory after an L1 Daily Triage run on smart-cart</text>
+
+  <rect x="40" y="168" width="1120" height="552" rx="12" fill="#111827" stroke="#374151" stroke-width="2"/>
+
+  <!-- sidebar -->
+  <rect x="40" y="168" width="220" height="552" rx="12" fill="#0f172a"/>
+  <rect x="40" y="168" width="220" height="552" fill="#0f172a"/>
+  <text x="60" y="204" fill="#9ca3af" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="600">EXPLORER</text>
+  <text x="60" y="236" fill="#f97316" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="600">STATE.md</text>
+  <text x="60" y="262" fill="#6b7280" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">loop-run-log.md</text>
+  <text x="60" y="288" fill="#6b7280" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">loop-budget.md</text>
+  <text x="60" y="314" fill="#6b7280" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">LOOP.md</text>
+  <text x="60" y="348" fill="#6b7280" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">.claude/skills/loop-triage/</text>
+
+  <!-- tab -->
+  <rect x="260" y="184" width="140" height="34" rx="6" fill="#1f2937"/>
+  <text x="276" y="206" fill="#f97316" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="600">STATE.md</text>
+
+  <!-- markdown content -->
+  <text x="280" y="248" fill="#f97316" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">## High Priority</text>
+  <text x="280" y="274" fill="#e5e7eb" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">- #401: RangeError on /week - bug label, reproduce-first required</text>
+
+  <text x="280" y="314" fill="#f97316" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">## Ready for Agent</text>
+  <text x="280" y="340" fill="#e5e7eb" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">- #444: Admin UX overhaul (design system)</text>
+  <text x="280" y="364" fill="#e5e7eb" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">- #428: Basket price comparison across supermarkets</text>
+
+  <text x="280" y="404" fill="#f97316" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">## Waiting on Human</text>
+  <text x="280" y="430" fill="#e5e7eb" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">- #408: Beta-tester flow - proposal not confirmed</text>
+
+  <text x="280" y="478" fill="#9ca3af" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Last run: Daily Triage L1 | No code changes | ~50k tokens</text>
+  <text x="280" y="504" fill="#9ca3af" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Repo: github.com/RonanCodes/smart-cart</text>
+</svg>
