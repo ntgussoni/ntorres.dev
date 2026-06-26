@@ -3,18 +3,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import profilePic from '../public/avatar.png';
-import driftIcon from './projects/drift/icon.png';
+import driftIcon from '../public/projects/drift/icon.png';
 import bedtimefableIcon from '../public/projects/showcase/bedtimefable-icon.png';
 import socialrobotIcon from '../public/projects/showcase/socialrobot-icon.png';
 import clashofappsIcon from '../public/projects/showcase/clashofapps-icon.png';
 import maidofhonorIcon from '../public/projects/showcase/maidofhonor-icon.png';
 import bestmanIcon from '../public/projects/showcase/bestman-icon.png';
 import funeralspeechIcon from '../public/projects/showcase/funeralspeech-icon.png';
-import { getContributions } from '../components/github';
+import sousoIcon from '../public/projects/showcase/souso-icon.png';
+import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/github';
 import getPost from '../components/get-post';
-import { PostImage } from '../components/PostImage';
+import { BlogPostList } from '../components/BlogPostList';
+import { RecentContributions } from '../components/RecentContributions';
+import { ContributionGraph } from '../components/ContributionGraph';
+import { sortPosts } from '../lib/sort-posts';
 
-const path = require('path');
 const fs = require('fs');
 
 const showcaseProjects = [
@@ -23,235 +26,171 @@ const showcaseProjects = [
     description: 'One word at a time. Sleep science from SFU.',
     href: '/projects/drift',
     image: driftIcon,
-    cardClass:
-      'bg-gradient-to-b from-[#3D3D3D] to-[#1A1A1A] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
+  },
+  {
+    name: 'Souso',
+    description:
+      'Your sous chef — weekly meal plans and a ready-to-order grocery basket.',
+    href: 'https://souso.app',
+    image: sousoIcon,
+    external: true,
   },
   {
     name: 'BedtimeFable',
-    description:
-      'Calming sleep stories for adults — narration and gentle music to wind down.',
+    description: 'Calming sleep stories for adults — narration and gentle music.',
     href: 'https://bedtimefable.com',
     image: bedtimefableIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#1e3a5f] to-[#0f172a] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
   {
     name: 'SocialRobot',
-    description:
-      'Create, schedule, and grow across every social platform in one place.',
+    description: 'Create, schedule, and grow across every social platform.',
     href: 'https://socialrobot.io',
     image: socialrobotIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#2F80ED] to-[#1a1a2e] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
   {
     name: 'Clash of Apps',
-    description:
-      'Analyze Play Store reviews — sentiment, competitors, and actionable insights.',
+    description: 'Analyze Play Store reviews — sentiment and competitors.',
     href: 'https://clashofapps.com',
     image: clashofappsIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#4a3728] to-[#1a1a1a] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
   {
     name: 'Maid of Honor Speech',
-    description:
-      'AI speech generator — a personalized maid of honor toast in minutes.',
+    description: 'AI speech generator — a personalized maid of honor toast.',
     href: 'https://maidofhonorspeech.net',
     image: maidofhonorIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#9b4d6a] to-[#2d1f24] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
   {
     name: 'How to Be Best Man',
-    description:
-      'Step-by-step help writing the perfect best man speech.',
+    description: 'Step-by-step help writing the perfect best man speech.',
     href: 'https://howtobebestman.com',
     image: bestmanIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#1e3a5f] to-[#0f1419] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
   {
     name: 'Funeral Speech',
-    description:
-      'Find the right words — heartfelt funeral speeches, step by step.',
+    description: 'Find the right words — heartfelt funeral speeches.',
     href: 'https://funeralspeech.net',
     image: funeralspeechIcon,
     external: true,
-    cardClass:
-      'bg-gradient-to-bl from-[#3d4f5f] to-[#1a1a1a] border border-white/10',
-    titleClass: 'text-white',
-    descriptionClass: 'text-gray-400',
   },
 ];
 
-function ProjectCard({
-  name,
-  description,
-  href,
-  image,
-  external,
-  cardClass,
-  titleClass,
-  descriptionClass,
-}) {
-  const className = `card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight p-5 items-center justify-center ${cardClass}`;
+function ProjectCard({ name, description, href, image, external }) {
+  const className =
+    'group flex w-full flex-col rounded-xl border border-neutral-200 bg-white p-5 transition-shadow hover:shadow-md';
 
   const content = (
     <>
-      <div className="flex w-full flex-1 relative max-w-[120px] min-h-[100px]">
-        <Image src={image} alt={name} layout="fill" objectFit="contain" />
+      <div className="relative mb-4 h-24 w-24">
+        <Image src={image} alt={name} fill className="object-contain" sizes="96px" />
       </div>
-      <div
-        className={`font-roboto font-bold text-lg text-center leading-8 mb-2 ${titleClass}`}
-      >
+      <h3 className="mb-1 text-base font-semibold text-neutral-900 group-hover:text-neutral-600">
         {name}
-      </div>
-      <div
-        className={`font-roboto font-light text-xs text-center max-w-[200px] ${descriptionClass}`}
-      >
-        {description}
-      </div>
+      </h3>
+      <p className="text-sm leading-relaxed text-neutral-600">{description}</p>
     </>
   );
 
   if (external) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-      >
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
         {content}
       </a>
     );
   }
 
   return (
-    <Link href={href} passHref>
-      <a className={className}>{content}</a>
+    <Link href={href} className={className}>
+      {content}
     </Link>
   );
 }
 
 export default function Home({ githubData, posts }) {
   return (
-    <Layout>
-      <div className="flex flex-row items-center mb-20">
-        <div className="flex-1 ">
-          <h1 className="text-4xl md:text-6xl font-bold mb-8">Welcome!</h1>
-          <p className="text-xl max-w-[800px]">{githubData.bio}</p>
+    <Layout wide>
+      <div className="mb-16 flex flex-col items-start gap-8 border-b border-neutral-200 pb-16 md:flex-row md:items-center">
+        <div className="flex-1">
+          <h1 className="mb-4 text-4xl font-semibold tracking-tight text-neutral-900 md:text-5xl">
+            Nicolás Torres
+          </h1>
+          <p className="max-w-2xl text-lg leading-relaxed text-neutral-600">
+            {githubData?.bio ||
+              'AI / Full Stack engineer building software that makes an impact.'}
+          </p>
+          <ContributionGraph
+            calendar={
+              githubData?.contributionsCollection?.contributionCalendar
+            }
+          />
         </div>
-        <div className="hidden ml-8  md:block w-[180px] h-[180px]">
-          <Image src={profilePic} alt="Nicolás Torres" />
+        <div className="shrink-0">
+          <Image
+            src={profilePic}
+            alt="Nicolás Torres"
+            width={160}
+            height={160}
+            className="h-28 w-28 rounded-full md:h-40 md:w-40"
+          />
         </div>
       </div>
-      <h2 className="text-xl text-headers mb-9">Latest blog posts</h2>
-      <div className="grid md:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 justify-items-center mb-12">
-        {posts.map(({ folderName, post }) => (
-          <Link key={folderName} href={`/blog/${folderName}`} passHref>
-            <a className="card hover:animate-zoom-down w-full flex flex-1 flex-col h-[273px] rounded-[16px] shadow-boxes hover:shadow-boxesHighlight bg-gradient-to-bl from-[#F2994A] to-[#EB5757] p-5 items-center justify-center ">
-              <div className="flex w-full h-full relative max-w-[60%]">
-                <PostImage
-                  className="image"
-                  folderName={folderName}
-                  src={post.metadata.image}
-                  alt={post.metadata.title}
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
-              <div className="font-roboto font-bold text-lg text-center leading-8 mb-4">
-                {post.metadata.title}
-              </div>
-              <div className="hidden md:block font-roboto font-light text-xs text-center">
-                {post.metadata.description}
-              </div>
-            </a>
-          </Link>
-        ))}
+
+      <div className="mb-8 flex items-end justify-between border-b border-neutral-200 pb-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">
+          Latest posts
+        </h2>
+        <Link
+          href="/blog"
+          className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+        >
+          View all →
+        </Link>
       </div>
-      <h2 className="text-xl text-headers mb-9">Projects</h2>
-      <div className="grid md:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 justify-items-center mb-12">
+      <div className="mb-16">
+        <BlogPostList posts={posts.slice(0, 3)} />
+      </div>
+
+      <h2 className="mb-8 text-sm font-semibold uppercase tracking-wider text-neutral-500">
+        Projects
+      </h2>
+      <div className="mb-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {showcaseProjects.map((project) => (
           <ProjectCard key={project.name} {...project} />
         ))}
       </div>
-      <h2 className="text-xl text-headers mb-9">Open source</h2>
-      <div className="grid grid-cols-1 md:grid-cols-[repeat(2,minmax(0,1fr))] gap-2 justify-items-center">
+
+      <h2 className="mb-8 text-sm font-semibold uppercase tracking-wider text-neutral-500">
+        Open source
+      </h2>
+      <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
         <a
           href="https://github.com/ntgussoni/blitz-guard"
-          className="card hover:animate-zoom-down flex flex-1 flex-col  h-[273px] rounded-[16px] shadow-boxes bg-gradient-to-bl from-[#2F80ED] to-[#9B51E0] p-5"
+          className="group flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
         >
-          <div className="h-full w-full relative">
+          <div className="mb-4 flex aspect-[603/268] w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-950 px-4 py-3">
             <Image
-              className="image"
-              src={path.resolve('blitz-guard.png')}
+              src="/blitz-guard.png"
               alt="Blitz Guard"
-              layout="fill"
-              objectFit="contain"
+              width={603}
+              height={268}
+              className="h-full w-full object-contain"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
-          <div className="w-full font-roboto font-bold text-lg leading-8 text-left">
+          <h3 className="text-lg font-semibold text-neutral-900 group-hover:text-neutral-600">
             Blitz Guard
-          </div>
-          <div className="w-full font-roboto font-light text-lg text-left">
-            The centralized permission based authorization for Blitz.js
-          </div>
+          </h3>
+          <p className="mt-1 text-sm text-neutral-600">
+            Centralized permission-based authorization for Blitz.js
+          </p>
         </a>
-        {githubData && (
-          <div className="flex flex-1 flex-col w-full h-[273px] rounded-[16px] shadow-boxes bg-[#343434] p-5 ">
-            <div className="overflow-x-auto">
-              {(githubData?.repositoriesContributedTo?.nodes ?? [])
-                .filter(Boolean)
-                .map(({ name, description, url }, index) => (
-                  <div
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={index}
-                    className="flex flex-col lg:flex-row w-full items-start lg:items-center mb-4"
-                  >
-                    <div className="flex flex-col flex-[70%]">
-                      <a href={url} target="_blank" rel="nofollow noreferrer">
-                        <span className="font-roboto font-bold text-base mb-2">
-                          {name}
-                        </span>
-                      </a>
-                      <span className="hidden xl:block font-roboto font-light text-sm">
-                        {description}
-                      </span>
-                    </div>
-                    {/* <div className="flex flex-col flex-[30%] items-left ml-8">
-                  <div className="flex  mb-2">
-                    <div className="w-7 h-7 shadow-[0px 0px 4px 2px,rgba(40, 213, 68, 0.25)] rounded-lg bg-gradient-to-bl from-[#0F993C] to-[#28D544]"></div>
-                    <span className="text-[#24CC43] ml-4">+1045</span>
-                    <span className="text-[#EB5757] ml-4">-95</span>
-                  </div>
-                  <div className="text-[#828282] text-base">Jan 16th, 2019</div>
-                </div> */}
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        )}
+        <RecentContributions
+          repositories={githubData?.repositoriesContributedTo?.nodes}
+        />
       </div>
     </Layout>
   );
@@ -260,17 +199,16 @@ export default function Home({ githubData, posts }) {
 export async function getStaticProps() {
   const folders = fs.readdirSync(`${process.cwd()}/posts`);
 
-  const githubData = await getContributions(
-    process.env.GITHUB_KEY,
-    'ntgussoni'
-  );
+  const githubData = await getContributions(process.env.GITHUB_KEY);
 
-  const posts = await Promise.all(
-    folders.map(
-      (folder) =>
-        new Promise((resolve) =>
-          getPost(folder).then((post) => resolve({ folderName: folder, post }))
-        )
+  const posts = sortPosts(
+    await Promise.all(
+      folders.map(
+        (folder) =>
+          new Promise((resolve) =>
+            getPost(folder).then((post) => resolve({ folderName: folder, post }))
+          )
+      )
     )
   );
 
@@ -279,7 +217,8 @@ export async function getStaticProps() {
       posts: process.env.IS_DEVELOPMENT
         ? posts
         : posts.filter((p) => !p.post.metadata.draft),
-      githubData: githubData || [],
-    }, // will be passed to the page component as props
+      githubData,
+    },
+    revalidate: GITHUB_REVALIDATE_SECONDS,
   };
 }

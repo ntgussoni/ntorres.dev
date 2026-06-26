@@ -1,39 +1,97 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@config './tailwind.config.js';
+
+@source './pages/**/*.{js,jsx}';
+@source './components/**/*.{js,jsx}';
+
+@layer components {
+  .prose-blog {
+    @apply prose prose-neutral max-w-none text-[1.0625rem] leading-[1.75];
+    --tw-prose-body: theme(colors.neutral.700);
+    --tw-prose-headings: theme(colors.neutral.900);
+    --tw-prose-links: theme(colors.neutral.900);
+    --tw-prose-bold: theme(colors.neutral.900);
+    --tw-prose-quotes: theme(colors.neutral.600);
+    --tw-prose-code: theme(colors.neutral.900);
+    --tw-prose-hr: theme(colors.neutral.200);
+    --tw-prose-th-borders: theme(colors.neutral.200);
+    --tw-prose-td-borders: theme(colors.neutral.200);
+  }
+
+  .prose-blog :where(h2):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply mt-12 mb-4 text-2xl font-semibold tracking-tight;
+  }
+
+  .prose-blog :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply mt-8 mb-3 text-xl font-semibold tracking-tight;
+  }
+
+  .prose-blog :where(h4):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply mt-6 mb-2 text-lg font-semibold tracking-tight;
+  }
+
+  .prose-blog :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply underline decoration-neutral-300 underline-offset-2 transition-colors hover:decoration-neutral-900;
+  }
+
+  .prose-blog :where(img):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply rounded-lg;
+  }
+
+  .prose-blog :where(blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply border-l-neutral-300 font-normal not-italic text-neutral-600;
+  }
+
+  .prose-blog :where(table):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply text-sm;
+  }
+
+  .prose-blog
+    :where(:not(pre) > code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    @apply rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[0.875em] font-normal text-neutral-800;
+  }
+
+  .prose-blog
+    :where(:not(pre) > code):not(:where([class~='not-prose'], [class~='not-prose'] *))::before,
+  .prose-blog
+    :where(:not(pre) > code):not(:where([class~='not-prose'], [class~='not-prose'] *))::after {
+    content: none;
+  }
+}
 
 @layer utilities {
   .scroll-snap-mandatory {
-      scroll-snap-type: x mandatory;
+    scroll-snap-type: x mandatory;
   }
   .scroll-snap-center {
     scroll-snap-align: center;
   }
 
   .project-section {
-    @apply mb-10 
+    @apply mb-10;
   }
   .me p {
-    @apply mb-4 font-oxygen text-white max-w-[700px];
+    @apply mb-4 max-w-[700px] leading-relaxed text-neutral-600;
   }
 
   .project-section p {
-    @apply mb-4 font-oxygen text-[#D1D1D1] max-w-[700px]
+    @apply mb-4 max-w-[700px] leading-relaxed text-neutral-600;
   }
 
   .timeline::before {
-    @apply content-[""] w-[2px] h-[calc(100%-90px)] from-[#baa1568f] to-[#F2C94C] bg-gradient-to-t  absolute left-[-31px] top-[80px] shadow-xl
+    @apply absolute left-[-31px] top-[80px] h-[calc(100%-90px)] w-[2px] bg-neutral-200 content-[""];
   }
 
   .dot {
-    @apply w-3 h-3 bg-[#F2C94C] rounded-full absolute -left-9 top-[12px] shadow-xl;
+    @apply absolute -left-9 top-[12px] h-3 w-3 rounded-full bg-neutral-900;
   }
 }
 
 .children-spin:hover > :first-child {
-  @apply animate-spin-slow
+  @apply animate-spin-slow;
 }
 
-.card:hover  .image {
-  @apply animate-zoom-up
+.card:hover .image {
+  @apply animate-zoom-up;
 }

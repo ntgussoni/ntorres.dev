@@ -1,5 +1,4 @@
 /* eslint-disable react/no-unescaped-entities */
-import fetch from 'isomorphic-fetch';
 import { useForm } from 'react-hook-form';
 import Button from './Button';
 
