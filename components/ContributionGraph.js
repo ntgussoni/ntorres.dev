@@ -17,9 +17,10 @@ export function ContributionGraph({ calendar, username = 'ntgussoni', className 
   if (!weeks?.length) return null;
 
   const total = calendar.totalContributions ?? 0;
+  const weekCount = weeks.length;
 
   return (
-    <div className={className ?? 'mt-6 max-w-xl'}>
+    <div className={className ?? 'mt-6 w-full min-w-0 max-w-full sm:max-w-xl'}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <p className="text-sm text-neutral-600">
           <span className="font-medium text-neutral-900">
@@ -37,9 +38,14 @@ export function ContributionGraph({ calendar, username = 'ntgussoni', className 
         </a>
       </div>
 
-      <div className="overflow-x-auto pb-1">
+      <div className="w-full min-w-0">
         <div
-          className="inline-grid grid-flow-col grid-rows-7 gap-[3px]"
+          className="grid w-full gap-[2px] sm:gap-[3px]"
+          style={{
+            gridTemplateRows: 'repeat(7, minmax(0, 1fr))',
+            gridTemplateColumns: `repeat(${weekCount}, minmax(0, 1fr))`,
+            gridAutoFlow: 'column',
+          }}
           role="img"
           aria-label={`${total} GitHub contributions in the last year`}
         >
@@ -49,7 +55,7 @@ export function ContributionGraph({ calendar, username = 'ntgussoni', className 
                 key={day.date}
                 title={formatDayLabel(day.date, day.contributionCount)}
                 style={{ backgroundColor: day.color }}
-                className="h-[11px] w-[11px] rounded-sm"
+                className="aspect-square w-full min-w-0 rounded-[2px] sm:rounded-sm"
               />
             ))
           )}

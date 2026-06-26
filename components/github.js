@@ -8,7 +8,7 @@ export async function getContributions(token) {
     query: `query {
       user(login: "ntgussoni") {
         bio
-        repositoriesContributedTo(first: 8, contributionTypes: [COMMIT, PULL_REQUEST, ISSUE]) {
+        repositoriesContributedTo(first: 12, contributionTypes: [COMMIT, PULL_REQUEST, ISSUE]) {
           nodes {
             id
             url

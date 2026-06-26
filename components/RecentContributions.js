@@ -1,4 +1,4 @@
-const MAX_ITEMS = 5;
+const MAX_ITEMS = 10;
 
 export function RecentContributions({ repositories = [] }) {
   const items = repositories.filter(Boolean).slice(0, MAX_ITEMS);
