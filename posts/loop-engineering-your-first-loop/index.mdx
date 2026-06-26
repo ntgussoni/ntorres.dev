@@ -34,6 +34,23 @@ pnpm install
 
 You do not need to merge the PR to follow along. The branch has the scaffold pre-seeded; run the steps below from that checkout.
 
+Alternatively, scaffold any repo with Cobus Greyling's upstream tooling: `npx @cobusgreyling/loop-init . --pattern daily-triage` ([loop-engineering repo](https://github.com/cobusgreyling/loop-engineering)). This walkthrough adapts that layout for Souso.
+
+# Prerequisites
+
+**You need:**
+
+- **Claude Code**, **Codex App**, or **Grok** with scheduling (`/loop` or an equivalent automation)
+- **`gh` CLI** logged in with read access to public issues and PRs (enough for L1)
+- The checkout above (`pnpm install` pulls deps for skills and scripts; you do not need to run the app)
+
+**You do not need:**
+
+- Merge rights on Souso, a running dev server, or Cloudflare credentials
+- To merge [PR #529](https://github.com/RonanCodes/smart-cart/pull/529) (the branch is pre-seeded)
+
+L1 triage only reads GitHub and edits loop files in the repo (`STATE.md`, `loop-run-log.md`). It never touches application source.
+
 ---
 
 # What We're Building
@@ -50,6 +67,8 @@ You do not need to merge the PR to follow along. The branch has the scaffold pre
 ---
 
 # Step 1: Scaffold the Loop Files
+
+The file layout follows [Cobus Greyling's loop-engineering starters](https://github.com/cobusgreyling/loop-engineering/tree/main/starters) (MIT). We adapted denylist paths and Souso-specific rules below.
 
 These files now live in the smart-cart repo root:
 
@@ -203,4 +222,4 @@ Souso has eval gates, ownership boundaries, and a promotion flow (`develop` → 
 
 **Loop Engineering series · 4 of 6** · [Previous](/blog/loop-engineering-where-work-enters) · Next: [Loop Patterns](/blog/loop-engineering-patterns)
 
-*Further reading: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/) and [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering). Souso loop example: [PR #529](https://github.com/RonanCodes/smart-cart/pull/529) · [`feat/loop-engineering-daily-triage`](https://github.com/RonanCodes/smart-cart/tree/feat/loop-engineering-daily-triage).*
+*Sources: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/). Loop scaffold from [Cobus Greyling's loop-engineering starters](https://github.com/cobusgreyling/loop-engineering/tree/main/starters) (MIT). [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering). Souso loop example: [PR #529](https://github.com/RonanCodes/smart-cart/pull/529) · [`feat/loop-engineering-daily-triage`](https://github.com/RonanCodes/smart-cart/tree/feat/loop-engineering-daily-triage).*

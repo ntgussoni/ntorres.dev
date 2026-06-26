@@ -16,6 +16,7 @@ import getPost from '../components/get-post';
 import { BlogPostList } from '../components/BlogPostList';
 import { RecentContributions } from '../components/RecentContributions';
 import { ContributionGraph } from '../components/ContributionGraph';
+import SeriesHighlight from '../components/SeriesHighlight';
 import { sortPosts } from '../lib/sort-posts';
 
 const fs = require('fs');
@@ -110,7 +111,7 @@ function ProjectCard({ name, description, href, image, external }) {
   );
 }
 
-export default function Home({ githubData, posts }) {
+export default function Home({ githubData, posts, seriesHighlight }) {
   return (
     <Layout wide>
       <div className="mb-12 flex flex-col items-start gap-6 border-b border-neutral-200 pb-12 sm:mb-16 sm:gap-8 sm:pb-16 md:flex-row md:items-center">
@@ -138,6 +139,15 @@ export default function Home({ githubData, posts }) {
           />
         </div>
       </div>
+
+      {seriesHighlight && (
+        <SeriesHighlight
+          seriesName="Loop Engineering"
+          folderName={seriesHighlight.folderName}
+          post={seriesHighlight.post}
+          totalParts={seriesHighlight.totalParts}
+        />
+      )}
 
       <div className="mb-8 flex items-end justify-between border-b border-neutral-200 pb-4">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">
@@ -212,11 +222,32 @@ export async function getStaticProps() {
     )
   );
 
+  const publishedPosts = process.env.IS_DEVELOPMENT
+    ? posts
+    : posts.filter((p) => !p.post.metadata.draft);
+
+  const loopEngineeringSeries = publishedPosts
+    .filter(
+      (entry) =>
+        entry.post.metadata.seriesOrder &&
+        entry.post.metadata.categories?.includes('loop-engineering')
+    )
+    .sort(
+      (a, b) => a.post.metadata.seriesOrder - b.post.metadata.seriesOrder
+    );
+
+  const firstSeriesPost = loopEngineeringSeries[0] ?? null;
+
   return {
     props: {
-      posts: process.env.IS_DEVELOPMENT
-        ? posts
-        : posts.filter((p) => !p.post.metadata.draft),
+      posts: sortPosts(publishedPosts),
+      seriesHighlight: firstSeriesPost
+        ? {
+            folderName: firstSeriesPost.folderName,
+            post: firstSeriesPost.post,
+            totalParts: loopEngineeringSeries.length,
+          }
+        : null,
       githubData,
     },
     revalidate: GITHUB_REVALIDATE_SECONDS,

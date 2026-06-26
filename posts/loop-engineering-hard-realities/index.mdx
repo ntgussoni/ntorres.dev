@@ -16,6 +16,8 @@ categories:
 
 Loops are early. The economics and verification challenges are real. Every conversation about Loop Engineering tends to focus on the power, and it is powerful. But the people doing this work are also the ones who've learned the hard lessons. This post collects them, with mitigations specific to **Souso**, where we just built our first loop.
 
+*Haven't run the example yet? [Post 4](/blog/loop-engineering-your-first-loop) has the clone-and-run walkthrough.*
+
 ![Top loop failure modes and their mitigations](failure-modes.png)
 
 ---
@@ -59,6 +61,8 @@ An arrow like **S1 → S2** means: starts mild if you catch it early; becomes S2
 ---
 
 # Failure Mode Catalog
+
+This catalog adapts the failure modes and anti-patterns in [Cobus Greyling's loop-engineering repo](https://github.com/cobusgreyling/loop-engineering) ([operating docs](https://github.com/cobusgreyling/loop-engineering/tree/main/docs), MIT). Mitigations below are Souso-specific.
 
 ## Infinite Fix Loop (S2)
 
@@ -177,4 +181,4 @@ Build the loop like someone who intends to stay the engineer. Not just the perso
 
 **Loop Engineering series · 6 of 6** · [Start from the beginning](/blog/loop-engineering-the-end-of-prompting)
 
-*Further reading: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/) and [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*
+*Sources: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/). Failure modes, anti-patterns, and safety framing from [Cobus Greyling's loop-engineering repo](https://github.com/cobusgreyling/loop-engineering) (MIT). [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*

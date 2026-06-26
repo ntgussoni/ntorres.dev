@@ -16,6 +16,8 @@ categories:
 
 A loop that actually runs unattended is not one long prompt. It's a small system with six parts. Five are capabilities. The sixth is the spine that holds state between runs. These are the primitives of Loop Engineering, and both Claude Code and OpenAI Codex now ship all of them.
 
+The primitive names and roles follow [Cobus Greyling's loop-engineering reference repo](https://github.com/cobusgreyling/loop-engineering) ([`docs/primitives.md`](https://github.com/cobusgreyling/loop-engineering/blob/main/docs/primitives.md), MIT license).
+
 We'll map each primitive to **Souso** ([smart-cart](https://github.com/RonanCodes/smart-cart)), the case study for this series. A team of seven built it at [Megathon](https://megathon.xyz/) Amsterdam in under 48 hours; three devs committed the code and merged more than 350 PRs, so the abstractions land on something real. Clone the loop example: [`feat/loop-engineering-daily-triage`](https://github.com/RonanCodes/smart-cart/tree/feat/loop-engineering-daily-triage) ([PR #529](https://github.com/RonanCodes/smart-cart/pull/529)).
 
 ![Six primitives orbiting STATE.md as the durable memory spine](six-primitives.png)
@@ -130,4 +132,4 @@ Don't run before you can walk. Start at L1 (report only). Graduate to L2 (assist
 
 **Loop Engineering series · 2 of 6** · [Previous](/blog/loop-engineering-the-end-of-prompting) · Next: [Where Work Enters the Loop](/blog/loop-engineering-where-work-enters)
 
-*Further reading: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/) and [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*
+*Sources: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/). The six-primitive model from [Cobus Greyling's loop-engineering repo](https://github.com/cobusgreyling/loop-engineering) (MIT). [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*

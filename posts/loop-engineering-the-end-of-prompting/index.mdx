@@ -20,7 +20,15 @@ This shift, from *crafting the perfect prompt* to *designing the system that cra
 
 Over this six-post series, we'll build a real loop on **[Souso](https://github.com/RonanCodes/smart-cart)**, a deployed AI meal planner with 50+ open issues, strict TDD, and a `ready-for-agent` issue queue. Not a toy repo. A team of seven shipped Souso at [Megathon](https://megathon.xyz/) Amsterdam in June 2026; three of us wrote the code, in less than 48 hours, with more than 350 PRs merged. A production app where loops have to respect ownership boundaries and `pnpm quality` gates.
 
-Follow along on branch [`feat/loop-engineering-daily-triage`](https://github.com/RonanCodes/smart-cart/tree/feat/loop-engineering-daily-triage) ([PR #529](https://github.com/RonanCodes/smart-cart/pull/529)).
+# How to follow along
+
+| Lane | Who it's for | What to do |
+|------|----------------|------------|
+| **Read only** | You want the ideas first | Stay on this page. Souso is the running example; no repo required yet. |
+| **Try it on Souso** | You want hands-on | Jump to [Building Your First Loop on Souso](/blog/loop-engineering-your-first-loop). Clone branch [`feat/loop-engineering-daily-triage`](https://github.com/RonanCodes/smart-cart/tree/feat/loop-engineering-daily-triage) ([PR #529](https://github.com/RonanCodes/smart-cart/pull/529)). L1 Daily Triage is report-only: read GitHub, write `STATE.md`, change no application code. |
+| **Use your own repo** | You are porting patterns | Same scaffold (`STATE.md`, skills, schedule). Swap labels, denylist paths, and your CI command instead of `pnpm quality`. |
+
+The hands-on walkthrough is **post 4**. Posts 1–3 are concepts; posts 5–6 assume you have run L1 triage at least once (or read post 4 closely).
 
 ---
 
@@ -52,7 +60,7 @@ This builds on earlier ideas. **Agent Harness Engineering** (which I'll cover in
 
 **Loop Engineering** sits one floor above the harness. It's the harness, but it runs on a timer, it spawns little helpers, and it feeds itself.
 
-Cobus Greyling frames it as three conceptual layers:
+Cobus Greyling frames it as three conceptual layers (see his [loop-engineering reference repo](https://github.com/cobusgreyling/loop-engineering) and [essay](https://cobusgreyling.substack.com/p/loop-engineering)):
 
 1. **Context Engineering**: getting the right information into the agent's context window
 2. **Harness Engineering**: building the environment for a single agent session
@@ -85,4 +93,4 @@ The loop amplifies judgment, both good and bad. Designing well is still on you.
 
 **Loop Engineering series · 1 of 6** · Next: [The Five Building Blocks + Memory](/blog/loop-engineering-the-five-building-blocks)
 
-*Further reading: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/) (June 2026) and [Cobus Greyling's Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*
+*Sources: [Addy Osmani's Loop Engineering](https://addyosmani.com/blog/loop-engineering/) (June 2026). Conceptual framing and the harness vs loop distinction draw on [Cobus Greyling's loop-engineering repo](https://github.com/cobusgreyling/loop-engineering) (MIT) and his [Loop Engineering essay](https://cobusgreyling.substack.com/p/loop-engineering).*

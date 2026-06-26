@@ -118,6 +118,20 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
             <time dateTime={metadata.dateRaw}>{metadata.date}</time>
           </div>
 
+          {metadata.image && (
+            <div className="relative mb-6 aspect-[16/10] w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 sm:mb-8">
+              <PostImage
+                folderName={folderName}
+                src={metadata.image}
+                alt=""
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 672px"
+              />
+            </div>
+          )}
+
           <h1 className="text-2xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-3xl md:text-[2.75rem] md:leading-[1.15]">
             {metadata.title}
           </h1>
