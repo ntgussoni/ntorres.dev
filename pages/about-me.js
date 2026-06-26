@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Head from 'next/head';
 import Image from 'next/image';
 import Layout from '../components/Layout';
 import { ContributionGraph } from '../components/ContributionGraph';
@@ -7,10 +6,15 @@ import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/githu
 import profilePic from '../public/avatar.png';
 
 const AboutMe = ({ githubData }) => (
-  <Layout title="About" wide>
-    <Head>
-      <title>About — Nicolás Torres</title>
-    </Head>
+  <Layout
+    title="About"
+    description={
+      githubData?.bio ||
+      'Fullstack engineer. AI, robotics, drones, and building software that makes an impact.'
+    }
+    path="/about-me"
+    wide
+  >
     <CV
       calendar={githubData?.contributionsCollection?.contributionCalendar}
     />

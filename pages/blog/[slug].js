@@ -2,7 +2,6 @@
 import React, { useMemo } from 'react';
 import fs from 'fs';
 import path from 'path';
-import Head from 'next/head';
 import Link from 'next/link';
 import matter from 'gray-matter';
 
@@ -14,6 +13,7 @@ import BlogLayout from '../../components/BlogLayout';
 import ToC from '../../components/TableOfContents';
 import { PostImage } from '../../components/PostImage';
 import SeriesNav from '../../components/SeriesNav';
+import { getPostOgImageUrl } from '../../lib/site';
 
 const getLoopEngineeringSeries = () => {
   const postsDir = path.join(process.cwd(), 'posts');
@@ -88,17 +88,31 @@ const loadComponents = (folderName) => ({
   ),
 });
 
+const parsePostDateIso = (dateStr) => {
+  const str = String(dateStr).trim();
+  const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (dmy) {
+    const [, day, month, year] = dmy;
+    return new Date(Number(year), Number(month) - 1, Number(day)).toISOString();
+  }
+  const parsed = new Date(str);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+};
+
 const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
   const components = useMemo(() => loadComponents(folderName), [folderName]);
   const category = metadata.categories?.[0];
+  const publishedTime = parsePostDateIso(metadata.dateRaw);
 
   return (
-    <BlogLayout title={metadata.title}>
-      <Head>
-        <meta name="description" content={metadata.description} />
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-
+    <BlogLayout
+      title={metadata.title}
+      description={metadata.description}
+      image={getPostOgImageUrl(folderName)}
+      path={`/blog/${folderName}`}
+      type="article"
+      publishedTime={publishedTime}
+    >
       <article>
         <header className="mb-8 max-w-2xl border-b border-neutral-200 pb-8 sm:mb-10 sm:pb-10">
           <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-neutral-500">

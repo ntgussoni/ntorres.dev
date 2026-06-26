@@ -1,17 +1,27 @@
 import clsx from 'clsx';
-import Head from 'next/head';
 import Logo from './Logo';
 import { SiteHeader } from './SiteHeader';
+import Seo from './Seo';
 
-const Layout = ({ children, title, wide = false }) => (
+const Layout = ({
+  children,
+  title,
+  description,
+  image,
+  path = '/',
+  type = 'website',
+  publishedTime,
+  wide = false,
+}) => (
   <div className="min-h-screen overflow-x-hidden bg-white font-[Inter,system-ui,sans-serif] text-neutral-900">
-    <Head>
-      <title>
-        {title ? `${title} — Nicolás Torres` : 'Nicolás Torres'}
-      </title>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      path={path}
+      type={type}
+      publishedTime={publishedTime}
+    />
     <SiteHeader />
     <main
       className={clsx(

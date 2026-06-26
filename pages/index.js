@@ -18,6 +18,7 @@ import { RecentContributions } from '../components/RecentContributions';
 import { ContributionGraph } from '../components/ContributionGraph';
 import SeriesHighlight from '../components/SeriesHighlight';
 import { sortPosts } from '../lib/sort-posts';
+import { siteDefaults } from '../lib/site';
 
 const fs = require('fs');
 
@@ -113,7 +114,14 @@ function ProjectCard({ name, description, href, image, external }) {
 
 export default function Home({ githubData, posts, seriesHighlight }) {
   return (
-    <Layout wide>
+    <Layout
+      wide
+      description={
+        githubData?.bio ||
+        'Fullstack Engineer // Robotics // Drones. Building software that makes an impact.'
+      }
+      path="/"
+    >
       <div className="mb-12 flex flex-col items-start gap-6 border-b border-neutral-200 pb-12 sm:mb-16 sm:gap-8 sm:pb-16 md:flex-row md:items-center">
         <div className="min-w-0 flex-1">
           <h1 className="mb-4 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl md:text-5xl">

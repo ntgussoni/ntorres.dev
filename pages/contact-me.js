@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import Layout from '../components/Layout';
 
 const iconClass = 'h-6 w-6 text-neutral-700 transition-colors hover:text-neutral-900';
@@ -29,10 +28,11 @@ const ContactIcons = () => (
 );
 
 const ContactMe = () => (
-  <Layout title="Contact">
-    <Head>
-      <title>Contact — Nicolás Torres</title>
-    </Head>
+  <Layout
+    title="Contact"
+    description="Get in touch with Nicolás Torres."
+    path="/contact-me"
+  >
     <div className="mx-auto max-w-lg py-8 text-center">
       <h1 className="mb-3 text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl">
         Get in touch
