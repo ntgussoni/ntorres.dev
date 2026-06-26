@@ -1,4 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+import { buildRecentRepositories } from '../lib/github-recent';
+
 export const GITHUB_REVALIDATE_SECONDS = 60 * 60 * 24;
 
 export async function getContributions(token) {
@@ -8,18 +10,44 @@ export async function getContributions(token) {
     query: `query {
       user(login: "ntgussoni") {
         bio
-        repositoriesContributedTo(first: 12, contributionTypes: [COMMIT, PULL_REQUEST, ISSUE]) {
+        repositoriesContributedTo(
+          first: 24
+          orderBy: { field: PUSHED_AT, direction: DESC }
+          contributionTypes: [COMMIT, PULL_REQUEST, ISSUE]
+        ) {
           nodes {
             id
             url
             name
+            nameWithOwner
             description
+            pushedAt
+            stargazerCount
+            primaryLanguage {
+              name
+              color
+            }
             owner {
               login
+              avatarUrl
+              url
             }
           }
         }
         contributionsCollection {
+          pullRequestContributions(first: 40) {
+            nodes {
+              occurredAt
+              pullRequest {
+                title
+                url
+                merged
+                repository {
+                  nameWithOwner
+                }
+              }
+            }
+          }
           contributionCalendar {
             totalContributions
             weeks {
@@ -56,7 +84,13 @@ export async function getContributions(token) {
       return null;
     }
 
-    return data?.user ?? null;
+    const user = data?.user ?? null;
+    if (!user) return null;
+
+    return {
+      ...user,
+      recentRepositories: buildRecentRepositories(user),
+    };
   } catch (e) {
     console.log('The data could not be loaded');
     return null;

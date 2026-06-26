@@ -189,7 +189,7 @@ export default function Home({ githubData, posts }) {
           </p>
         </a>
         <RecentContributions
-          repositories={githubData?.repositoriesContributedTo?.nodes}
+          repositories={githubData?.recentRepositories}
         />
       </div>
     </Layout>
