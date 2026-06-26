@@ -31,10 +31,18 @@ function Heading({ children }) {
 
 function Heading2({ children }) {
   return (
-    <h2 className="relative mb-6 mt-3 break-words text-lg font-semibold tracking-tight text-neutral-900 sm:text-xl">
-      <span className="dot" />
+    <h2 className="mb-6 mt-3 break-words text-lg font-semibold tracking-tight text-neutral-900 sm:text-xl">
       {children}
     </h2>
+  );
+}
+
+function TimelineEntry({ children }) {
+  return (
+    <div className="timeline-entry relative mb-6">
+      <span className="dot" aria-hidden="true" />
+      {children}
+    </div>
   );
 }
 
@@ -451,7 +459,7 @@ const CV = ({ calendar }) => (
         <Heading>Education</Heading>
         <EducationItem
           title="Facultad de Ingeniería"
-          text="Software Engineering and Robotics"
+          text="Studied Software Engineering and Robotics — did not complete"
         />
         <EducationItem
           title="Instituto Tecnológico Superior"
@@ -463,10 +471,9 @@ const CV = ({ calendar }) => (
         <EducationItem title="Dutch (Basic)" />
       </div>
       <div>
-      <div className="relative pl-8 md:pl-10">
           <Heading>Experience</Heading>
-          <div className="timeline">
-            <div className="mb-6">
+          <div className="timeline relative ml-[11px] border-l-2 border-neutral-200 pl-6 md:ml-[15px] md:pl-8">
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">
                   BACKBASE — THE #1 DIGITAL BANKING PLATFORM
@@ -478,8 +485,8 @@ const CV = ({ calendar }) => (
                 />
               </Heading2>
               <AIAssistant />
-            </div>
-            <div className="mb-6">
+            </TimelineEntry>
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">
                   BACKBASE — THE #1 DIGITAL BANKING PLATFORM
@@ -495,8 +502,8 @@ const CV = ({ calendar }) => (
               <DeveloperHub />
               <SoftwareCatalog />
               <Community />
-            </div>
-            <div className="mb-6">
+            </TimelineEntry>
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">
                   INGENIOUS — FUELING THE NEXT HEALTHCARE INDUSTRY
@@ -510,8 +517,8 @@ const CV = ({ calendar }) => (
               <FertilityPro />
               <Trama />
               <Adidas />
-            </div>
-            <div className="mb-6">
+            </TimelineEntry>
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">INFOKE</span>
                 <div className="mb-8 mt-2 flex flex-col gap-1 text-sm font-normal text-neutral-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
@@ -520,8 +527,8 @@ const CV = ({ calendar }) => (
                 </div>
               </Heading2>
               <SrvMonitor />
-            </div>
-            <div className="mb-6">
+            </TimelineEntry>
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">
                   FACULTAD DE ARQUITECTURA, DISEÑO Y URBANISMO
@@ -533,8 +540,8 @@ const CV = ({ calendar }) => (
               </Heading2>
               <FADU />
               <Forma />
-            </div>
-            <div className="mb-6">
+            </TimelineEntry>
+            <TimelineEntry>
               <Heading2>
                 <span className="font-semibold text-neutral-900">
                   FACULTAD DE VETERINARIA UDELAR
@@ -545,9 +552,8 @@ const CV = ({ calendar }) => (
                 </div>
               </Heading2>
               <Veterinaria />
-            </div>
+            </TimelineEntry>
           </div>
-        </div>
         <div>
           <Heading>Voluntary work</Heading>
           <div className="mb-6">

@@ -84,12 +84,15 @@
     @apply mb-4 max-w-[700px] leading-relaxed text-neutral-600;
   }
 
-  .timeline::before {
-    @apply absolute left-[11px] top-[80px] h-[calc(100%-90px)] w-[2px] bg-neutral-200 content-[""] md:left-[15px];
+  .dot {
+    @apply absolute top-3 size-3 -translate-x-1/2 rounded-full bg-neutral-900;
+    left: calc(-1.5rem - 1px);
   }
 
-  .dot {
-    @apply absolute left-0 top-[12px] h-3 w-3 rounded-full bg-neutral-900;
+  @media (width >= 768px) {
+    .dot {
+      left: calc(-2rem - 1px);
+    }
   }
 }
 

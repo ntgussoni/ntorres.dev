@@ -1,0 +1,15 @@
+---
+description: Use OpenAI gpt-image-2 on Replicate for all blog and site image generation
+alwaysApply: true
+---
+
+# Image generation
+
+When generating images for this site (blog cards, OG images, LinkedIn heroes, post illustrations):
+
+- **Always use** `openai/gpt-image-2` via the Replicate MCP (`create_models_predictions`).
+- **Do not use** Flux, Ideogram, or other image models unless the user explicitly asks for a different model.
+- **Blog cards:** `aspect_ratio: "1536x1024"`, `output_format: "png"`, `quality: "high"`. Save as `posts/<slug>/card.png`.
+- **Prompts:** Include readable title text in the prompt (gpt-image-2 renders typography well). Tie visuals to the post's metaphor, not generic icon clutter.
+- **Polling:** `create_models_predictions` may time out; poll with `get_predictions` if status is `processing`.
+- **No em dashes** in overlay text if adding typography in post-processing.

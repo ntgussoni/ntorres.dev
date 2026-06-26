@@ -2,6 +2,7 @@
 import React, { useMemo } from 'react';
 import fs from 'fs';
 import path from 'path';
+import Image from 'next/image';
 import Link from 'next/link';
 import matter from 'gray-matter';
 
@@ -14,6 +15,7 @@ import ToC from '../../components/TableOfContents';
 import { PostImage } from '../../components/PostImage';
 import SeriesNav from '../../components/SeriesNav';
 import { getPostOgImageUrl } from '../../lib/site';
+import profilePic from '../../public/avatar.png';
 
 const getLoopEngineeringSeries = () => {
   const postsDir = path.join(process.cwd(), 'posts');
@@ -156,7 +158,16 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
             </p>
           )}
 
-          <p className="mt-5 text-sm text-neutral-500">Nicolás Torres</p>
+          <div className="mt-5 flex items-center gap-2.5">
+            <Image
+              src={profilePic}
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full"
+            />
+            <p className="text-sm text-neutral-500">Nicolás Torres</p>
+          </div>
         </header>
 
         <div className="flex flex-col gap-8 lg:flex-row lg:gap-12 xl:gap-16">

@@ -1,0 +1,177 @@
+---
+date: 26/06/2026
+title: "Death by a Thousand Cuts"
+description: "We rarely fail at work from one big blow. We fail from a hundred small permissions we grant until the environment is the problem and we're too tired to fix it."
+image: card.png
+draft: false
+categories:
+  - technology
+  - work
+---
+
+Nothing went wrong last Tuesday. No crisis, no fight, nothing I'd need to escalate.
+
+It was the kind of day that doesn't stick. I got through it. Replied to people. Moved a few things forward. Nothing blew up. Nothing landed well enough that I'd remember it on Friday. If someone asked what was broken, I'd have shrugged. Proud of anything? Same shrug.
+
+That was the whole day, actually. Quietly costly. By four in the afternoon I was staring at a ticket I'd already read twice, unable to decide whether it was worth doing today, tomorrow, or never. Not burned out in the dramatic sense. Not quitting. Just dull. Like something had been leaking out of me in increments too small to measure, for long enough that I had stopped checking the gauge.
+
+That feeling is what I've wanted to write about for years. Not a single traumatic failure at work. Not one bad boss or one catastrophic outage. The slow accumulation of things we let pass because each one, alone, doesn't seem worth the fight.
+
+We call it **death by a thousand cuts**. And once you see the pattern, you see it everywhere: in codebases, in calendars, in teams, and in yourself.
+
+---
+
+# Not paper cuts
+
+The English phrase comes from *lingchi*, an archaic Chinese punishment sometimes translated as "slow slicing." Western retellings exaggerated it into "a thousand cuts," but the metaphor that stuck is accurate enough: many small wounds, applied over time, until the body can't recover.
+
+That matters because the work version is usually **not** random misfortune. It's not the universe handing you paper cuts. Most of the cuts are **permissions**. We agree to the extra meeting. We ship the hotfix without the test. We answer Slack during lunch because it feels faster than not answering. We accept "known flaky" as a category. Each decision is survivable. The accumulation isn't.
+
+I read [a post on software quality](https://www.evalapply.org/posts/how-to-not-die-by-a-thousand-cuts/index.html) that framed every failure as a cut:
+
+> Every hotfix is a cut. Every complaint is a cut. Every app crash is a cut. Every service outage is a cut. Each cut heals slowly and destroys Quality.
+
+Replace *hotfix* with *scope creep*, *status update*, or *"can you just take a look?"* and the sentence still works outside engineering.
+
+---
+
+# The spiral
+
+Across burnout research, organizational behavior papers, and a decade of developer blog posts, the same shape keeps showing up. I think of it as the spiral: six beats that repeat until something breaks.
+
+## 1. The first cuts are invisible
+
+A skipped test. A meeting that "only takes fifteen minutes." A `TODO` that never gets a ticket. A process step added because last quarter something went wrong once.
+
+Individually, each is rational. You were busy. The fix was urgent. The meeting seemed useful. Nobody keeps a ledger of these.
+
+## 2. Accumulation without notice
+
+The fiftieth cut doesn't register. Systems absorb damage quietly. The codebase still deploys. The team still ships. Your calendar still looks full of *work*, not *meta-work*. The boiling-frog cliché is tired because it's true.
+
+## 3. Compounding, not adding
+
+Cuts don't stack linearly. Each one makes the next more likely.
+
+Bad code invites more bad code because the "right" fix now feels too expensive. Skipped tests invite more skipped tests because the suite is already flaky. Broken-window logic applies to culture too: once everyone tolerates late-night pings, late-night pings become normal.
+
+The same post describes the curve as band-aids, then stitches, then casts, then suddenly gangrene. You don't notice the phase change until you're in a different phase.
+
+## 4. Normalization of deviance
+
+What was unacceptable becomes policy.
+
+"We re-trigger the build when integration tests flake." becomes permanent. "We'll document it after the release." becomes permanent. "Version 2 will fix the architecture." becomes permanent while version 1 never quite ships.
+
+Each normalization is its own cut, because you're now explicitly agreeing that the degraded state is fine.
+
+## 5. The tipping point
+
+Performance degrades non-linearly. One week the team is tired. The next week every task takes twice as long and nobody can explain why. The product enters maintenance hell. The person enters burnout. The organization enters survival mode.
+
+Nothing *happened*. That's the point. The threshold was crossed by weight, not by impact.
+
+## 6. The system can't save itself
+
+The mechanisms meant to help become part of the problem.
+
+A developer [described the agile death spiral](https://postagilist.wordpress.com/2012/03/06/death-by-a-thousand-cuts-agilescrum-style-an-example/) in 2012: adopt Agile, then require full test coverage, then DI and mocking everywhere, then TDD mandates, then UI automation, then manual QA anyway, then deep refactors that break all the tests, then descope half the sprint, then hire more people, then hit tool limits, then hack around them, then talk about version 2 before version 1 ships.
+
+Each layer sounded reasonable when it was added. Together they produced a grim estimate: maybe 10-20% of hours touching production code.
+
+The spiral doesn't need malice. It needs **reasonable decisions made without a view of the whole**.
+
+---
+
+# One email, a thousand times
+
+In a [2018 paper on how companies mishandle information](https://informationr.net/ir/23-1/paper779.html), two researchers studying enterprise data practices put it in terms anyone can recognize:
+
+One person managing one email badly is irrelevant. **Everyone** managing **every** email badly **every day** is an existential threat to productivity.
+
+No single villain. No dramatic breach. Just a thousand small failures of the same boring habit.
+
+That's the non-engineering version of the same law. The cuts don't have to be technical. They can be communication norms, approval chains, documentation nobody reads, or the quiet agreement that meetings are how we show we're working.
+
+Rob Cross, a researcher who has spent years studying collaboration and overload at work, calls the personal version **microstresses**: tiny moments of strain so small they don't get logged, but they drain capacity all day. A tense Slack thread. A stakeholder who reopens settled decisions. A calendar invite that lands in your only free hour. None of these are crises. Together they are.
+
+---
+
+# Engineering, where the cuts are easier to count
+
+Software makes the pattern visible because we leave artifacts.
+
+Technical debt is the canonical case: each shortcut is harmless alone. [The industry has been writing about it](https://javascript.plainenglish.io/the-hidden-costs-of-technical-debt-death-by-a-thousand-cuts-23569200df48) under this metaphor for years. The debt isn't one bad module. It's the thousand times someone said "we'll clean it up later" and later never came.
+
+Context switching is a cut with a hidden multiplier. The interruption might be five minutes. The recovery (reloading mental state, remembering what you were proving about the bug) is often much longer. A standup, a ping, a "quick sync," a CI failure on another branch: none of them are the work. All of them fragment the work.
+
+And decision fatigue is the tax on top. By afternoon you're not shipping worse code because you're lazy. You're shipping worse code because you've already spent the day's judgment on prioritization, triage, and small negotiations that nobody will remember.
+
+---
+
+# Organizations bleed the same way
+
+Gergely Orosz [compared layoff strategies](https://newsletter.pragmaticengineer.com/p/the-scoop-one-deep-layoff-or-death) during the 2022 tech downturn. Some companies cut once, deep and painful. Others cut shallow, hoped it was enough, then cut again.
+
+The second pattern is organizational death by a thousand cuts. Each round is "manageable." Together they destroy trust and morale in a way that total headcount loss alone doesn't explain. People stop taking risks. They stop believing the next all-hands. They start interviewing in quiet.
+
+SaaS companies [die similarly](https://medium.com/swlh/death-by-a-thousand-cuts-in-saas-e0914fc60003): not one competitor killing them, but churn, support load, feature bloat, and incremental product decay until the product is a burden to maintain and a disappointment to use.
+
+The mechanism is always accumulation. The drama is always delayed.
+
+---
+
+# The permission you're granting
+
+Here's what took me years to articulate.
+
+The thousand cuts aren't inflicted only by bad management or bad luck. **I** grant a lot of them. I let the meeting stay on the calendar because declining feels awkward. I merge without the test because the branch is old and everyone wants it gone. I answer the message now because leaving it unread feels worse than breaking focus.
+
+Each time, the math is local: this cut is cheaper than the alternative *right now*. The math is almost never global: what happens when I make this choice a hundred times?
+
+Burnout research uses the same frame. Physician burnout articles in venues like the *New England Journal of Medicine* don't describe one catastrophic shift. They describe cumulative micro-failures of systems that were supposed to support people. Psychology literature on chronic maltreatment uses the metaphor too: invisible wounds that accumulate until life feels like stumbling through the world already injured.
+
+The cuts you can't see are sometimes worse than the ones you can.
+
+---
+
+# What actually helps
+
+I'm skeptical of posts that end with ten life hacks. The spiral is structural. You can't "self-care" your way out of a system designed to leak your attention.
+
+But you can stop granting cuts blindly.
+
+**Name the cut.** When something feels off but not worth fixing, say what it is out loud, to yourself or to the team. "We're normalizing flaky tests." "This meeting recurs and nobody acts on it." Naming breaks normalization.
+
+**Protect one non-negotiable block.** Not "more focus time" in general. One recurring window where Slack is off and meetings don't land. Defend it like a production incident. The cut you're refusing is fragmentation.
+
+**Refuse one category, not every battle.** You won't win every fight about process. Pick one class of meta-work (status theater, duplicate tooling, reply-all storms) and become annoying about it. Consistency matters more than volume.
+
+**Prefer one deep cut over endless shallow ones.** Teams, products, and careers all benefit from decisive correction over drip damage. The layoff literature's lesson applies to technical debt and personal habits: a painful reset often preserves more than slow erosion.
+
+**Design for unattended failure.** This is where my recent work on [Loop Engineering](/blog/loop-engineering-the-end-of-prompting) connects, almost accidentally. The failure mode I fear most in agent loops isn't one catastrophic wrong merge. It's small drift repeated every five minutes until `STATE.md` is fiction and nobody noticed for a week. The mitigations are budgets, caps, and verification: constraints that exist because unattended cuts compound.
+
+The same logic applies to human work. If you don't design guardrails, the default is a thousand cuts.
+
+---
+
+# Tuesday wasn't the problem
+
+Last Tuesday wasn't an anomaly. It was the output of a system, partly the org's and partly mine, that had been optimized for survivable local decisions.
+
+Nothing went wrong. That was the warning.
+
+Death by a thousand cuts isn't a Taylor Swift lyric or a metaphor for one bad quarter. It's the shape of how good people, good teams, and good products slowly become hard to recognize. The cuts are small. The permission is daily. The end is quiet.
+
+The work isn't to eliminate every cut. That's impossible, and some friction is how organizations coordinate. The work is to notice when you're no longer healing, when you're only accumulating, and to refuse the next permission before the spiral completes another turn.
+
+Some cuts are worth taking. The dangerous ones are the ones you take without remembering you chose them.
+
+---
+
+## Further reading
+
+- [How To Not Die By A Thousand Cuts](https://www.evalapply.org/posts/how-to-not-die-by-a-thousand-cuts/index.html). Software quality and compounding failure.
+- [Death by a Thousand Cuts, Agile/Scrum Style](https://postagilist.wordpress.com/2012/03/06/death-by-a-thousand-cuts-agilescrum-style-an-example/). The meta-work spiral.
+- [One Deep Layoff or Death By a Thousand Cuts?](https://newsletter.pragmaticengineer.com/p/the-scoop-one-deep-layoff-or-death). Gergely Orosz on layoffs and organizational trust.
+- [Death by a Thousand Cuts: Enterprise Information Asset Management](https://informationr.net/ir/23-1/paper779.html). Small daily failures at scale.
