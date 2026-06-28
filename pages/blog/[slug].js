@@ -172,7 +172,7 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
 
         <div className="flex flex-col gap-8 lg:flex-row lg:gap-12 xl:gap-16">
           <div className="prose-blog min-w-0 max-w-2xl flex-1">
-            <ToC variant="mobile" />
+            <ToC variant="mobile" contentKey={folderName} />
             {seriesNav && (
               <SeriesNav
                 posts={seriesNav.posts}
@@ -189,8 +189,8 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
               />
             )}
           </div>
-          <aside className="hidden w-44 shrink-0 lg:block">
-            <ToC variant="desktop" />
+          <aside className="sticky top-20 z-10 hidden w-44 shrink-0 self-start lg:block">
+            <ToC variant="desktop" contentKey={folderName} />
           </aside>
         </div>
       </article>

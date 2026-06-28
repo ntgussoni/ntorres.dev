@@ -13,7 +13,7 @@ const Layout = ({
   publishedTime,
   wide = false,
 }) => (
-  <div className="min-h-screen overflow-x-hidden bg-white font-[Inter,system-ui,sans-serif] text-neutral-900">
+  <div className="min-h-screen overflow-x-clip bg-white font-[Inter,system-ui,sans-serif] text-neutral-900">
     <Seo
       title={title}
       description={description}

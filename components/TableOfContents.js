@@ -77,12 +77,18 @@ const Headings = ({ headings, activeId }) => (
   </ul>
 );
 
-const useIntersectionObserver = (setActiveId) => {
+const getArticleHeadings = () =>
+  Array.from(document.querySelectorAll('article h2, article h3'));
+
+const useIntersectionObserver = (setActiveId, contentKey) => {
   const headingElementsRef = useRef([]);
   const observedEntriesRef = useRef({});
 
   useEffect(() => {
-    const domHeadings = Array.from(document.querySelectorAll('h2, h3'));
+    observedEntriesRef.current = {};
+    setActiveId(undefined);
+
+    const domHeadings = getArticleHeadings();
     headingElementsRef.current = domHeadings;
 
     const callback = (entries) => {
@@ -121,20 +127,21 @@ const useIntersectionObserver = (setActiveId) => {
     domHeadings.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, [setActiveId]);
+  }, [setActiveId, contentKey]);
 };
 
-const ToC = ({ variant = 'all' }) => {
+const ToC = ({ variant = 'all', contentKey }) => {
   const [activeId, setActiveId] = useState();
   const [nestedHeadings, setNestedHeadings] = useState([]);
 
   useEffect(() => {
-    const headingElements = Array.from(document.querySelectorAll('h2, h3'));
+    setActiveId(undefined);
+    const headingElements = getArticleHeadings();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM headings exist only after MDX mounts
     setNestedHeadings(getNestedHeadings(headingElements));
-  }, []);
+  }, [contentKey]);
 
-  useIntersectionObserver(setActiveId);
+  useIntersectionObserver(setActiveId, contentKey);
 
   if (nestedHeadings.length === 0) return null;
 
@@ -161,7 +168,7 @@ const ToC = ({ variant = 'all' }) => {
       {showDesktop && (
         <nav
           aria-label="Table of contents"
-          className="sticky top-20 hidden text-xs lg:block"
+          className="hidden text-xs lg:block"
         >
           <p className="mb-3 font-medium uppercase tracking-wider text-neutral-400">
             On this page
