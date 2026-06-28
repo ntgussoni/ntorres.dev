@@ -29,10 +29,10 @@ export default function SeriesHighlight({
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 shadow-sm">
-        <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center">
           <Link
             href={`/blog/${folderName}`}
-            className="group relative block aspect-[16/10] overflow-hidden bg-neutral-100 lg:aspect-auto lg:min-h-[280px]"
+            className="group relative block aspect-[3/2] w-full self-start overflow-hidden bg-neutral-100"
           >
             {metadata.image && (
               <PostImage

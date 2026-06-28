@@ -26,8 +26,9 @@ const showcaseProjects = [
   {
     name: 'Drift',
     description: 'One word at a time. Sleep science from SFU.',
-    href: '/projects/drift',
+    href: 'https://cognitiveshuffle.app',
     image: driftIcon,
+    external: true,
   },
   {
     name: 'Souso',
