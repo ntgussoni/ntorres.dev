@@ -78,6 +78,21 @@ const loadComponents = (folderName) => ({
       {children}
     </h4>
   ),
+  h4: ({ children, ...props }) => (
+    <h5 {...props} id={kebabCase(getLabelFromChildren(children))}>
+      {children}
+    </h5>
+  ),
+  h5: ({ children, ...props }) => (
+    <h6 {...props} id={kebabCase(getLabelFromChildren(children))}>
+      {children}
+    </h6>
+  ),
+  h6: ({ children, ...props }) => (
+    <h6 {...props} id={kebabCase(getLabelFromChildren(children))}>
+      {children}
+    </h6>
+  ),
   p: ({ children, ...props }) => {
     const text = getPlainText(children);
     if (text.includes('Loop Engineering series')) {

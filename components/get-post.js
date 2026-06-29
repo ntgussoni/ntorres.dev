@@ -3,6 +3,8 @@ import { serialize } from 'next-mdx-remote/serialize';
 import path from 'path';
 import matter from 'gray-matter';
 import remarkGfm from 'remark-gfm';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypePrettyCodeOptions from '../lib/rehype-pretty-code';
 
 const getPost = async (slug) => {
   const folderName = slug;
@@ -49,7 +51,7 @@ const getPost = async (slug) => {
     blockJS: false,
     mdxOptions: {
       remarkPlugins: [remarkGfm],
-      rehypePlugins: [],
+      rehypePlugins: [[rehypePrettyCode, rehypePrettyCodeOptions]],
     },
   });
 

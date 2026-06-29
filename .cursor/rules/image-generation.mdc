@@ -13,3 +13,18 @@ When generating images for this site (blog cards, OG images, LinkedIn heroes, po
 - **Prompts:** Include readable title text in the prompt (gpt-image-2 renders typography well). Tie visuals to the post's metaphor, not generic icon clutter.
 - **Polling:** `create_models_predictions` may time out; poll with `get_predictions` if status is `processing`.
 - **No em dashes** in overlay text if adding typography in post-processing.
+
+## Diagram workflow: ugly SVG, then polish with gpt-image-2
+
+For post diagrams (flowcharts, pyramids, ladders, architecture sketches):
+
+1. **Draft structure in SVG.** Boxes, arrows, labels, zones. Deliberately plain wireframe only.
+2. **Rasterize to PNG** with `sharp` (or keep as PNG if already raster).
+3. **Polish via Replicate MCP:** call `create_models_predictions` on `openai/gpt-image-2` with `input_images: [<wireframe png as data url or http url>]` plus a style prompt. Poll with `get_predictions` if needed.
+4. **Save** as `posts/<slug>/<name>.png`. Keep the `.svg` source for edits.
+
+**Prompt pattern:**
+
+> Polish this technical diagram into a clean flat illustration. Preserve the exact layout, all text labels, and arrow directions. Orange and white palette, modern tech blog style, subtle depth, white background, no clutter.
+
+**When to skip polish:** Data-heavy charts where exact values matter (variance plots, error bars). Generate those with code instead.

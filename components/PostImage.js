@@ -1,6 +1,10 @@
 import Image from 'next/image';
 
-const imageContext = require.context('../posts', true, /^(?!.*\.(mdx)$).*/);
+const imageContext = require.context(
+  '../posts',
+  true,
+  /\.(png|jpe?g|gif|webp|svg)$/i
+);
 
 export const PostImage = ({
   src,
