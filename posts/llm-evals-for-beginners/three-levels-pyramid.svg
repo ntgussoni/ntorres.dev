@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" fill="none">
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="56" text-anchor="middle" fill="#1f2937" font-family="Inter, system-ui, sans-serif" font-size="34" font-weight="700">Three Levels of Evaluation</text>
+  <text x="600" y="86" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="15">Conquer level 1 before level 2, and level 2 before level 3</text>
+
+  <polygon points="600,150 760,290 440,290" fill="#ea580c" stroke="#c2410c" stroke-width="2"/>
+  <text x="600" y="228" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">Level 3</text>
+  <text x="600" y="256" text-anchor="middle" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">A/B testing</text>
+  <text x="600" y="276" text-anchor="middle" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="12">Expensive, major releases</text>
+
+  <polygon points="600,300 840,470 360,470" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+  <text x="600" y="388" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">Level 2</text>
+  <text x="600" y="416" text-anchor="middle" fill="#fff7ed" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Human and model eval</text>
+  <text x="600" y="436" text-anchor="middle" fill="#fff7ed" font-family="Inter, system-ui, sans-serif" font-size="12">Medium cost, scheduled</text>
+
+  <polygon points="600,480 920,660 280,660" fill="#fdba74" stroke="#f97316" stroke-width="2"/>
+  <text x="600" y="578" text-anchor="middle" fill="#7c2d12" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">Level 1</text>
+  <text x="600" y="606" text-anchor="middle" fill="#9a3412" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Unit tests (assertions)</text>
+  <text x="600" y="626" text-anchor="middle" fill="#9a3412" font-family="Inter, system-ui, sans-serif" font-size="12">Cheap, every code change</text>
+
+  <text x="170" y="270" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600">User behavior</text>
+  <text x="170" y="288" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="12">conversion, completion</text>
+
+  <text x="170" y="420" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600">Quality judgment</text>
+  <text x="170" y="438" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="12">traces, LLM-as-judge</text>
+
+  <text x="170" y="590" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="600">Fast assertions</text>
+  <text x="170" y="608" text-anchor="middle" fill="#737373" font-family="Inter, system-ui, sans-serif" font-size="12">JSON, regex, no UUIDs</text>
+
+  <path d="M250 270 H360" stroke="#d4d4d4" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M250 420 H360" stroke="#d4d4d4" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M250 590 H280" stroke="#d4d4d4" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <text x="980" y="700" text-anchor="end" fill="#a3a3a3" font-family="Inter, system-ui, sans-serif" font-size="12">start here</text>
+  <path d="M940 688 C900 640 880 620 860 620" stroke="#1f2937" stroke-width="2" fill="none" marker-end="url(#arrow-dark)"/>
+
+  <defs>
+    <marker id="arrow-dark" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#1f2937"/>
+    </marker>
+  </defs>
+</svg>
