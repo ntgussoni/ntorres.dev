@@ -14,6 +14,7 @@ import BlogLayout from '../../components/BlogLayout';
 import ToC from '../../components/TableOfContents';
 import { PostImage } from '../../components/PostImage';
 import SeriesNav from '../../components/SeriesNav';
+import CopyPageMenu from '../../components/CopyPageMenu';
 import { getPostOgImageUrl } from '../../lib/site';
 import profilePic from '../../public/avatar.png';
 
@@ -132,21 +133,24 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
     >
       <article>
         <header className="mb-8 max-w-2xl border-b border-neutral-200 pb-8 sm:mb-10 sm:pb-10">
-          <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
-            <Link
-              href="/blog"
-              className="font-medium text-neutral-700 hover:text-neutral-900"
-            >
-              Blog
-            </Link>
-            {category && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{formatCategory(category)}</span>
-              </>
-            )}
-            <span aria-hidden="true">·</span>
-            <time dateTime={metadata.dateRaw}>{metadata.date}</time>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-neutral-500">
+              <Link
+                href="/blog"
+                className="font-medium text-neutral-700 hover:text-neutral-900"
+              >
+                Blog
+              </Link>
+              {category && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{formatCategory(category)}</span>
+                </>
+              )}
+              <span aria-hidden="true">·</span>
+              <time dateTime={metadata.dateRaw}>{metadata.date}</time>
+            </div>
+            <CopyPageMenu slug={folderName} title={metadata.title} />
           </div>
 
           {metadata.image && (
