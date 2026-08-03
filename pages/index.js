@@ -185,6 +185,50 @@ export default function Home({ githubData, posts, seriesHighlight }) {
       <h2 className="mb-8 text-sm font-semibold uppercase tracking-wider text-neutral-500">
         Open source
       </h2>
+      <a
+        href="https://github.com/socialrobot-io/agent-kit"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group mb-4 flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md md:flex-row"
+      >
+        <div className="relative aspect-[603/268] w-full shrink-0 overflow-hidden bg-neutral-950 md:aspect-auto md:w-[52%] md:min-h-[240px]">
+          <Image
+            src="/agent-kit.jpg"
+            alt="agent-kit: self-improving AI agents"
+            fill
+            className="object-cover object-left transition-transform duration-500 group-hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 52vw"
+          />
+        </div>
+        <div className="flex flex-1 flex-col justify-center p-6 sm:p-8">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {['TypeScript', 'MIT', 'Sandbox', 'Multi-tenant'].map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          <h3 className="text-xl font-semibold tracking-tight text-neutral-900 group-hover:text-neutral-600 sm:text-2xl">
+            agent-kit
+          </h3>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base">
+            Production-grade AI agents with curated memory, human-gated
+            learning, and sandboxed multi-tenant execution.
+          </p>
+          <p className="mt-4 text-sm font-medium text-neutral-900">
+            View on GitHub
+            <span
+              aria-hidden="true"
+              className="ml-1 inline-block transition-transform group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </p>
+        </div>
+      </a>
       <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
         <a
           href="https://github.com/ntgussoni/blitz-guard"
