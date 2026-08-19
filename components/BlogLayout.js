@@ -8,6 +8,7 @@ const BlogLayout = ({
   path = '/blog',
   type = 'website',
   publishedTime,
+  jsonLd,
 }) => (
   <Layout
     title={title === 'Blog' ? 'Blog' : title}
@@ -16,6 +17,7 @@ const BlogLayout = ({
     path={path}
     type={type}
     publishedTime={publishedTime}
+    jsonLd={jsonLd}
   >
     {children}
   </Layout>

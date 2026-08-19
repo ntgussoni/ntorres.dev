@@ -11,6 +11,7 @@ const Layout = ({
   path = '/',
   type = 'website',
   publishedTime,
+  jsonLd,
   wide = false,
 }) => (
   <div className="min-h-screen overflow-x-clip bg-white font-[Inter,system-ui,sans-serif] text-neutral-900">
@@ -21,6 +22,7 @@ const Layout = ({
       path={path}
       type={type}
       publishedTime={publishedTime}
+      jsonLd={jsonLd}
     />
     <SiteHeader />
     <main

@@ -3,7 +3,27 @@ import Image from 'next/image';
 import Layout from '../components/Layout';
 import { ContributionGraph } from '../components/ContributionGraph';
 import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/github';
+import { absoluteUrl } from '../lib/site';
 import profilePic from '../public/avatar.png';
+
+const personJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Nicolás Torres Gussoni',
+    url: absoluteUrl('/about-me'),
+    image: absoluteUrl('/avatar.png'),
+    jobTitle: 'AI / Senior Fullstack Engineer',
+    description:
+      'AI and fullstack engineer building software that makes an impact: AI assistants, developer platforms, documentation tooling, and open source.',
+    knowsAbout: ['AI', 'Software Engineering', 'Robotics', 'Developer Platforms'],
+    sameAs: [
+      'https://github.com/ntgussoni',
+      'https://twitter.com/ntorresdev',
+      'https://www.linkedin.com/in/ntgussoni/',
+    ],
+  },
+];
 
 const AboutMe = ({ githubData }) => (
   <Layout
@@ -13,6 +33,7 @@ const AboutMe = ({ githubData }) => (
       'Fullstack engineer. AI, robotics, drones, and building software that makes an impact.'
     }
     path="/about-me"
+    jsonLd={personJsonLd}
     wide
   >
     <CV

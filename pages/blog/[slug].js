@@ -15,7 +15,7 @@ import ToC from '../../components/TableOfContents';
 import { PostImage } from '../../components/PostImage';
 import SeriesNav from '../../components/SeriesNav';
 import CopyPageMenu from '../../components/CopyPageMenu';
-import { getPostOgImageUrl } from '../../lib/site';
+import { getPostOgImageUrl, absoluteUrl } from '../../lib/site';
 import profilePic from '../../public/avatar.png';
 
 const getLoopEngineeringSeries = () => {
@@ -121,15 +121,59 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
   const components = useMemo(() => loadComponents(folderName), [folderName]);
   const category = metadata.categories?.[0];
   const publishedTime = parsePostDateIso(metadata.dateRaw);
+  const ogImage = getPostOgImageUrl(folderName);
+  const postUrl = absoluteUrl(`/blog/${folderName}`);
+
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: metadata.title,
+      description: metadata.description,
+      image: [ogImage],
+      datePublished: publishedTime,
+      dateModified: publishedTime,
+      author: {
+        '@type': 'Person',
+        name: 'Nicolás Torres',
+        url: absoluteUrl('/about-me'),
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Nicolás Torres',
+        url: absoluteUrl('/about-me'),
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': postUrl,
+      },
+    },
+  ];
+
+  if (Array.isArray(metadata.faq) && metadata.faq.length > 0) {
+    jsonLd.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: metadata.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    });
+  }
 
   return (
     <BlogLayout
       title={metadata.title}
       description={metadata.description}
-      image={getPostOgImageUrl(folderName)}
+      image={ogImage}
       path={`/blog/${folderName}`}
       type="article"
       publishedTime={publishedTime}
+      jsonLd={jsonLd}
     >
       <article>
         <header className="mb-8 max-w-2xl border-b border-neutral-200 pb-8 sm:mb-10 sm:pb-10">
@@ -200,6 +244,25 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
               />
             )}
             <MDXRemote {...mdxSource} components={components} />
+            {Array.isArray(metadata.faq) && metadata.faq.length > 0 && (
+              <section aria-label="Frequently asked questions" className="mt-12">
+                <h2 className="text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
+                  Frequently asked questions
+                </h2>
+                <div className="mt-6 space-y-6">
+                  {metadata.faq.map((item) => (
+                    <div key={item.question}>
+                      <h3 className="text-base font-semibold text-neutral-900">
+                        {item.question}
+                      </h3>
+                      <p className="mt-2 text-base leading-relaxed text-neutral-600">
+                        {item.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
             {seriesNav && (
               <SeriesNav
                 posts={seriesNav.posts}

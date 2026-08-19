@@ -1,13 +1,32 @@
 ---
 date: 06/07/2026
-title: "Customize Agent Workflows with Hooks"
-description: "Use hooks.json to intercept, block, and extend what Cursor and Claude Code agents do: shell gating, auto-formatting, audit logs, and more."
+title: "Cursor hooks.json: JSON Schema, Events & Payloads"
+description: "The complete hooks.json reference: every Cursor and Claude Code hook event, stdin JSON payload shape, exit codes, matchers, and copy-paste recipes."
 image: card.png
 draft: false
 categories:
   - ai
   - cursor
   - engineering
+faq:
+  - question: "Does Cursor have hooks?"
+    answer: |
+      Yes. Cursor shipped lifecycle hooks in 2024 and has iterated heavily since. As of 2026 it is the most mature editor-integrated hook system, covering Tab, Agent, workspace, and cloud agent lifecycles. Configure hooks in .cursor/hooks.json (project) or ~/.cursor/hooks.json (user).
+  - question: "What is the hooks.json schema?"
+    answer: |
+      The current schema (version 1) keys events by name. Each event maps to an array of hook entries with fields like command, type, matcher, failClosed, timeout, and loop_limit. Project hooks live at .cursor/hooks.json relative to the repo root; user hooks live at ~/.cursor/hooks.json.
+  - question: "How do I run tests after every file edit?"
+    answer: |
+      Use an afterFileEdit command hook (or postToolUse in Claude Code) that runs your test command. Keep it fail-open: tests that fail should not block the agent's edit. See the "Run tests after every file edit" recipe in this guide.
+  - question: "What fields does the afterFileEdit stdin payload contain?"
+    answer: |
+      The afterFileEdit payload includes conversation_id, generation_id, hook_event_name, workspace_roots, file_path, and edits (an array of old_string/new_string pairs). Read it as JSON from stdin in your hook script.
+  - question: "Can I use Claude Code hooks in Cursor?"
+    answer: |
+      Yes. Enable third-party skills in Cursor Settings and existing .claude/settings.json hooks are auto-mapped to Cursor event names. Event names map automatically (PreToolUse becomes preToolUse). For full control, maintain a native .cursor/hooks.json alongside Claude config.
+  - question: "What is the difference between Cursor and Claude Code hooks?"
+    answer: |
+      Cursor uses a flat schema in .cursor/hooks.json where each event maps to an array of { command, matcher } entries. Claude Code nests matcher groups with a hooks array inside each group, stored in settings.json. Same idea, different JSON shapes.
 ---
 
 If you've used git hooks, you already understand the idea. A commit hook runs your linter before code lands in history. A pre-push hook blocks you from pushing to `main` by mistake. The hook doesn't replace git. It sits on the lifecycle and enforces policy.
@@ -237,11 +256,41 @@ Matchers filter when a hook runs. They use **JavaScript regex**, not POSIX/grep 
 
 If a matcher is tricky, get the hook working without one first, then tighten it.
 
+### Event payload reference
+
+Every command hook receives a JSON object on stdin. These are the key fields per event, based on the typed definitions in the [cursor-hooks npm package](https://github.com/johnlindquist/cursor-hooks) and Cursor's docs.
+
+All events share four base fields:
+
+```json
+{
+  "conversation_id": "uuid",
+  "generation_id": "uuid",
+  "hook_event_name": "afterFileEdit",
+  "workspace_roots": ["/path/to/repo"]
+}
+```
+
+| Event | stdin payload (key fields) | stdout response |
+|-------|----------------------------|-----------------|
+| `beforeShellExecution` | `command`, `cwd` | `{ "permission": "allow" \| "ask" \| "deny", "user_message", "agent_message" }` |
+| `beforeMCPExecution` | `tool_name`, `tool_input`, `url`?, `command`? | same permission response |
+| `beforeReadFile` | `file_path`, `content`, `attachments` | `{ "permission": "allow" \| "deny" }` |
+| `beforeSubmitPrompt` | `prompt`, `attachments` | `{ "continue": true }` |
+| `afterFileEdit` | `file_path`, `edits` (`{ old_string, new_string }[]`) | none (side-effect only) |
+| `preToolUse` | tool name + input | permission response, plus `updated_input` to rewrite the call |
+| `postToolUse` | tool name + input + output | `additional_context`, `updated_mcp_tool_output` |
+| `subagentStart` / `subagentStop` | subagent type | `subagentStop` can return `followup_message` |
+| `sessionStart` | session info | `additional_context` (fire-and-forget) |
+| `stop` | `status` (`"completed"`, `"aborted"`, `"error"`) | none |
+
+Blocking events (`beforeShellExecution`, `beforeMCPExecution`, `preToolUse`, `subagentStart`) can return `permission: "allow" | "ask" | "deny"` plus optional `user_message` and `agent_message`. Exit code `2` is equivalent to `permission: "deny"`.
+
 ---
 
 ## Hook recipes you can copy today
 
-Each recipe includes the `hooks.json` entry and a hook script. Put scripts in `.cursor/hooks/` and `chmod +x` them. Recipes 1-5 are the essentials; 6-8 come from [official Cursor docs](https://cursor.com/docs/agent/hooks).
+Each recipe includes the `hooks.json` entry and a hook script. Put scripts in `.cursor/hooks/` and `chmod +x` them. Recipes 1-5 are the essentials; 6-8 come from [official Cursor docs](https://cursor.com/docs/agent/hooks); 9 is the run-tests pattern.
 
 ### 1. Block dangerous shell commands
 
@@ -561,6 +610,52 @@ EOF
 exit 0
 ```
 
+### 9. Run tests after every file edit
+
+The most requested hook pattern: make sure the agent's edits didn't break anything. Runs your test suite after every agent write, so failures surface immediately instead of at review time.
+
+**`.cursor/hooks.json`:**
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/run-tests.sh",
+        "timeout": 300
+      }
+    ]
+  }
+}
+```
+
+**`.cursor/hooks/run-tests.sh`:**
+
+```bash
+#!/bin/bash
+input=$(cat)
+file=$(echo "$input" | jq -r '.file_path // empty')
+
+# Only run tests for files that affect behavior, not lockfiles or config
+if echo "$file" | grep -qE '\.(lock|json|md)$' && [ "$file" != "package.json" ]; then
+  exit 0
+fi
+
+# Use the same test command your CI uses
+if [ -f "pnpm-lock.yaml" ]; then
+  pnpm test 2>&1 | tail -40
+elif [ -f "package-lock.json" ]; then
+  npm test 2>&1 | tail -40
+else
+  npm test 2>&1 | tail -40
+fi
+
+exit 0
+```
+
+Leave `failClosed` unset (fail-open): a failing test should be visible, but it shouldn't brick the agent's session. Pair with a `preToolUse` hook if you want to gate *commits* on green tests instead. In Claude Code, use `PostToolUse` with matcher `Edit\|Write` and the same script.
+
 ### Claude Code equivalents
 
 The same policies work in Claude Code with different event names and nested JSON. Examples from [code.claude.com/docs/en/hooks-guide](https://code.claude.com/docs/en/hooks-guide):
@@ -734,6 +829,8 @@ Add audit logging when you need compliance or post-incident review. Add subagent
 Check `.cursor/hooks.json` into git. Document what each hook does in a short README in `.cursor/hooks/`. Review hooks in PRs the same way you'd review CI config.
 
 Rules tell the agent how to write code. Hooks define what it's allowed to do. For production AI coding, you want both.
+
+Hooks are also the enforcement layer inside unattended AI coding loops: a loop that runs tests, gates shell commands, and blocks secrets before going to sleep. See the [Loop Engineering series](/blog/loop-engineering) for the full picture of building those loops.
 
 ---
 

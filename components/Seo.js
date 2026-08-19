@@ -13,6 +13,7 @@ export default function Seo({
   path = '/',
   type = 'website',
   publishedTime,
+  jsonLd = [],
 }) {
   const pageTitle = title ? `${title} — ${SITE_NAME}` : SITE_NAME;
   const url = absoluteUrl(path);
@@ -48,6 +49,14 @@ export default function Seo({
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+
+      {jsonLd.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
     </Head>
   );
 }
