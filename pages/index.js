@@ -17,7 +17,9 @@ import { BlogPostList } from '../components/BlogPostList';
 import { RecentContributions } from '../components/RecentContributions';
 import { ContributionGraph } from '../components/ContributionGraph';
 import SeriesHighlight from '../components/SeriesHighlight';
+import SocialRobotBanner from '../components/SocialRobotBanner';
 import { sortPosts } from '../lib/sort-posts';
+import { externalLinkProps } from '../lib/links';
 import { siteDefaults } from '../lib/site';
 
 const fs = require('fs');
@@ -100,7 +102,7 @@ function ProjectCard({ name, description, href, image, external }) {
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a href={href} {...externalLinkProps(href)} className={className}>
         {content}
       </a>
     );
@@ -149,6 +151,8 @@ export default function Home({ githubData, posts, seriesHighlight }) {
         </div>
       </div>
 
+      <SocialRobotBanner variant="hero" />
+
       {seriesHighlight && (
         <SeriesHighlight
           seriesName="Loop Engineering"
@@ -187,8 +191,7 @@ export default function Home({ githubData, posts, seriesHighlight }) {
       </h2>
       <a
         href="https://github.com/socialrobot-io/agent-kit"
-        target="_blank"
-        rel="noopener noreferrer"
+        {...externalLinkProps('https://github.com/socialrobot-io/agent-kit')}
         className="group mb-4 flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md md:flex-row"
       >
         <div className="relative aspect-[603/268] w-full shrink-0 overflow-hidden bg-neutral-950 md:aspect-auto md:w-[52%] md:min-h-[240px]">
@@ -232,6 +235,7 @@ export default function Home({ githubData, posts, seriesHighlight }) {
       <div className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
         <a
           href="https://github.com/ntgussoni/blitz-guard"
+          {...externalLinkProps('https://github.com/ntgussoni/blitz-guard')}
           className="group flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
         >
           <div className="mb-4 flex aspect-[603/268] w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-950 px-4 py-3">

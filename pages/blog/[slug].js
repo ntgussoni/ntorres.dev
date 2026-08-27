@@ -15,7 +15,9 @@ import ToC from '../../components/TableOfContents';
 import { PostImage } from '../../components/PostImage';
 import SeriesNav from '../../components/SeriesNav';
 import CopyPageMenu from '../../components/CopyPageMenu';
+import SocialRobotBanner from '../../components/SocialRobotBanner';
 import { getPostOgImageUrl, absoluteUrl } from '../../lib/site';
+import { externalLinkProps } from '../../lib/links';
 import profilePic from '../../public/avatar.png';
 
 const getLoopEngineeringSeries = () => {
@@ -64,6 +66,10 @@ const formatCategory = (category) =>
 
 const loadComponents = (folderName) => ({
   img: (props) => <PostImage folderName={folderName} {...props} />,
+  a: (props) => {
+    const { href } = props;
+    return <a {...props} {...externalLinkProps(href)} />;
+  },
   h1: ({ children, ...props }) => (
     <h2 {...props} id={kebabCase(getLabelFromChildren(children))}>
       {children}
@@ -273,6 +279,9 @@ const Post = ({ folderName, post: { metadata, mdxSource }, seriesNav }) => {
           </div>
           <aside className="sticky top-20 z-10 hidden w-44 shrink-0 self-start lg:block">
             <ToC variant="desktop" contentKey={folderName} />
+            <div className="mt-6">
+              <SocialRobotBanner variant="sidebar" />
+            </div>
           </aside>
         </div>
       </article>

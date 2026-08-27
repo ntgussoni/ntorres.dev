@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { absoluteUrl } from '../lib/site';
+import { externalLinkProps } from '../lib/links';
 
 function MarkdownIcon() {
   return (
@@ -62,7 +63,7 @@ function ChevronIcon({ open }) {
   );
 }
 
-function MenuItem({ href, onClick, icon, title, description, external }) {
+function MenuItem({ href, onClick, icon, title, description }) {
   const className =
     'flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors hover:bg-neutral-50';
 
@@ -82,8 +83,7 @@ function MenuItem({ href, onClick, icon, title, description, external }) {
         className={className}
         href={href}
         onClick={onClick}
-        rel={external ? 'noopener noreferrer' : undefined}
-        target={external ? '_blank' : undefined}
+        {...externalLinkProps(href)}
       >
         {content}
       </a>

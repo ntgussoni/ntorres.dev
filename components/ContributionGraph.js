@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import clsx from 'clsx';
+import { externalLinkProps } from '../lib/links';
 
 const GITHUB_PROFILE = 'https://github.com/ntgussoni';
 
@@ -37,8 +38,7 @@ export function ContributionGraph({ calendar, username = 'ntgussoni', className 
         </p>
         <a
           href={GITHUB_PROFILE}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...externalLinkProps(GITHUB_PROFILE)}
           className="text-sm font-medium text-neutral-700 hover:text-neutral-900"
         >
           @{username}
@@ -95,8 +95,7 @@ export function ContributionGraph({ calendar, username = 'ntgussoni', className 
         {' · '}
         <a
           href={GITHUB_PROFILE}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...externalLinkProps(GITHUB_PROFILE)}
           className="text-neutral-500 hover:text-neutral-700"
         >
           View on GitHub

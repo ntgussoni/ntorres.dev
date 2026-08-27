@@ -1,3 +1,5 @@
+import { externalLinkProps } from '../lib/links';
+
 const GITHUB_PROFILE = 'https://github.com/ntgussoni';
 
 function LanguageBadge({ language }) {
@@ -31,8 +33,7 @@ function ContributionRow({ repo }) {
     <li>
       <a
         href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...externalLinkProps(url)}
         className="group flex gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-neutral-50"
       >
         {owner?.avatarUrl && (
@@ -103,12 +104,11 @@ export function RecentContributions({ repositories = [] }) {
           </h3>
         </div>
         <p className="text-sm leading-relaxed text-neutral-600">
-          Open-source work on GitHub —{' '}
+          Open-source work on GitHub:{' '}
           <a
             href={GITHUB_PROFILE}
             className="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-2 hover:decoration-neutral-900"
-            target="_blank"
-            rel="noopener noreferrer"
+            {...externalLinkProps(GITHUB_PROFILE)}
           >
             @ntgussoni
           </a>
@@ -125,8 +125,7 @@ export function RecentContributions({ repositories = [] }) {
         </h3>
         <a
           href={GITHUB_PROFILE}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...externalLinkProps(GITHUB_PROFILE)}
           className="text-xs font-medium text-neutral-600 transition-colors hover:text-neutral-900"
         >
           View profile →
