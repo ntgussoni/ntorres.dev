@@ -190,7 +190,7 @@ Use the narrowest event. If you only care about shell commands, use `beforeShell
 
 ### Cloud agents
 
-[Cloud agents](https://cursor.com/agents) run **project** hooks from `.cursor/hooks.json` in your repo. They do **not** see user-level `~/.cursor/hooks.json`. Command hooks work; prompt hooks do not (no auth wiring in the cloud VM). Several events are IDE-only and do not fire in cloud agents: `sessionStart`, `sessionEnd`, `beforeSubmitPrompt`, Tab hooks, `workspaceOpen`, and (currently) `beforeMCPExecution`, `afterMCPExecution`, `stop`, `afterAgentResponse`, `afterAgentThought`.
+[Cloud agents](https://cursor.com/agents) run **project** hooks from `.cursor/hooks.json` in your repo. They do **not** see user-level `~/.cursor/hooks.json`. Command hooks work; prompt hooks do not (no auth wiring in the cloud VM). Events that do not fire in cloud agents: `sessionStart` and `sessionEnd` (session lifecycle is tied to the IDE session), `beforeMCPExecution` and `afterMCPExecution`, the Tab hooks (`beforeTabFileRead`, `afterTabFileEdit`), and `workspaceOpen`. Everything else runs in cloud agents, including `beforeSubmitPrompt`, `preCompact`, `stop`, `afterAgentResponse`, and `afterAgentThought`.
 
 ### Command hooks: stdin and stdout
 
