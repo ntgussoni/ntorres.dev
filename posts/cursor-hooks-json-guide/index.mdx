@@ -656,6 +656,8 @@ exit 0
 
 Leave `failClosed` unset (fail-open): a failing test should be visible, but it shouldn't brick the agent's session. Pair with a `preToolUse` hook if you want to gate *commits* on green tests instead. In Claude Code, use `PostToolUse` with matcher `Edit\|Write` and the same script.
 
+This recipe now has a standalone guide with the stdin payload deep-dive, monorepo, agent-context, and full-suite variants: [Cursor hooks: run tests after every file edit](/blog/cursor-hooks-run-tests-after-file-edit).
+
 ### Claude Code equivalents
 
 The same policies work in Claude Code with different event names and nested JSON. Examples from [code.claude.com/docs/en/hooks-guide](https://code.claude.com/docs/en/hooks-guide):

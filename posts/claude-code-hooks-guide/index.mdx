@@ -220,6 +220,8 @@ exit 0
 
 Keep test hooks fail-open. A failing test should be visible, not session-breaking. To gate merges on green tests, enforce in CI instead.
 
+The Cursor equivalent uses `afterFileEdit` or `postToolUse` with a `Write` matcher; see [Cursor hooks: run tests after every file edit](/blog/cursor-hooks-run-tests-after-file-edit) for the payload details and monorepo variants.
+
 ### 3. Desktop notification when Claude needs you
 
 **`.claude/settings.json`:**

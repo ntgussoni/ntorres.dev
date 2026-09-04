@@ -1,0 +1,345 @@
+---
+date: 04/09/2026
+title: "Cursor hooks: run tests after every file edit"
+description: "The working recipe to auto-run your test suite after every Cursor agent file edit: afterFileEdit vs postToolUse, the stdin payload, fail-open defaults, and monorepo and Claude Code variants."
+draft: false
+categories:
+  - ai
+  - cursor
+  - engineering
+faq:
+  - question: "How do I run tests after every file edit in Cursor?"
+    answer: |
+      Add an afterFileEdit command hook to .cursor/hooks.json that calls a script running your test suite, for example "pnpm test". The script reads the event JSON from stdin, uses .file_path to skip files that cannot break tests, and exits 0 so it stays fail-open. Results show up in the Hooks output channel (Cmd+Shift+P then "Hooks").
+  - question: "Does Cursor have a postToolUse hook like Claude Code?"
+    answer: |
+      Yes. Cursor exposes postToolUse and it fires after every successful agent tool call, not just file writes. To make it behave like the Claude Code Edit|Write recipe, add a matcher such as "Write". The extra capability postToolUse has over afterFileEdit is that it can return additional_context, which is injected into the conversation so the agent can see test failures and fix them.
+  - question: "Should I use afterFileEdit or postToolUse to run tests in Cursor?"
+    answer: |
+      Use afterFileEdit when you only need a safety net: it fires on agent file writes and cannot feed context back to the model. Use postToolUse with a "Write" matcher when you want the agent to see the failure output through additional_context and correct its own work. Do not configure both on the same writes, or you will run the test suite twice per edit.
+  - question: "How do I run tests for only the package I changed in a monorepo?"
+    answer: |
+      Walk up from the edited file's directory until you find a package.json, cd into that package, and run its own test script if one is declared. Skip markdown, lockfiles, images, and json files other than package.json. Files outside any package fall back to the root suite.
+  - question: "Why is my Cursor test hook not running?"
+    answer: |
+      Check that hooks.json sits at the repo root as .cursor/hooks.json with version 1, that your script has a shebang and the execute bit, and that jq is on PATH. afterFileEdit only fires on agent file writes, not on manual edits or files changed by external processes. Cursor reloads hooks.json on save; validation errors show as toasts, and debug output lands in the Hooks output channel. Cloud agents run project hooks but ignore user-level ~/.cursor/hooks.json and do not support prompt hooks.
+  - question: "How do I run tests after every edit in Claude Code instead?"
+    answer: |
+      Claude Code stores hooks in settings.json with a nested schema. Add a PostToolUse matcher group for "Edit|Write" with a command hook that runs your test script and keep it fail-open so failing tests do not break the session. See the Claude Code hooks guide for the full reference.
+---
+
+If you asked an agent to refactor a utility function and the first time you learned a test broke was 20 minutes later in CI, this recipe is for you. A Cursor hook can run your test suite after every agent file edit, so failures surface the moment they happen, while the agent is still in context and can fix them.
+
+If you came from Claude Code, your muscle memory says `PostToolUse` with an `Edit|Write` matcher. Cursor has a `postToolUse` event too, but it fires after every tool call, and that is where the naive version of this recipe gets noisy. This guide covers which event to wire, what the stdin payload gives you, the copy-paste script, and the variants for monorepos and for letting the agent see its own failures.
+
+For every event, matcher, and payload field in one place, see the [Cursor hooks.json reference](/blog/cursor-hooks-json-guide).
+
+---
+
+## Which event fires when the agent edits a file
+
+Three events look like candidates for test-on-edit. They differ in when they fire and in what they can do with the result.
+
+| Event | Fires when | Can it feed context to the agent? | Right use |
+|-------|-----------|-----------------------------------|-----------|
+| `afterFileEdit` | An agent file write lands | No, side-effect only | Safety net: run tests, log results |
+| `postToolUse` (no matcher) | Every successful agent tool call | Yes, via `additional_context` | Too noisy for test-on-edit |
+| `postToolUse` matcher `Write` | Agent `Write` tool calls | Yes, via `additional_context` | Agent sees failures and self-corrects |
+| `stop` | The agent finishes a turn | No | Full suite once per turn, not per file |
+
+The decision rule:
+
+- You just want a CI-style safety net: use `afterFileEdit`. It fires on file writes, gives you the changed path, and stays out of the agent's way.
+- You want the agent to notice a red test and fix it before the turn ends: use `postToolUse` with a `Write` matcher and return `additional_context` with the failure summary.
+- Your suite is slow: skip per-edit runs and run the full suite from a `stop` hook instead.
+
+Do not configure `afterFileEdit` and `postToolUse` matcher `Write` at the same time on the same writes, or every edit runs your suite twice.
+
+---
+
+## What the afterFileEdit payload contains
+
+Every command hook receives a JSON object on stdin. `afterFileEdit` events carry the shared base fields plus the file that changed and the edits themselves:
+
+```json
+{
+  "conversation_id": "4d2a2f1c-8b3e-4c7a-9f0d-1e5a6b7c8d9e",
+  "generation_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+  "hook_event_name": "afterFileEdit",
+  "workspace_roots": ["/Users/you/code/my-app"],
+  "file_path": "/Users/you/code/my-app/src/utils/format.ts",
+  "edits": [
+    {
+      "old_string": "export function formatDate(d: Date) {",
+      "new_string": "export function formatDate(d: Date, tz?: string) {"
+    }
+  ]
+}
+```
+
+For a test hook the field that matters is `file_path`. It lets the script skip files that cannot break anything, like docs, lockfiles, and images. The `edits` array is useful when you want finer control, for example skipping writes that only touch whitespace by comparing `old_string` and `new_string`.
+
+A matcher can narrow `afterFileEdit` further by tool type (`Write` for agent writes, `TabWrite` for tab writes). Most projects do not need one, because the event itself only fires on writes.
+
+---
+
+## The recipe
+
+Project hooks live at `.cursor/hooks.json` relative to the repo root. Command paths inside it are also relative to the repo root, and hook scripts run with the repo root as their working directory.
+
+**`.cursor/hooks.json`:**
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/run-tests.sh",
+        "timeout": 300
+      }
+    ]
+  }
+}
+```
+
+**`.cursor/hooks/run-tests.sh`:**
+
+```bash
+#!/bin/bash
+# Run the test suite after an agent file edit. Fail-open: test results
+# never block the agent, they land in the Hooks output channel.
+
+input=$(cat)
+file=$(printf '%s' "$input" | jq -r '.file_path // empty')
+[ -z "$file" ] && exit 0
+
+# Skip files that cannot break tests: docs, lockfiles, images.
+case "$file" in
+  *.md|*.lock|*.png|*.jpg|*.jpeg|*.gif|*.svg) exit 0 ;;
+  *.json) [ "$(basename "$file")" = "package.json" ] || exit 0 ;;
+esac
+
+echo "afterFileEdit: running tests for $file" 1>&2
+
+# Use the same test command your CI uses.
+if [ -f pnpm-lock.yaml ]; then
+  pnpm test 2>&1 | tail -60
+elif [ -f yarn.lock ]; then
+  yarn test 2>&1 | tail -60
+else
+  npm test 2>&1 | tail -60
+fi
+
+exit 0
+```
+
+Make the script executable: `chmod +x .cursor/hooks/run-tests.sh`. The script needs `jq` on PATH (`brew install jq` on macOS). Cursor reloads `hooks.json` on save, and a validation error shows as a toast. To watch runs and failures, open the Hooks output channel with Cmd+Shift+P, then type "Hooks".
+
+Two things worth knowing about the default behavior:
+
+- **Exit codes are fail-open.** Unless a hook sets `"failClosed": true`, any non-zero exit logs the error and continues. For `afterFileEdit` there is nothing to block anyway: it is an observe-only event, so a red suite can never brick the agent session. That is why the script always exits 0 and just prints output.
+- **The default timeout is short.** Hooks that run long get killed. Set an explicit `timeout` that covers your slowest suite, in seconds.
+
+---
+
+## Variant A: run only the package you changed (monorepo)
+
+In a monorepo, running the root suite after every edit is slow and noisy. Walk up from the edited file until you find a `package.json`, then run that package's own test script. Files outside any package fall back to the root suite.
+
+```bash
+#!/bin/bash
+input=$(cat)
+file=$(printf '%s' "$input" | jq -r '.file_path // empty')
+[ -z "$file" ] && exit 0
+
+case "$file" in
+  *.md|*.lock|*.png|*.jpg|*.jpeg|*.gif|*.svg) exit 0 ;;
+  *.json) [ "$(basename "$file")" = "package.json" ] || exit 0 ;;
+esac
+
+# Find the nearest package.json above the edited file.
+pkg_dir=""
+dir=$(dirname "$file")
+while [ "$dir" != "/" ] && [ -z "$pkg_dir" ]; do
+  if [ -f "$dir/package.json" ]; then
+    pkg_dir="$dir"
+  fi
+  dir=$(dirname "$dir")
+done
+[ -z "$pkg_dir" ] && pkg_dir=$(pwd)
+
+cd "$pkg_dir" || exit 0
+
+# No test script in this package: nothing to run.
+if ! jq -e '.scripts.test // empty' package.json >/dev/null 2>&1; then
+  echo "afterFileEdit: no test script in $pkg_dir, skipping" 1>&2
+  exit 0
+fi
+
+if [ -f pnpm-lock.yaml ]; then
+  pnpm test 2>&1 | tail -60
+elif [ -f yarn.lock ]; then
+  yarn test 2>&1 | tail -60
+else
+  npm test 2>&1 | tail -60
+fi
+exit 0
+```
+
+The lockfile check now runs inside the package directory, so workspace packages keep their own package manager without extra plumbing.
+
+---
+
+## Variant B: let the agent see the failure and fix it
+
+`afterFileEdit` output goes to the Hooks channel, not to the model. If you want the agent to notice a red test during the turn and fix it, switch to `postToolUse` with a `Write` matcher and return `additional_context`. Cursor merges that context into the conversation.
+
+**`.cursor/hooks.json`:**
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "matcher": "Write",
+        "command": ".cursor/hooks/test-and-report.sh",
+        "timeout": 300
+      }
+    ]
+  }
+}
+```
+
+**`.cursor/hooks/test-and-report.sh`:**
+
+```bash
+#!/bin/bash
+# Run tests after a Write tool call. On failure, return additional_context
+# so the agent sees what broke and can fix it in the same turn.
+
+input=$(cat)
+file=$(printf '%s' "$input" | jq -r '.file_path // empty')
+
+if [ -f pnpm-lock.yaml ]; then
+  cmd=(pnpm test)
+elif [ -f yarn.lock ]; then
+  cmd=(yarn test)
+else
+  cmd=(npm test)
+fi
+
+if ! "${cmd[@]}" >/tmp/cursor-hook-test.log 2>&1; then
+  summary=$(tail -20 /tmp/cursor-hook-test.log)
+  jq -n --arg ctx "Tests failed after editing $file. Output:" \
+    --arg out "$summary" \
+    '{additional_context: ($ctx + "\n" + $out)}'
+fi
+
+exit 0
+```
+
+Because `postToolUse` fires once per tool call, an agent that rewrites five files in a row triggers five suite runs. Keep this variant for fast suites, or accept the runs as the cost of having the agent self-correct. Slow suites belong in Variant C.
+
+---
+
+## Variant C: run the full suite when the turn ends
+
+For a large suite, per-edit runs make the agent sluggish. Run everything once when the turn completes instead. The `stop` event reports a `status` of `completed`, `aborted`, or `error`; gate on `completed` so you do not test after an aborted turn.
+
+**`.cursor/hooks.json`:**
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "stop": [
+      {
+        "command": ".cursor/hooks/run-full-suite.sh",
+        "timeout": 600
+      }
+    ]
+  }
+}
+```
+
+**`.cursor/hooks/run-full-suite.sh`:**
+
+```bash
+#!/bin/bash
+input=$(cat)
+status=$(printf '%s' "$input" | jq -r '.status // empty')
+[ "$status" = "completed" ] || exit 0
+
+if [ -f pnpm-lock.yaml ]; then
+  pnpm test 2>&1 | tail -80
+elif [ -f yarn.lock ]; then
+  yarn test 2>&1 | tail -80
+else
+  npm test 2>&1 | tail -80
+fi
+exit 0
+```
+
+---
+
+## Claude Code equivalent
+
+The same policy in Claude Code uses `PostToolUse` with an `Edit|Write` matcher, stored in `.claude/settings.json` with Claude's nested schema:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/run-tests.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Claude Code fires the matcher only for the matched tools, which is why the recipe that works there feels narrow. Cursor's `postToolUse` without a matcher fires for every tool, so translate the matcher when you move a hook across. The [Claude Code hooks guide](/blog/claude-code-hooks-guide) is the full reference for the other side.
+
+---
+
+## Gotchas
+
+- **It fires on agent writes, not on your hands.** Manual edits, Cmd+S saves, and files rewritten by external processes do not trigger `afterFileEdit`. Only agent file writes do.
+- **One run per write call.** An agent that edits five files fires the hook five times. If that feels wasteful, use the `stop` variant.
+- **The default timeout is a few seconds.** Long suites get killed mid-run. Always set an explicit `timeout`.
+- **`jq` must exist in the hook environment.** macOS does not ship it. Install it, or parse stdin with `node -e` if you know Node is present.
+- **Scripts need a shebang and the execute bit.** `#!/bin/bash` plus `chmod +x`, or the hook fails silently.
+- **Matchers are JavaScript regex.** If you filter by file or tool, use `\s`, not `[[:space:]]`.
+- **Do not double-wire the recipe.** If Cursor's third-party skills feature is mapping your `.claude/settings.json` hooks onto Cursor events and you also add a native `afterFileEdit` hook, you can get two suite runs per edit. Keep one source of truth.
+- **Cloud agents have limits.** Project hooks from `.cursor/hooks.json` run in cloud agents. User-level `~/.cursor/hooks.json` does not apply there, and prompt hooks are unsupported in the cloud VM.
+- **Windows.** Shebang scripts do not run on Windows; use `.cmd` or an explicit interpreter.
+
+---
+
+## When to use which variant
+
+| Situation | Setup |
+|-----------|-------|
+| Fast suite, small repo | `afterFileEdit`, run the whole suite |
+| Fast suite, you want the agent to self-correct | `postToolUse` matcher `Write`, return `additional_context` |
+| Monorepo | `afterFileEdit` with the nearest-package script |
+| Slow suite | `stop` hook, full suite once per completed turn |
+
+The pattern generalizes beyond tests: the same hook can format the edited file, run the type checker, or lint only the files the agent touched. Check your `.cursor/hooks.json` into git and document each script in `.cursor/hooks/`, the same way you would review CI config. Hooks are also the enforcement layer inside unattended coding loops; see the [Loop Engineering series](/blog/loop-engineering) for that bigger picture.
+
+---
+
+## Sources
+
+- [Cursor Hooks documentation](https://cursor.com/docs/agent/hooks)
+- [Cursor Hooks reference: cursor-hooks npm package](https://github.com/johnlindquist/cursor-hooks)
+- [Cursor third-party hooks (Claude compatibility)](https://cursor.com/docs/reference/third-party-hooks)
+- [Claude Code hooks guide](https://code.claude.com/docs/en/hooks-guide)
