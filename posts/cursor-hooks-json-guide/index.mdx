@@ -17,7 +17,7 @@ faq:
       The current schema (version 1) keys events by name. Each event maps to an array of hook entries with fields like command, type, matcher, failClosed, timeout, and loop_limit. Project hooks live at .cursor/hooks.json relative to the repo root; user hooks live at ~/.cursor/hooks.json.
   - question: "How do I run tests after every file edit?"
     answer: |
-      Use an afterFileEdit command hook (or postToolUse in Claude Code) that runs your test command. Keep it fail-open: tests that fail should not block the agent's edit. See the "Run tests after every file edit" recipe in this guide.
+      Use an afterFileEdit command hook that runs your test command, and keep it fail-open so a failing test does not block the agent's edit. The full recipe, with the stdin payload, the monorepo variant, and the postToolUse alternative that shows failures back to the agent, lives in the dedicated guide at ntorres.dev/blog/cursor-hooks-run-tests-after-file-edit
   - question: "What fields does the afterFileEdit stdin payload contain?"
     answer: |
       The afterFileEdit payload includes conversation_id, generation_id, hook_event_name, workspace_roots, file_path, and edits (an array of old_string/new_string pairs). Read it as JSON from stdin in your hook script.
@@ -612,55 +612,13 @@ exit 0
 
 ### 9. Run tests after every file edit
 
-The most requested hook pattern: make sure the agent's edits didn't break anything. Runs your test suite after every agent write, so failures surface immediately instead of at review time.
+This one is requested often enough that it grew into its own guide, with the stdin payload deep dive, the monorepo variant, the version where the agent sees its own failures, and the Claude Code equivalent: [Cursor hooks: run tests after every file edit](/blog/cursor-hooks-run-tests-after-file-edit).
 
-**`.cursor/hooks.json`:**
-
-```json
-{
-  "version": 1,
-  "hooks": {
-    "afterFileEdit": [
-      {
-        "command": ".cursor/hooks/run-tests.sh",
-        "timeout": 300
-      }
-    ]
-  }
-}
-```
-
-**`.cursor/hooks/run-tests.sh`:**
-
-```bash
-#!/bin/bash
-input=$(cat)
-file=$(echo "$input" | jq -r '.file_path // empty')
-
-# Only run tests for files that affect behavior, not lockfiles or config
-if echo "$file" | grep -qE '\.(lock|json|md)$' && [ "$file" != "package.json" ]; then
-  exit 0
-fi
-
-# Use the same test command your CI uses
-if [ -f "pnpm-lock.yaml" ]; then
-  pnpm test 2>&1 | tail -40
-elif [ -f "package-lock.json" ]; then
-  npm test 2>&1 | tail -40
-else
-  npm test 2>&1 | tail -40
-fi
-
-exit 0
-```
-
-Leave `failClosed` unset (fail-open): a failing test should be visible, but it shouldn't brick the agent's session. Pair with a `preToolUse` hook if you want to gate *commits* on green tests instead. In Claude Code, use `PostToolUse` with matcher `Edit\|Write` and the same script.
-
-This recipe now has a standalone guide with the stdin payload deep-dive, monorepo, agent-context, and full-suite variants: [Cursor hooks: run tests after every file edit](/blog/cursor-hooks-run-tests-after-file-edit).
+The short version: an `afterFileEdit` command hook that runs your test command and exits 0. Leave `failClosed` unset (fail-open) so a red test is visible without bricking the agent's session. Pair it with a `preToolUse` hook if you would rather gate *commits* on green tests.
 
 ### Claude Code equivalents
 
-The same policies work in Claude Code with different event names and nested JSON. Examples from [code.claude.com/docs/en/hooks-guide](https://code.claude.com/docs/en/hooks-guide):
+The same policies work in Claude Code with different event names and nested JSON. Examples from [code.claude.com/docs/en/hooks-guide](https://code.claude.com/docs/en/hooks-guide), and the [Claude Code hooks guide](/blog/claude-code-hooks-guide) covers the settings.json schema and every event in depth:
 
 | Goal | Cursor event | Claude Code event |
 |------|--------------|-------------------|

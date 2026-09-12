@@ -29,6 +29,13 @@ export default function LoopEngineeringHub({ posts }) {
           >
             Cursor hooks.json guide
           </a>{' '}
+          or the{' '}
+          <a
+            href="/blog/claude-code-hooks-guide"
+            className="font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-4 hover:decoration-neutral-900"
+          >
+            Claude Code hooks guide
+          </a>{' '}
           for the guardrails, then come back for the loop architecture.
         </p>
       </header>

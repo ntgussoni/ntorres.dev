@@ -35,6 +35,19 @@ If you came from Claude Code, your muscle memory says `PostToolUse` with an `Edi
 
 For every event, matcher, and payload field in one place, see the [Cursor hooks.json reference](/blog/cursor-hooks-json-guide).
 
+**The short version.** Add this to `.cursor/hooks.json`, then point `command` at a script that runs your test suite and exits 0:
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [{ "command": ".cursor/hooks/run-tests.sh", "timeout": 300 }]
+  }
+}
+```
+
+Everything below is the why and the variants: which event to wire, what the payload gives you, and the script itself.
+
 ---
 
 ## Which event fires when the agent edits a file
