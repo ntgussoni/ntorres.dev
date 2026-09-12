@@ -1,7 +1,7 @@
 ---
 date: 27/08/2026
-title: "Grok Bot guide: pricing, Discord, Telegram & Cursor"
-description: "Grok Bot is xAI's always-on AI agent with its own computer. Setup steps, pricing, the official Telegram bot, why there is no Discord bot, and how it compares to Claude."
+title: "Grok Bot (2026): pricing, plans, limits, Discord & Telegram"
+description: "Grok Bot is xAI's always-on agent with its own computer. Every plan that unlocks it (from $20 Cursor Pro), the macOS, Windows, Linux, iOS and Android builds, what the limits actually are, the official Telegram bot, and why Discord has no official one."
 image: card.png
 draft: false
 categories:
@@ -11,7 +11,7 @@ categories:
 faq:
   - question: "Is Grok Bot free?"
     answer: |
-      No. Grok Bot is a paid feature. The current get-started docs require SuperGrok Plus, SuperGrok Heavy, or a Cursor Pro+, Ultra, or Teams Standard or Premium plan. The August 11 launch announcement also named plain SuperGrok and Cursor Pro. Grok chat itself stays free within usage limits.
+      No, and there is no standalone Grok Bot subscription. It launched in beta on August 11, 2026 for SuperGrok, SuperGrok Plus, SuperGrok Heavy, Cursor Pro, Pro+ and Ultra, and on August 26, 2026 xAI expanded it to Cursor Pro and all Cursor Teams plans. The cheapest route in is a base Cursor Pro plan at $20 a month. Grok chat itself stays free within usage limits.
   - question: "What is the official Grok bot on Telegram?"
     answer: |
       The official Grok bot on Telegram is @GrokAI. xAI launched it for Telegram Premium subscribers, who get Grok 3 for free without needing an X account. Open t.me/GrokAI and press Start. Bots with similar names are third-party and not endorsed by xAI.
@@ -23,13 +23,19 @@ faq:
       There is no official one-click invite. You can invite a community bot after checking its permissions and privacy policy, or build your own: create a Discord app in the Developer Portal, enable the Message Content Intent, get an API key at console.x.ai, and point an OpenAI-compatible SDK at https://api.x.ai/v1.
   - question: "Can I use Grok Bot with Cursor?"
     answer: |
-      Yes. Grok Bot is included with Cursor Pro+, Ultra, and Teams Standard or Premium plans, and you sign in with your Cursor account. Cursor also lists Grok models such as grok-code-fast in its model picker. Grok Bot usage is separate from your Cursor and Grok quotas.
+      Yes. Grok Bot is included with every paid Cursor plan since August 26, 2026: base Cursor Pro at $20 a month, plus Pro+, Ultra, Teams Standard and Teams Premium. You sign in with your Cursor account. Cursor also lists Grok models such as grok-code-fast in its model picker. Grok Bot usage is separate from your Cursor and Grok quotas.
   - question: "How much does Grok cost?"
     answer: |
       Grok chat is free within limits. Paid plans: SuperGrok Lite at about $10 a month, SuperGrok at $30, SuperGrok Plus at $100, and SuperGrok Heavy at about $300, plus X Premium at $8 and X Premium+ at $40, which bundle Grok access. API pricing for grok-4.6 starts at $2 per million input tokens.
   - question: "What platforms does Grok Bot run on?"
     answer: |
-      Grok Bot has desktop apps for macOS and Windows, plus an iOS app. There is no Linux desktop app and no Android app yet. Grok Bot requires cloud data storage, and Cursor accounts on Legacy Privacy Mode must move to a supported data setting first.
+      Desktop apps for macOS, Windows and Linux, with Linux shipped as AppImage, deb and rpm for x64 and arm64, plus mobile apps for iPhone on iOS 18 or later and Android 9 or later. Android shipped in early September 2026. The mobile app is built for phones, so there is no iPad version. Grok Bot requires cloud data storage, and Cursor accounts on Legacy Privacy Mode must move to a supported data setting first.
+  - question: "What are Grok Bot limits?"
+    answer: |
+      Grok Bot has its own usage pool, separate from your Grok and Cursor plans, so handing work to a Bot does not draw down your chat quota. xAI does not publish a per-plan number of tasks or runs, so the in-app usage view is the authoritative meter. Numbers circulating online, such as 50 Bots, 50 routines and a 20 run record cap, are community reports that xAI has not confirmed.
+  - question: "Is Grok Bot on Android?"
+    answer: |
+      Yes, Android support shipped in early September 2026 and requires Android 9 or later. The phone app connects to the same Bots, conversations, routines and cloud computer as the desktop app, so work keeps running when the app is closed. There is no tablet build.
   - question: "What is the difference between Grok and Grok Bot?"
     answer: |
       Grok is the chatbot on grok.com, X, and the mobile apps. Grok Bot is a separate product: always-on agents with their own cloud computer that sign into your tools and work 24/7. Grok Bot launched in early beta on August 11, 2026.
@@ -37,7 +43,7 @@ faq:
 
 Grok Bot is xAI's answer to the "give it real work" agent. Launched in early beta on August 11, 2026, it is not another chat window. Each Bot gets a cloud computer of its own, signs into the tools you already use, and keeps working while you sleep.
 
-The searches around "grok bot" cluster into a few questions: what is it, is it free, how do I set it up, where is the official Telegram bot, why is there no Discord bot, and how does it compare to Claude. This guide answers all of them as of August 27, 2026, with primary sources at the end.
+The searches around "grok bot" cluster into a few questions: what is it, is it free, which plan unlocks it, where do I download it, what are the limits, where is the official Telegram bot, why is there no Discord bot, and how does it compare to Claude. This guide answers all of them, updated September 12, 2026, with primary sources at the end.
 
 ## What is Grok Bot
 
@@ -62,7 +68,7 @@ Grok Bot is a paid feature, bundled with the mid and upper Grok plans and with p
 | SuperGrok ($30/mo) | Yes, per launch announcement |
 | SuperGrok Plus ($100/mo) | Yes |
 | SuperGrok Heavy ($300/mo) | Yes |
-| Cursor Pro | Yes, per launch announcement |
+| Cursor Pro | Yes, since August 26, 2026 |
 | Cursor Pro+, Ultra | Yes |
 | Cursor Teams Standard, Premium | Yes |
 | Enterprise | Waitlist |
@@ -123,7 +129,30 @@ Grok chat itself, by contrast, is free within generous limits. The current consu
 | SuperGrok Heavy | ~$300/mo | Top usage tier |
 | X Premium / Premium+ | $8 / $40/mo | Grok bundled with X subscriptions |
 
-So the answer to "is grok bot free" is: the bot is not, the chatbot is. If you only want Grok in chat, the free tier works. If you want agents with their own computer, the practical entry point is a paid Grok plan or a Cursor Pro+ plan you already have.
+So the answer to "is grok bot free" is: the bot is not, the chatbot is. If you only want Grok in chat, the free tier works.
+
+The access map moved twice in August 2026. At the August 11 launch, xAI named SuperGrok, SuperGrok Plus, SuperGrok Heavy and the paid Cursor plans. On August 26 it expanded Grok Bot to Cursor Pro and all Cursor Teams plans, which makes a base Cursor Pro plan at $20 a month the cheapest route into the product, and the reason searches for "grok bot 20 dollars" and "cheapest way to use grok bot" exist. There is still no standalone Grok Bot subscription.
+
+## Grok Bot download and platforms
+
+Official builds come from two places: [cursor.com/download/bot](https://cursor.com/download/bot) for desktop, and the App Store or Google Play for phones.
+
+| Platform | Build | Notes |
+|----------|-------|-------|
+| macOS | Desktop app | Official download |
+| Windows | Desktop app | Official download |
+| Linux | Desktop app | AppImage, deb and rpm, x64 and arm64 |
+| iPhone | Mobile app | iOS 18 or later |
+| Android | Mobile app | Android 9 or later, shipped September 2026 |
+| iPad | None | The mobile app is built for phones |
+
+The download itself is free and access is gated by the plan: you sign in with the account that carries SuperGrok or Cursor, and the Bot then runs in xAI's cloud rather than on the machine you installed it on. That is why the desktop app is a control surface, not the compute.
+
+## Grok Bot limits and usage
+
+xAI's launch post is explicit that each Bot "comes with its own usage, separate from your Grok and Cursor plans", so Bot work does not consume your chat or editor quota. What xAI does not publish is a per-plan number: the pricing pages list plans, not task counts, and the numbers move with each access expansion.
+
+Your own meter is the usage view in the app, which breaks consumption out alongside your other Grok surfaces. Third-party figures circulate, including 50 Bots, 50 routines, a 20 run record cap and a 10 minute recording limit, and xAI has not confirmed any of them. Treat them as community reports and check your own usage screen before planning around a cap.
 
 ## Grok bot on Telegram: the official one
 
@@ -194,18 +223,17 @@ Cost is trivial for a small server. Grok 4.6 API pricing is $2 per million input
 Two separate things share this keyword cluster:
 
 1. **Grok models inside Cursor.** Cursor lists xAI models such as grok-code-fast in its model picker, so you can code with Grok without leaving the editor. Check the model settings for Grok, or add it from your Grok account if it is not listed.
-2. **Grok Bot bundled with Cursor plans.** Grok Bot is available to Cursor Pro+, Ultra, and Teams Standard and Premium, and you sign in with your Cursor account. If you already pay for one of those, you get Grok Bot without a separate SuperGrok subscription, and its usage does not draw from your Cursor quota.
+2. **Grok Bot bundled with Cursor plans.** Grok Bot is available to every paid Cursor plan, which since August 26, 2026 includes base Cursor Pro at $20 a month along with Pro+, Ultra, and Teams Standard and Premium, and you sign in with your Cursor account. If you already pay for one of those, you get Grok Bot without a separate SuperGrok subscription, and its usage does not draw from your Cursor quota.
 
-For Cursor users this is the cheapest path to the agent: a plan you already pay for unlocks the always-on Bot, and the shared Cursor sign-in means one less account to manage.
+For Cursor users this is the cheapest path to the agent: a plan you already pay for unlocks the always-on Bot, and the shared Cursor sign-in means one less account to manage. If you also want the editor side of Cursor under control, the [Cursor hooks.json guide](/blog/cursor-hooks-json-guide) covers the hook layer that decides what an agent is allowed to change.
 
 ## Grok bot on Android
 
-The searches for "grok bot android" mix two products again:
+Grok Bot is on Android, since early September 2026. The [mobile docs](https://docs.x.ai/grok-bot/mobile) list iPhone on iOS 18 or later, or a phone on Android 9 or later, and the Cursor team announced the Android rollout on September 2, 2026.
 
-- **Grok the app** is on Android. The xAI download pages list iOS and Android, and grok.com works on mobile browsers. You get chat, Imagine image generation, and voice.
-- **Grok Bot the agent** is not on Android yet. The desktop apps cover macOS and Windows, and iOS is the only mobile surface, with no Android timeline announced.
+What you get on a phone is the same product: the same Bots, the same conversations, the same routines and connectors, and the same shared cloud computer as the desktop app. You can start work, answer a Bot's questions, approve a step, and review results away from your desk while the work keeps running in the cloud with the app closed.
 
-So on Android today, you get Grok, not Grok Bot. The Bot arrives on Android when xAI ships it.
+Two limits worth knowing: Grok Bot is built for phones, so there is no iPad or tablet build, and the Android app needs Android 9 or newer.
 
 ## Grok Bot vs Claude
 
@@ -221,12 +249,14 @@ If you already run Claude Code, the [Claude Code hooks guide](/blog/claude-code-
 
 ## Bottom line
 
-Grok Bot is real, it is paid, and it is early. It ships with the upper Grok tiers and paid Cursor plans, it runs on macOS, Windows, and iOS, the official Telegram bot is @GrokAI, Discord has no official bot, and the Cursor route is the cheapest way in if you already pay for an editor. Grok answers, Grok Bot does, and as of August 2026 the difference is finally worth paying for.
+Grok Bot is real, it is paid, and it is early. It ships with the upper Grok tiers and every paid Cursor plan, and since late August 2026 the cheapest route in is base Cursor Pro at $20 a month. It runs on macOS, Windows, Linux, iOS and, since September 2026, Android. The official Telegram bot is @GrokAI, Discord still has no official bot, and the Cursor route stays the cheapest way in if you already pay for an editor. Grok answers, Grok Bot does, and the difference is finally worth paying for.
 
 ## Sources
 
-- [x.ai: Introducing Grok Bot](https://x.ai/news/introducing-grok-bot), August 11, 2026
-- [SpaceXAI Docs: Grok Bot get started](https://docs.x.ai/grok-bot/get-started), updated August 20, 2026
+- [x.ai: Introducing Grok Bot](https://x.ai/news/introducing-grok-bot), August 11, 2026, plus the later "Grok Bot for more plans" and "Grok Bot for Enterprise" announcements
+- [Cursor: Download Grok Bot](https://cursor.com/download/bot), macOS, Windows and Linux builds
+- [SpaceXAI Docs: Grok Bot for Mobile](https://docs.x.ai/grok-bot/mobile), iOS 18 and Android 9 requirements, phones only
+- [SpaceXAI Docs: Grok Bot get started](https://docs.x.ai/grok-bot/get-started), access requirements
 - [x.ai Pricing](https://x.ai/pricing), consumer and API plans, August 2026
 - [t.me/GrokAI](https://t.me/GrokAI), official Telegram bot
 - [x.ai API](https://x.ai/api), grok-4.6 token pricing
@@ -234,4 +264,4 @@ Grok Bot is real, it is paid, and it is early. It ships with the upper Grok tier
 - Third-party price trackers for SuperGrok Lite and Heavy: [suprmind.ai](https://suprmind.ai/hub/grok/pricing/), [felloai.com](https://felloai.com/grok-pricing/)
 - Third-party model comparisons: [Admix](https://admix.software/compare/grok-vs-claude), [MindStudio](https://www.mindstudio.ai/blog/grok-4-5-vs-claude-opus-4-8-agentic-coding)
 
-Prices and availability verified against primary sources on August 27, 2026. xAI changes plans often; the live pages are the source of truth.
+Prices and availability verified against primary sources on September 12, 2026. xAI changes plans often; the live pages are the source of truth.
