@@ -1,0 +1,186 @@
+---
+date: 12/09/2026
+title: "Grok Bot: run your business while you sleep, bots you can copy"
+description: "Six Grok Bots to leave running overnight: inbox triage, social publishing through SocialRobot's MCP connector, receipt collection, competitor monitoring, support drafts and a Monday numbers recap. Prompts, connectors, and where each one stops for approval."
+image: card.png
+draft: false
+categories:
+  - ai
+  - xai
+  - engineering
+faq:
+  - question: "Can Grok Bot really run my business while I sleep?"
+    answer: |
+      Within limits, yes. Each Bot runs on its own cloud computer and keeps working while the app is closed, and routines let it repeat a job on a schedule. The catch is that you set where it stops: anything irreversible, spending money, sending mail, publishing, stays gated behind your approval unless you deliberately open it.
+  - question: "How do I connect Grok Bot to SocialRobot?"
+    answer: |
+      Add SocialRobot as a custom MCP connector in Grok Bot and point it at https://socialrobot.io/api/mcp over HTTP, then complete the OAuth flow. Once linked, the Bot can draft and schedule posts across the social accounts connected to SocialRobot.
+  - question: "Which Grok Bots should I set up first?"
+    answer: |
+      Start with inbox triage and the social publishing bot, because they run daily and replace the most recurring manual work. Add receipt collection and the Monday numbers recap next, then competitor monitoring and support drafts once you trust the first four to stop where they should.
+  - question: "Do I need SuperGrok Heavy or Cursor Ultra to use Grok Bot?"
+    answer: |
+      No. Since August 26, 2026 every paid Cursor plan includes Grok Bot, so a base Cursor Pro plan at $20 a month is the cheapest route in, and base SuperGrok at $30 also works. You do not need the SuperGrok Plus ($100) or Heavy tiers just to run these bots.
+---
+
+The pitch for Grok Bot is that you hand off work and come back to it done. The version people actually want is stronger: hand off work, close the laptop, sleep, and wake up to a finished queue of drafts, a cleaned inbox and a week of posts scheduled. That version is real, with a few guardrails you have to set yourself.
+
+If you have not seen the basics, start with the [Grok Bot guide](/blog/grok-bot-guide) for what it is, what it costs and which platforms it runs on. This post assumes you already have the app and an eligible plan.
+
+## What "while you sleep" actually means
+
+Three facts from the launch materials make overnight work possible:
+
+- Each Bot gets a cloud computer of its own, so jobs do not stall when you close the app.
+- Bots keep working 24/7 and only come back when something needs your approval.
+- Routines let a Bot repeat a job on a schedule, so you set the cadence once.
+
+What it does not mean is that you hand over a credit card and hope. The work that runs cleanly overnight is work with a known input, a repeatable path and a safe endpoint: read a source, transform it, produce a draft, file it, and stop before anything irreversible. Every bot below ends at a human checkpoint on purpose.
+
+## The one-time setup
+
+You need an eligible plan (base Cursor Pro at $20 a month is the cheapest, or SuperGrok at $30), the desktop or mobile app, and the connectors each bot uses. Grok Bot talks to external tools through connectors, and the relevant one for this post is a custom MCP connector: add a New Connector, choose Custom, enter the MCP server URL and finish the authentication. The flow is documented at [docs.x.ai/grok/connectors](https://docs.x.ai/grok/connectors).
+
+## Six bots I would leave running
+
+### 1. Inbox triage
+
+The bot that pays for itself first.
+
+**Role.** Read the inbox every morning, bucket mail, flag what needs a human, draft replies, and never send anything.
+
+**Connectors.** Your email account, read and draft access.
+
+**Prompt to start it.**
+
+```
+You are my inbox triage bot. Each morning:
+1. Read new email since your last run.
+2. Bucket each message: needs-reply, needs-action, invoice, newsletter, junk, personal.
+3. For needs-reply, draft a reply in my voice and leave it unsent.
+4. For invoice, file the PDF and note the amount and due date.
+5. Never send, delete, archive or unsubscribe. Output a summary table and the drafts.
+```
+
+**Where it stops.** Send, delete and unsubscribe stay on your side of the line.
+
+### 2. Social publishing, through SocialRobot
+
+This is the one I built, and the reason I built it.
+
+Posting felt like a second job. I would spend Sunday blocking out a week of posts across every network, copy pasting between platforms, and still forget LinkedIn half the time. Existing schedulers handled the scheduling but not the writing, and AI assistants handled the writing but not the publishing. So I built [SocialRobot](https://socialrobot.io), a scheduler that publishes to every network through your own accounts, and then wired it to Grok Bot so the whole loop runs unattended.
+
+**Role.** Turn a list of topics into a week of scheduled posts.
+
+**Connectors.** SocialRobot, which exposes a hosted MCP server. In Grok Bot, add a custom connector with these values:
+
+```
+Name:       SocialRobot
+Transport:  HTTP
+URL:        https://socialrobot.io/api/mcp
+Auth:       OAuth, or an API key sent as Bearer or x-api-key
+```
+
+Once the OAuth handshake completes, the Bot can see and schedule across the social accounts already connected in SocialRobot. Setup details are at [socialrobot.io/mcp](https://socialrobot.io/mcp).
+
+**Prompt to start it.**
+
+```
+Each Monday, turn my topic list into a week of posts:
+1. For each topic, draft a short post in my voice, one variant per network
+   (LinkedIn longer, X and Threads shorter, Bluesky casual).
+2. Schedule the posts through SocialRobot across the connected accounts,
+   spreading them across my usual posting times.
+3. Where I asked for it, attach a first comment.
+4. Show me the full schedule before anything goes live.
+```
+
+**Where it stops.** Nothing publishes until you approve the week. Keep it that way for the first month, then you can let the schedule run.
+
+Full disclosure: SocialRobot is my product. I am writing the integration from both sides, which is exactly why it is the one bot in this list I can vouch for end to end.
+
+### 3. Receipt and expense collection
+
+**Role.** Watch a folder or a label, read every receipt that lands, and file it into a running sheet.
+
+**Connectors.** Your inbox and a spreadsheet.
+
+**Prompt to start it.**
+
+```
+Watch for receipts and invoices. For each one: extract the vendor,
+date, amount, currency and category, append a row to the expense sheet,
+and rename the file with the date and vendor. Skip duplicates by matching
+vendor and amount within 30 days. Ask me before categorizing anything
+you cannot place.
+```
+
+**Where it stops.** Categorization it is not sure about, and anything that looks like a reimbursement dispute.
+
+### 4. Competitor monitoring
+
+**Role.** A weekly sweep of the three or four products you actually care about.
+
+**Connectors.** Web access, and a doc to write the digest into.
+
+**Prompt to start it.**
+
+```
+Every Monday, check the changelogs, pricing pages and blog of [list
+competitors]. Record: new features, pricing changes, new plans, notable
+hires and anything they shipped that we do not have. Write a one page
+digest with a diff against last week, and flag the one item that matters
+most this week.
+```
+
+**Where it stops.** It reports, it does not decide. You read the digest and pick the response.
+
+### 5. Support drafts
+
+**Role.** First pass on inbound support questions.
+
+**Connectors.** Your support inbox or help desk, read and draft access.
+
+**Prompt to start it.**
+
+```
+For each new support message: classify it (bug, how-to, billing, account,
+refund), pull the relevant docs, and draft a reply that either answers
+directly or asks for the one missing detail. Never send. Tag anything
+about billing, refunds or account closure as high priority and surface it
+first.
+```
+
+**Where it stops.** Everything is a draft until you read it, and billing and refunds are always human.
+
+### 6. The Monday numbers recap
+
+**Role.** Close the loop with a weekly state of the business.
+
+**Connectors.** Your analytics, your accounts and wherever you keep goals.
+
+**Prompt to start it.**
+
+```
+Every Monday morning, pull last week's numbers: traffic, signups, revenue,
+active users, and anything we track as a goal. Compare each to the prior
+week and to the same week last quarter. Write a short recap: what moved,
+what dropped, and the one number I should act on this week.
+```
+
+**Where it stops.** It summarizes. You act.
+
+## What still breaks
+
+This is an early product and the honest list matters more than the prompts:
+
+- Connectors must be reachable over the public internet. A local MCP server on your laptop will not attach, because the Bot runs in xAI's cloud.
+- OAuth reauthorization will happen at some point. When a connector drops, expect the bot to stop mid routine and ask you to reconnect.
+- Format correction is normal. Expect one or two rounds of "make the table match last week" on the monitoring and recap bots.
+- Rate limits are real. SocialRobot's HTTP and MCP endpoints share 2,000 requests per minute and 200,000 per day per account, and the platforms themselves throttle fast publishing, so keep the cadence human.
+
+## Bottom line
+
+Start with inbox triage and social publishing, because they recur daily and replace the most manual work. Add the other four once you trust the first two to stop where you told them to. Keep every irreversible action behind an approval for the first month, and the "sleep" part of the promise stays honest.
+
+For what Grok Bot is, what it costs and how it compares to Claude, the [Grok Bot guide](/blog/grok-bot-guide) is the fuller reference.
