@@ -1,7 +1,7 @@
 ---
 date: 04/09/2026
 title: "Cursor hooks: run tests after every file edit"
-description: "The working recipe to auto-run your test suite after every Cursor agent file edit: afterFileEdit vs postToolUse, the stdin payload, fail-open defaults, and monorepo and Claude Code variants."
+description: "The working recipe to auto-run your test suite after a Cursor agent file edit, plus test on save for your own saves: afterFileEdit vs postToolUse, the stdin payload, fail-open defaults, and monorepo and Claude Code variants."
 image: card.png
 draft: false
 categories:
@@ -9,6 +9,9 @@ categories:
   - cursor
   - engineering
 faq:
+  - question: "Does Cursor run tests automatically when I save a file?"
+    answer: |
+      Not from .cursor/hooks.json. Every event in that file fires on agent activity, so afterFileEdit runs when the agent writes a file, not when you press Cmd+S yourself. For test on save in Cursor, install the Run On Save extension (emeraldwalk.runonsave) and add an emeraldwalk.runonsave block to settings.json with a match pattern for your source files and your test command. Keep the two mechanisms on disjoint triggers, or one edit that ends with a save runs the suite twice.
   - question: "How do I run tests after every file edit in Cursor?"
     answer: |
       Add an afterFileEdit command hook to .cursor/hooks.json that calls a script running your test suite, for example "pnpm test". The script reads the event JSON from stdin, uses .file_path to skip files that cannot break tests, and exits 0 so it stays fail-open. Results show up in the Hooks output channel (Cmd+Shift+P then "Hooks").
@@ -154,6 +157,42 @@ Two things worth knowing about the default behavior:
 
 - **Exit codes are fail-open.** Unless a hook sets `"failClosed": true`, any non-zero exit logs the error and continues. For `afterFileEdit` there is nothing to block anyway: it is an observe-only event, so a red suite can never brick the agent session. That is why the script always exits 0 and just prints output.
 - **The default timeout is short.** Hooks that run long get killed. Set an explicit `timeout` that covers your slowest suite, in seconds.
+
+---
+
+## Test on save vs test on agent edit
+
+A lot of people arrive here looking for Cursor to run tests automatically when they save a file, so the honest answer first: `.cursor/hooks.json` does not do that. Every event in that file is fired by the agent. Press Cmd+S and nothing in the hooks config runs, because no agent tool call and no agent file write happened.
+
+That leaves two mechanisms, and they cover different triggers:
+
+| Trigger | Mechanism | Config |
+|---------|-----------|--------|
+| The agent edits a file | Cursor hook | `.cursor/hooks.json`, `afterFileEdit` |
+| You save a file by hand | Run On Save extension | `emeraldwalk.runonsave` in `settings.json` |
+
+For the manual save, install Run On Save (the VS Code extension `emeraldwalk.runonsave`, which Cursor installs the same way as any other extension), then add this to your user or workspace settings:
+
+```jsonc
+{
+  "emeraldwalk.runonsave": {
+    "ignoreUnchangedFiles": true,
+    "commands": [
+      {
+        "match": "\\.(ts|tsx|js|jsx|py|go|rs)$",
+        "cmd": "pnpm test",
+        "autoShowOutputPanel": "error"
+      }
+    ]
+  }
+}
+```
+
+`match` and `notMatch` take regexes tested against the absolute file path, so you can keep the suite off docs, lockfiles and assets the same way the hook script does. `ignoreUnchangedFiles` skips saves that changed nothing. Commands run when you save an existing file; creating a file or using Save as does not trigger them.
+
+Two caveats. The extension fires on every qualifying save, so a slow suite will make the editor feel slow, tighten `match` or move the full run to a pre-push step. And keep the triggers disjoint: if the extension matches every file and the `afterFileEdit` hook also runs the suite, an agent edit that ends with a save runs it twice.
+
+Cursor's own `editor.codeActionsOnSave` is not a substitute here. It runs code actions on save, formatting, `source.fixAll`, import organization, and it cannot launch a shell command.
 
 ---
 
