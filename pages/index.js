@@ -6,10 +6,6 @@ import profilePic from '../public/avatar.png';
 import driftIcon from '../public/projects/drift/icon.png';
 import bedtimefableIcon from '../public/projects/showcase/bedtimefable-icon.png';
 import socialrobotIcon from '../public/projects/showcase/socialrobot-icon.png';
-import clashofappsIcon from '../public/projects/showcase/clashofapps-icon.png';
-import maidofhonorIcon from '../public/projects/showcase/maidofhonor-icon.png';
-import bestmanIcon from '../public/projects/showcase/bestman-icon.png';
-import funeralspeechIcon from '../public/projects/showcase/funeralspeech-icon.png';
 import sousoIcon from '../public/projects/showcase/souso-icon.png';
 import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/github';
 import getPost from '../components/get-post';
@@ -52,34 +48,6 @@ const showcaseProjects = [
     description: 'Create, schedule, and grow across every social platform.',
     href: 'https://socialrobot.io',
     image: socialrobotIcon,
-    external: true,
-  },
-  {
-    name: 'Clash of Apps',
-    description: 'Analyze Play Store reviews — sentiment and competitors.',
-    href: 'https://clashofapps.com',
-    image: clashofappsIcon,
-    external: true,
-  },
-  {
-    name: 'Maid of Honor Speech',
-    description: 'AI speech generator — a personalized maid of honor toast.',
-    href: 'https://maidofhonorspeech.net',
-    image: maidofhonorIcon,
-    external: true,
-  },
-  {
-    name: 'How to Be Best Man',
-    description: 'Step-by-step help writing the perfect best man speech.',
-    href: 'https://howtobebestman.com',
-    image: bestmanIcon,
-    external: true,
-  },
-  {
-    name: 'Funeral Speech',
-    description: 'Find the right words — heartfelt funeral speeches.',
-    href: 'https://funeralspeech.net',
-    image: funeralspeechIcon,
     external: true,
   },
 ];
@@ -220,6 +188,50 @@ export default function Home({ githubData, posts, seriesHighlight }) {
           <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base">
             Production-grade AI agents with curated memory, human-gated
             learning, and sandboxed multi-tenant execution.
+          </p>
+          <p className="mt-4 text-sm font-medium text-neutral-900">
+            View on GitHub
+            <span
+              aria-hidden="true"
+              className="ml-1 inline-block transition-transform group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </p>
+        </div>
+      </a>
+      <a
+        href="https://github.com/socialrobot-io/reflow"
+        {...externalLinkProps('https://github.com/socialrobot-io/reflow')}
+        className="group mb-4 flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md md:flex-row"
+      >
+        <div className="relative aspect-[603/268] w-full shrink-0 overflow-hidden bg-neutral-950 md:aspect-auto md:w-[52%] md:min-h-[240px]">
+          <Image
+            src="/reflow.png"
+            alt="reflow: durable email workflow engine"
+            fill
+            className="object-cover object-left transition-transform duration-500 group-hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 52vw"
+          />
+        </div>
+        <div className="flex flex-1 flex-col justify-center p-6 sm:p-8">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {['TypeScript', 'MCP', 'CLI', 'Email'].map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          <h3 className="text-xl font-semibold tracking-tight text-neutral-900 group-hover:text-neutral-600 sm:text-2xl">
+            reflow
+          </h3>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-neutral-600 sm:text-base">
+            Agent-first durable email workflow engine for MCP and CLI. Describe
+            the flow, an MCP agent or CLI publishes it, Temporal keeps each
+            enrollment alive, and Resend sends the mail.
           </p>
           <p className="mt-4 text-sm font-medium text-neutral-900">
             View on GitHub

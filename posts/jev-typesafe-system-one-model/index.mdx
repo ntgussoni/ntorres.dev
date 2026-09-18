@@ -1,0 +1,161 @@
+---
+date: 18/09/2026
+title: "Jev (TypeSafe) explained: the AI model that returns decisions instead of text"
+description: "Jev is TypeSafe's first System One model: it returns typed decisions with calibrated probabilities instead of text. How it works, the three primitives, real cost and latency, and where it fails."
+image: card.png
+draft: false
+categories:
+  - ai
+  - llms
+  - engineering
+faq:
+  - question: "How much does Jev cost?"
+    answer: |
+      At launch (September 2026), Jev costs $0.042 per million input tokens, or $42 per billion tokens, and output tokens are free. For comparison, TypeSafe's launch post puts LLM input prices between $0.20 and $10 per million tokens, with output tokens roughly five times more expensive than input. These numbers are explicitly described as moving, so check the official pricing before you build a budget around them.
+  - question: "Does Jev hallucinate?"
+    answer: |
+      Not in the usual sense. Jev does not generate text, so it cannot invent a category that is not in your list or emit a value outside your schema. TypeSafe calls the no-type-errors property mathematically impossible to falsify. Jev can still pick the wrong answer, which is exactly why every Choice and Score response carries calibrated probabilities and a confidence score your code can gate on.
+  - question: "Is Jev just a smaller LLM?"
+    answer: |
+      No. Jev is a different architecture trained with a method TypeSafe calls Reinforcement Learning for Calibrated Decisions (RLCD). It does not generate text at all. Instead it evaluates a state against typed questions and returns probability distributions over the options you defined.
+  - question: "How is Jev different from JSON mode or structured outputs?"
+    answer: |
+      JSON mode and structured outputs constrain an LLM's output shape, but the model still generates tokens that have to be parsed and validated, and it can still be wrong. Jev is built to output structured decisions directly. The type guarantee is part of the model, not a post-processing layer on top of a text generator.
+  - question: "What is Jev bad at?"
+    answer: |
+      Counting, arithmetic, and comparing dates as ordered values are the big ones, along with anything that needs generated text. TypeSafe publishes a jaggedness page for Jev 1.13 that lists nine documented failure modes, from reading instructions too literally to being moved by adversarial content in the state.
+---
+
+Jev is not the Java config library (that is Typesafe Config, from Akka and friends), not the Japanese encephalitis vaccine, and not the rapper. Jev is a new AI model from [TypeSafe AI](https://typesafe.ai), a San Francisco lab that came out of stealth on 15 September 2026 with $40 million in seed funding led by DCVC. It is the first of what TypeSafe calls **System One models**: models built to return structured decisions for software, not generated text.
+
+## The mismatch Jev is built to fix
+
+Large language models produce text for humans to read. When you need a model to make a judgment your code will consume, that creates a mismatch. You coerce a text generator into outputting structured decisions, then parse the result back into something your code can depend on. Prompt for JSON, hope it is valid, parse, validate, and still leave room for a refusal or a hallucinated tool call somewhere in the chain.
+
+Jev removes the middle step. You send a *state* (a string, a JSON object, or an array of text) and a set of typed *questions*. Jev returns typed values and probability distributions you can branch on, sort by, and route with. No text generation, no parsing.
+
+## What Jev actually is
+
+Jev is TypeSafe's flagship model. The name comes from William Stanley Jevons, the economist behind the Jevons paradox: when the cost of a resource drops by an order of magnitude, demand expands by more than the saving. TypeSafe's bet is that cutting the cost and latency of a decision will do the same for automation. The "System One" label comes from Daniel Kahneman's *Thinking, Fast and Slow*, where fast, intuitive System 1 thinking contrasts with slow, deliberate System 2 reasoning.
+
+| Fact | Value |
+|---|---|
+| Company | TypeSafe AI, San Francisco |
+| Founder | Diogo Almeida, former OpenAI researcher and co-inventor of RLHF |
+| Funding | $40 million seed, led by DCVC |
+| Category | System One models; Jev is the first |
+| Training | New architecture, parallel sampler, Reinforcement Learning for Calibrated Decisions (RLCD) |
+| Output | Typed values plus per-option probabilities and confidence |
+| Primitives | Choice, Score, Noul |
+| Endpoint | `POST https://api.typesafe.ai/v1/systemone` |
+| Model alias | `jev-latest` (points to `jev-1.13.0`) |
+| Price | $0.042 per Mtok input, output free (at launch) |
+| Limits | 250,000 tokens/s, 1,200 requests/min, 64k context (at launch) |
+| Input | Text only. No images, audio, or video |
+
+The founder's history matters here. Diogo Almeida helped build the instruction-following methods at OpenAI that ended up behind ChatGPT, which means the pitch that "chat models are the wrong shape for automation" comes from someone who helped make chat models work in the first place.
+
+## The three primitives
+
+TypeSafe exposes three question types. Each returns a different shape of typed answer, and you can mix all three in a single call. Every question sees the same state, is evaluated in parallel, and adding questions barely changes the response time.
+
+| Primitive | What it answers | Returns |
+|---|---|---|
+| Choice | Which of these options? | `choice`, `probabilities`, `confidence` |
+| Score | Which level on a scale? | `score`, `probabilities`, `confidence` |
+| Noul | Is this statement true? | `noul` (0 to 1) |
+
+A concrete example from TypeSafe's own quickstart. Send a support ticket and ask three questions at once:
+
+```json
+{
+  "state": "Our API integration started returning 500 errors on every request about 20 minutes ago, and we can't process any customer orders until this is fixed.",
+  "model": "jev-latest",
+  "questions": {
+    "department": {
+      "type": "choice",
+      "instructions": "Which team should handle this",
+      "criteria": {
+        "billing": "Payment or subscription issues",
+        "technical": "Bugs or integration problems",
+        "sales": "Pricing or account questions"
+      }
+    },
+    "frustration": {
+      "type": "score",
+      "instructions": "How frustrated the customer appears",
+      "criteria": ["Calm, just stating facts", "Frustrated but civil", "Very angry, strong language"]
+    },
+    "is_urgent": {
+      "type": "noul",
+      "instructions": "The message conveys urgency or time-sensitivity"
+    }
+  }
+}
+```
+
+The response is typed, not prose. A `choice` lands in `billing` with a probability distribution over all three options and a confidence number. A `score` lands somewhere between two levels. A `noul` is the probability the answer is yes. Your code reads fields, not paragraphs.
+
+The docs are explicit about the mental model: each question should be a snap judgment a knowledgeable person could make in a second with the right context. "Which team should handle this ticket" is a good question. "Analyze this and determine the best course of action" is not, because it needs slow reasoning. You decompose that into smaller questions and combine the answers in code.
+
+## What "can't hallucinate" actually means
+
+The claim is narrower than the marketing headline and more precise. Jev cannot hallucinate in the structured sense: its outputs are constrained to the schema you supply. If a Choice question offers `billing`, `technical`, and `sales`, the model cannot return a fourth label. It cannot produce a type error. TypeSafe calls this property mathematically impossible to falsify.
+
+That is different from "never wrong." Jev can pick the wrong option, or assign high probability to the wrong answer. What it cannot do is go off-script. That is the property automation actually needs. A hallucinated tool call is inconvenient in an agent. A hallucinated answer buried several layers deep in a dependency chain with a latency guarantee is a deal-breaker.
+
+The second half of the guarantee is calibration. Every Choice and Score answer carries a `confidence` value from 0 to 1, derived from the shape of the probability distribution. The claim is that higher confidence means higher accuracy, which is what lets your code decide when to act automatically and when to escalate to a person. Confidence thresholds are meant to scale with risk: a read-only action can fire at a low bar, a destructive one should wait for high confidence.
+
+## Speed and cost, read honestly
+
+The launch post's headline numbers are aggressive: 70 to 500 milliseconds per call end to end, described as 40x to 200x faster than frontier LLMs on System One shaped queries, and a home page claim of 193.6x faster and 444.6x cheaper. TypeSafe's own nuance section admits those workflow numbers are "on the higher end of real world gains."
+
+The per-token economics are simpler to verify. Jev charges $0.042 per million input tokens and nothing for output, against an LLM range TypeSafe lists at $0.20 to $10 per million input tokens with output tokens about five times more expensive. Whether that pricing is sustainable is something TypeSafe says only the long term will prove.
+
+The honest picture comes from TypeSafe's own workflow evals, which measure accuracy, cost, and time per case across four workflows (security incidents, agent trace observability, invoice processing, and customer service). Every model runs in workflow mode (TypeSafe's structured wrapper) at the provider's default reasoning setting. Reference labels are the average of GPT-6 Astra and Claude Fable 5.1, a bias the launch post itself calls out.
+
+| Model (workflow mode) | Mean accuracy | Cost per case | Seconds per case |
+|---|---|---|---|
+| sol | 74.1% | $0.0836 | 23.3 s |
+| opus 5 | 73.1% | $0.1761 | 37.8 s |
+| terra | 67.9% | $0.0304 | 10.1 s |
+| sonnet 5 | 67.8% | $0.1174 | 78.1 s |
+| Jev | 67.8% | $0.0004 | 0.4 s |
+| luna | 66.8% | $0.0033 | 12.9 s |
+| DS v4 pro | 65.5% | $0.0413 | 86.5 s |
+| DS v4 flash | 64.4% | $0.0059 | 51.9 s |
+| haiku 4.5 | 53.6% | $0.0195 | 12.5 s |
+
+Read this table correctly. Jev does not own accuracy: two frontier models beat it by five to six points, and two more are within a tenth of a point. Jev owns cost and time by one to two orders of magnitude. It is 67.8% accurate for $0.0004 and 0.4 seconds, while opus 5 is 73.1% accurate for $0.1761 and 37.8 seconds. That gap is the entire argument for the model, and it is the sentence most of the launch coverage missed.
+
+## Where Jev fails
+
+TypeSafe publishes a jaggedness page for Jev 1.13 that lists nine documented failure modes. This is the most useful page in the whole doc set, because it tells you where to draw the boundary before you learn the hard way:
+
+1. **Literal reading.** It answers the question you wrote, not the one you meant.
+2. **Math and numbers.** It is not a calculator and does not count reliably.
+3. **Date and time comparison.** Dates are read as text, not ordered values.
+4. **Indirection.** Extra levels of indirection degrade it.
+5. **Large state full of irrelevant detail.** Accuracy decays as state grows noisy.
+6. **Adversarial content.** Content in the state can move the answer.
+7. **Contradictory instructions and criteria.** It will not reconcile a conflict.
+8. **Structural invariants.** It will not guarantee that two answers stay consistent with each other.
+9. **Generation.** It cannot generate text at all, by design.
+
+Every failure mode ships with a "do this instead" fix, and almost all of them are the same fix: keep the logic in code and give Jev only the narrow judgment it is good at.
+
+## Where Jev fits
+
+If you already build AI systems, Jev slots into the places where you currently pay a frontier model to make a small decision. Intent routing: classify an incoming request and route it to the right handler. Guardrails: judge whether a message is a jailbreak or a prompt injection. Re-ranking and filtering. Classification with a known label set. Scoring against a rubric. Anything that is a smart if-statement.
+
+This is the same shape of work covered in my earlier post on [LLM evals](/blog/llm-evals-for-beginners), and it is a natural fit for the [Loop Engineering](/blog/loop-engineering-the-end-of-prompting) idea: narrow, verifiable decisions that software composes, instead of open-ended text a human has to review. A decision model is exactly the kind of building block a loop wants, because its output is already typed and already carries a confidence signal you can gate on.
+
+The counter-position is just as important. Do not use Jev for anything numeric, anything that needs generated text, or any judgment that depends on several interacting factors you have not decomposed. For those, keep the frontier model or the deterministic code.
+
+## The honest summary
+
+Jev is a bet on a specific idea: that the model great at talking to humans is the wrong model for running software. It trades away the generality of string generation for two properties automation needs more: type-safe output that cannot go off-script, and calibrated confidence your code can act on. The cost is real accuracy, a few points below the top frontier models on TypeSafe's own eval.
+
+Whether that trade is worth it depends entirely on whether your workload is a decision or a text. If it is a decision, Jev is cheaper and faster by orders of magnitude. If it is text, Jev has nothing for you by design.
+
+Everything here is from TypeSafe's own surfaces (the launch post, docs.typesafe.ai, and evals.typesafe.ai) as of 18 September 2026. Pricing and rate limits are explicitly described as moving. Jev is still in early access, and the API requires a key, so the numbers that matter most are the ones you will measure with your own workload once you are off the waitlist.
