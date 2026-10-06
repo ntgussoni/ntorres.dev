@@ -6,6 +6,7 @@ import profilePic from '../public/avatar.png';
 import driftIcon from '../public/projects/drift/icon.png';
 import bedtimefableIcon from '../public/projects/showcase/bedtimefable-icon.png';
 import socialrobotIcon from '../public/projects/showcase/socialrobot-icon.png';
+import rachetIcon from '../public/projects/showcase/rachet-icon.png';
 import sousoIcon from '../public/projects/showcase/souso-icon.png';
 import { getContributions, GITHUB_REVALIDATE_SECONDS } from '../components/github';
 import getPost from '../components/get-post';
@@ -48,6 +49,14 @@ const showcaseProjects = [
     description: 'Create, schedule, and grow across every social platform.',
     href: 'https://socialrobot.io',
     image: socialrobotIcon,
+    external: true,
+  },
+  {
+    name: 'Rachet',
+    description:
+      'Customer journeys for AI agents. Your agent writes them, Temporal keeps them running.',
+    href: 'https://rachet.dev',
+    image: rachetIcon,
     external: true,
   },
 ];
