@@ -1,0 +1,161 @@
+---
+date: 06/10/2026
+title: "Clef (Cloudflare) explained: open decision models you can run yourself"
+description: "Cloudflare's Clef is an Apache-2.0 decision model with Jev's API. What the benchmarks really say, what the packaging gets wrong, and how to choose."
+image: card.png
+draft: false
+categories:
+  - ai
+  - llms
+  - engineering
+faq:
+  - question: "What is Clef?"
+    answer: |
+      Clef is a decision model from Cloudflare, released on 1 October 2026. It reads a state (text, JSON, images or video) and a set of typed questions, and returns a probability for every allowed answer instead of generating text. There are two sizes: Clef at 27B parameters, built on Qwen3.8-27B, and Clef-flash at 9B, built on Qwen3.5-9B. Both are Apache-2.0 open weights on Hugging Face, both are hosted on Workers AI, and both speak the same request format as TypeSafe's Jev.
+  - question: "Is Clef better than Jev?"
+    answer: |
+      On Cloudflare's own numbers, Clef would top the community Decision Index at 61.21 against Jev's 57.91. That run is self-reported, covers 36 of the index's 38 benchmarks, and has not been reproduced independently, so treat it as a vendor claim. Reading the same table row by row, Clef wins on 25 of the 36 published benchmarks and loses the reasoning-heavy ones by a wide margin: GPQA Diamond 48.0 against 78.3, BBH 73.7 against 92.9, MMLU-Pro 65.9 against 82.7. It is better at routing and labelling, weaker where the answer needs knowledge or several reasoning steps.
+  - question: "Can I run Clef locally in LM Studio or llama.cpp?"
+    answer: |
+      Not with the popular GGUF repackages. Clef's probabilities come from a separate joint schema head, stored as joint_head.safetensors alongside the backbone. The big GGUF conversions on Hugging Face ship the quantised backbone only, with no head and no scoring code, so they load as a plain Qwen text model and produce meaningless text. Working local paths are Cloudflare's own repositories with its Python loader, the MLX 4-bit builds that bundle the head and a loader, the NVFP4 vLLM conversion, Livesport's GGUF package (which does include the head), or Ollama, which packages the model for you.
+  - question: "How much does Clef cost?"
+    answer: |
+      On Workers AI, Clef is $0.24 and Clef-flash is $0.09 per million input tokens, with no charge for output because a decision model generates no text. Jev is $0.042 per million input tokens, so hosted Clef is about 5.7 times Jev's price per token and Clef-flash about 2.1 times. In absolute terms the amounts are small: Construct measured $93 per million Clef decisions against $23 for Jev, and its entire 1,053-call benchmark cost about five cents. The weights are free to download and self-host under Apache 2.0.
+  - question: "Does Clef read images?"
+    answer: |
+      Yes, and that is the clearest capability difference from Jev, which is text and JSON only. Cloudflare's hosted endpoint accepts up to four embedded PNG, JPEG or WebP images per request, 4 MiB and 16 megapixels each, with remote URLs rejected. The open weights also accept video frames. Two caveats: the vision encoder is unchanged from stock Qwen, and Cloudflare published no image benchmark, so measure it on your own assets before trusting it.
+  - question: "Should I use Clef or Clef-flash?"
+    answer: |
+      Use Clef-flash for high-volume gates that can only skip or downgrade work, and only with thresholds measured for it. Use the 27B Clef for anything that merges, deletes, sends or passes a policy, and never use either flash model as a hallucination or out-of-scope guardrail: on the Decision Index, Clef-flash scores 35.6 on RAGTruth against 79.4 for Clef and 76.5 for Jev, below that benchmark's 51.8 chance line, and 66.8 on CLINC150 with out-of-scope requests against 97.4 for Clef.
+---
+
+The decision model category got its second vendor two weeks after the first. Cloudflare released **Clef** and **Clef-flash** on 1 October 2026: open-weight models that read a state and a set of typed questions and return a probability for every allowed answer, with no text to parse. If you read my [explainer on Jev and the System One idea](/blog/jev-typesafe-system-one-model), you already know the shape of the category. This is the same category with two models you can download, a vision encoder, and a scoreboard that needs to be read carefully.
+
+Clef is not the music symbol, not a file format, and not an LLM you chat with. It is a 27B decision model built on Qwen3.8-27B, and Clef-flash is a 9B version built on Qwen3.5-9B. Both are Apache-2.0, both are on Workers AI, and both are, in Cloudflare's words, "fully Jev-API compatible", which means swapping models is one string in code you already wrote.
+
+## What Cloudflare shipped
+
+Everything in this table comes from Cloudflare's launch post, its Hugging Face model cards and its Workers AI model page, read on 6 October 2026.
+
+| Fact | Clef | Clef-flash | Jev 1.13 (reference) |
+|---|---|---|---|
+| Maker | Cloudflare | Cloudflare | TypeSafe AI |
+| Released | 1 October 2026 | 1 October 2026 | 15 September 2026 |
+| Size | 27B, built on Qwen3.8-27B | 9B, built on Qwen3.5-9B | Not published |
+| Weights | Apache-2.0, on Hugging Face | Apache-2.0, on Hugging Face | Closed, API only |
+| Input | Text, JSON, images, video | Text, JSON, images, video | Text and JSON |
+| Question types | Choice, Score, Noul | Same | Choice, Score, Noul |
+| Published context | 64k | 64k | 64k per request, 32k for state plus the longest question |
+| Hosted ID | `@cf/cloudflare/clef` | `@cf/cloudflare/clef-flash` | `typesafe/jev`, `jev-1.13.0` |
+| Price per million input tokens | $0.24 | $0.09 | $0.042 |
+| Output tokens | Free | Free | Free |
+| Runs on your own hardware | Yes | Yes | No |
+
+The architectural difference that matters is the **joint schema head**. Cloudflare froze the Qwen backbone, added a small transformer head that reads the backbone's final hidden states and scores every option of every question in one forward pass, and trained it with rank-256 low-rank adapters. Nothing is sampled, no text is generated, no JSON is parsed. A separate, small file called `joint_head.safetensors` is where the decision actually happens, which becomes important when you try to run this locally.
+
+That non-autoregressive step is also the reason Clef behaves differently from Jev under repetition, as we will get to. Cloudflare also shipped a vision encoder, so a support ticket that arrives as a screenshot is a decision you can make now, and a reinforcement learning fine-tuning service for customers who want their own labels trained in.
+
+## Read the scoreboard like a claims adjuster
+
+Cloudflare's launch post says Clef "is currently the leader" on the Decision Index, the community leaderboard for this model class. Its model card publishes an internal run of the same suite: **Clef 61.21, Clef-flash 57.07**, against Jev's 57.91 on the board itself. If those numbers were real, Clef would be first and Clef-flash fourth.
+
+Four things about that table are worth knowing before you quote it.
+
+**The two Cloudflare rows are flagged as self-reported.** In the leaderboard's own data file, the Clef and Clef-flash entries carry a `self_reported` flag and a coverage field of 36 benchmarks, against 38 for every community row. The two that are missing are HLE and iSarcasmEval, and both are scored as zero in Cloudflare's total. Nobody outside Cloudflare has reproduced the Clef column on the board's hardware. Creative AI News re-implemented the index formula and reproduced the arithmetic; it says nothing about whether the underlying scores are right.
+
+**Winning rows is the wrong way to read a vendor's table.** I counted them anyway, against Jev's community numbers: Clef wins 25 of the 36 published index benchmarks and loses 11, with no ties. The losses are not random noise. They cluster wherever the answer needs knowledge or several steps of reasoning:
+
+| Benchmark | Clef | Clef-flash | Jev |
+|---|---|---|---|
+| GPQA Diamond (graduate science) | 48.0 | 51.0 | **78.3** |
+| BBH (hard reasoning) | 73.7 | 68.9 | **92.9** |
+| MMLU-Pro | 65.9 | 65.3 | **82.7** |
+| When2Call (should the agent act?) | 72.4 | 65.6 | **81.0** |
+| HoVer, NLI4CT, ANLI, VAST, BRIGHT | 65.2 to 82.9 | 49.6 to 78.6 | **64.6 to 84.1** |
+
+The pattern is consistent across three independent sources now. Clef is strong at routing and labelling: BANKING77 intent at 94.2 against 79.7, CLINC150 out-of-scope at 97.4 against 89.3, tool-call selection at 98.5 against 95.8. It is weaker at judgment. When2Call is the row agent builders should read twice, because it asks whether a model knows to call a tool, ask a question, or decline, and Jev leads it by 8.6 points.
+
+**Clef-flash is not a smaller Clef.** On most rows it tracks the 27B model closely, and on two it collapses, both of them checks people put in production. RAGTruth, which measures hallucination detection, is 35.6 for Clef-flash against 79.4 for Clef and 76.5 for Jev, below that benchmark's 51.8 chance line, so it earns zero skill there. CLINC150 with out-of-scope requests is 66.8 against 97.4. If your pipeline uses a decision model to say "this does not belong to any of my categories", the fast model is the wrong one.
+
+**One column in Cloudflare's table mixes two different entrants.** The DiffusionGemma column's accuracy figures (BFCL 96.52, BANKING77 74.28, CLINC150 83.49) match the leaderboard entry `JoshuaSP diffusiongemma (open-jev)`, index 49.47. Its latency figures (median 84.4 ms, p95 211.2 ms) match a different entry, `djev`, index 40.28. I checked both value by value against the leaderboard JSON. Two models, one column.
+
+### On latency, be specific about what was measured
+
+Cloudflare reports 209.3 ms median for Clef, 38.8 ms for Clef-flash and 524.1 ms for Jev. Those three numbers do not measure the same thing. The leaderboard labels Jev's figure a hosted API round trip from its lab, "not comparable to the on-card single-process figures", and Cloudflare runs Clef on its own infrastructure, which it says is the point: models at the edge, low network latency, decisions in the hot path.
+
+Independent measurements are messier. Construct called all three models from a laptop through Cloudflare's REST API and found a floor of 340 to 384 ms for every model, because the network path dominates; at the median, Clef was the slowest of the three and both Clef models had longer tails. Knowviq, running inside their own Worker on large multi-question requests, measured Clef at roughly 1.1 to 1.4 seconds, well above the published 209 ms, and recorded a fifteen-minute window where one-question Clef-flash calls took a 13.7 second median. Their requests are bigger than the benchmark's, so this is not a contradiction, but it is the number a production caller is more likely to see.
+
+## Two independent tests, both much smaller than the launch table
+
+The most useful published test is [Construct's drop-in study](https://construct.computer/blog/clef-vs-jev-benchmark/), and it deserves the caveats it states itself. It took five decisions from a real agent, 117 labelled cases, three calls per model, and ran them on all three models using thresholds that had been tuned for Jev. Its own summary is honest about the size: Clef 92.3%, Jev 88.6%, Clef-flash 82.1%, with a 95% interval on the lead of minus 1.1 to plus 8.8 points, which is not statistically significant. Jev won email triage, made no wrong merges, and was perfect on the memory gate.
+
+Three findings from that work matter more than the headline accuracy.
+
+1. **Clef was deterministic; Jev was not.** Clef and Clef-flash returned the same probability to four decimal places on all 351 repeat calls each, including with cache-busting variations. Jev's action probability moved by up to 0.10 between identical calls, and two cases changed verdict. TypeSafe promises consistent answers for similar inputs, not determinism, so this is consistent with its documentation, but a decision layer acts when a probability crosses a line, so any wobble means a case near the line is decided by which call you happened to make.
+2. **Jev's scores moved under the same version string.** Construct calibrated three probes against Jev in September at 0.71 to 0.82, set a 0.70 threshold in the gap, and re-asked in October. None of 60 repeat calls reached 0.70, on Workers AI or on TypeSafe's own API with `jev-1.13.0` pinned. Three probes are three probes, and they are not claiming Jev got worse in general, but the lesson generalizes: a version string is not a guarantee, and open weights you host yourself cannot move under your thresholds.
+3. **Thresholds do not transfer between models.** For a tool-call risk decision, the configured threshold was 0.80, the best threshold was 0.49 for Jev, 0.22 for Clef and 0.31 for Clef-flash. Clef-flash scored 82.1% being read with Jev's ruler and 90.6% with its own, level with Jev's 90.9%. The 9B model was never bad; it was being measured against a different model's probabilities.
+
+Knowviq's independent write-up, from 938 checks of its own production traffic, adds a counterweight: on sentence-support scoring, Clef's AUC was 0.786 against Jev's 0.978, and copying Jev's 0.75 confidence threshold into Clef's badge rule hid 82% of relevant results, because Clef's confidence values are much less peaked. That is the threshold problem again, from a third team.
+
+## What nobody tells you before you run it locally
+
+This is the part I checked by hand, because it is where the open weights stop being a marketing claim and start being files on your machine.
+
+**Ollama is the shortest path.** Four decision models are in the library: `clef` (18GB, 27B, text and images), `clef-flash` (11 to 12GB, 9B, text and images), `nimble` (9.5GB, Bespoke Labs, text) and `tev1` (4.5GB for 4B, 800MB for 0.8B, Together AI, text). They all answer on `/v1/systemone`, the endpoint Ollama added on 29 September, and Clef needs Ollama 0.35.1 or later. The pages carry curl examples and, contrary to what I wrote in my earlier research notes, Python and JavaScript examples too: `ollama.systemone(model=..., state=..., questions=...)` works in both libraries. There is no per-decision API cost and no network hop, and Ollama's own benchmark put Nimble 9B at 91 ms per decision on an M5 Max.
+
+**The context window in the tag is not the context window you get.** Every one of those four models advertises a "256K context window" on its Ollama tag. The documentation on the same page says something else:
+
+| Model tag | Tag metadata | Documented limit on the same page |
+|---|---|---|
+| `clef`, `clef-flash` | 256K | "64K context window" |
+| `nimble` | 256K | "that prompt has to fit in Nimble's 8,192-token context" |
+| `tev1` | 256K | "runs with a context of about 2,000 tokens" |
+
+The model card for Nimble is stricter still: 8,192 tokens, and oversized inputs are rejected rather than truncated. For Clef, Cloudflare serves 64k, and the Hugging Face loader defaults to 16,384. Plan for the smallest of the numbers you can find. If you build a state that is 20,000 tokens long because the tag said 256K, you will find out at the worst moment.
+
+**Half the GGUF repackages cannot make a decision at all.** I pulled the file lists for the popular conversions. `bartowski/Cloudflare_clef-GGUF`, `bartowski/Cloudflare_clef-flash-GGUF`, `ggml-org/Clef-GGUF`, `ggml-org/Clef-Flash-GGUF`, `prithivMLmods/clef-GGUF` and `OlyMahmud/clef-flash-Q4_K_M-GGUF` contain GGUF files and nothing else: no `joint_head.safetensors`, no scoring code. Loaded in llama.cpp or LM Studio, the backbone generates meaningless text, because the part that turns hidden states into option scores is not in the file. The packages that do work: Cloudflare's own repositories with `joint_schema_model.py`, the MLX 4-bit builds from `mlx-community` (6.2GB for Clef-flash, which fits a 16GB Mac), `simonlehmann/clef-NVFP4` for vLLM, and, as of this week, `Livesport/clef-flash-GGUF`, which ships the head alongside the quant. Between them, the headless repos have now passed 50,000 downloads.
+
+**The hardware, honestly.** Clef in bf16 is 55GB of weights before any cache, so an 80GB-class GPU or a multi-GPU box. Clef-flash is 19.1GB and fits a 24GB card. Clef-flash in MLX 4-bit is 6.2GB. Perplexity's `pplx-decider-v1-27b` wants about 49 GiB and a CUDA GPU. Kev has 0.8B, 4B, 9B and 27B checkpoints, and the smaller ones run on Apple Silicon.
+
+**Two traps that will not show up as errors.** Bespoke's Nimble requires a temperature of 2.179 when you turn its logits into probabilities, and its card warns that loading only the adapter and applying a plain softmax silently gives you an uncalibrated distribution; nothing on the Ollama page mentions it. And Tev1 is not a Jev-style runtime at all: it keeps Qwen's next-token head and returns an option letter, so treat it as a cheap classifier, not as a decision model with a type guarantee.
+
+**Images have rules.** On Ollama, images must be raw base64 in the request, and URLs and data URLs are not supported. On Workers AI, up to four embedded images, PNG, JPEG or WebP, 4 MiB and 16 megapixels each, remote URLs rejected.
+
+## The rest of the field, in one table
+
+All index scores below are the community Decision Index 0.2.1 (28 September 2026), measured on one RTX PRO 6000 except where noted, so latencies are on-card and comparable to each other, and not to Jev's hosted 524 ms.
+
+| Model | Index | Size | Median latency | License | What it is for |
+|---|---|---|---|---|---|
+| Surogate Rune 26B-A4B v3 | 57.44 | 25.8B MoE | 120.5 ms | Apache-2.0 | High accuracy on one card, GGUF available |
+| Decider chat · Gemma-4-31B | 57.33 | 32.7B | 108.5 ms | Technique, MIT code | Prompting method, no new weights |
+| pplx-decider-v1-27b | 56.40 | 27.8B | 101.4 ms | Apache-2.0 | Best calibration in the top group (ECE 0.018), needs about 49 GiB |
+| Jebadiah 27B | 54.67 | 27.8B | 110.4 ms | Apache-2.0 | Best calibration overall among the 27B group (ECE 0.014) |
+| Winnow-12B | 50.02 | 12.0B | 72.5 ms | Apache-2.0 | Mid-size compromise, Q8 GGUF |
+| Decider 4B | 40.70 | 4.7B | 12.6 ms | Apache-2.0 | Best size-to-quality at the low end |
+| Bespoke Nimble 9B v2 | 39.57 | 9.7B | 77.3 ms | Apache-2.0 | Honest card, 255 choices, on Ollama |
+| Kev 9B / 4B / 0.8B | 38.48 / 34.64 / 14.60 | 9.7B / 4.7B / 0.9B | 51.4 / 52.1 / 41.6 ms | Apache-2.0 | Full training pipeline, System One server |
+| Tev1-4B / Decider 2B | 29.24 / 28.97 | 4.7B / 2.3B | 35.8 / 8.1 ms | Apache-2.0 | Cheap routing, autoregressive, not type-safe |
+| Laya | 6.04 | 0.42B | 5.8 ms | Apache-2.0 | Needs fine-tuning on your labels; near-zero zero-shot |
+| GLiNER2.5-Decide | 11.21 | 0.49B | 23.3 ms | Apache-2.0 | CPU-friendly classifier, strong once fine-tuned |
+
+Two reading notes. First, index numbers blend accuracy, calibration, speed and coverage, so a cheap 4B model can outrank a 27B model while being less accurate; Decider 4B at 40.70 and 12.6 ms is genuinely useful and genuinely worse than Clef. Second, several of the highest rows are *techniques* rather than weights, which means you can apply them to a model you already trust instead of adopting a new one.
+
+## How to choose
+
+The decision rules that fall out of all of the above:
+
+- **Closed label set, high volume, cheap mistakes** (routing, tagging, extraction, model selection): Clef-flash locally or hosted, or a 4B like Decider. Retune thresholds on your own labels first. This is the narrow judgment call that [loop engineering](/blog/loop-engineering-patterns) keeps in code rather than in a prompt.
+- **Anything that needs judgment rather than lookup** (should this tool call wait, is this answer grounded, does this request belong to any of my categories): the 27B Clef, or Jev, or a frontier model with a schema. Not Clef-flash, whose RAGTruth and out-of-scope numbers are below the incumbent.
+- **Knowledge or multi-step reasoning inside the decision**: none of the decision models. This category is built to avoid reasoning, and every open model in it loses to Jev, which loses to a frontier model.
+- **Vision**: Clef or Clef-flash, because Jev cannot read an image today. Test it on your own assets, since no image benchmark has been published.
+- **You need a version you can pin, data that cannot leave your network, or a fine-tune of your own**: the open weights are the whole point. That is the argument Apache-2.0 makes, and it is a better one than any leaderboard row.
+- **Whatever you pick: swap in shadow first, log the probabilities, and set each threshold from your own data.** The uncomfortable lesson of the last two weeks is that a threshold is a property of a model and a prompt together, and the models move underneath you. If reading calibration and thresholds is new to you, my [guide to LLM evals](/blog/llm-evals-for-beginners) covers how to measure all of this on your own cases.
+
+## Where this leaves Jev
+
+Jev still wins the two things it won three weeks ago: it is the cheapest hosted decision per token by 5.7x, and it is the strongest model in the class on knowledge and reasoning, which is exactly the part of the work that decision models are supposed to avoid and nonetheless get asked to do. What it lost in the last two weeks is exclusivity. The category now has two vendors, one of them shipping weights you can download, pin, fine-tune and audit, with a vision encoder and a determinism property that matters more than three points of accuracy if you have ever debugged an agent that did something different the second time.
+
+That is a good thing for anyone building on this layer. It was a one-vendor category on 14 September, and it is now a category with a price war, an open-weight baseline, and enough independent testing that the numbers are starting to mean something.
+
+Everything above is from primary sources read on 6 October 2026: TypeSafe's docs and jaggedness page, Cloudflare's launch post, model cards and Workers AI pages, the Decision Index JSON, the leaderboard data file behind Cloudflare's numbers, the Ollama library pages, Hugging Face file listings and download counts, plus two independently published tests. Vendor numbers are labelled as vendor numbers, and this category is three weeks old, so prices, limits and leaderboards will all move.
