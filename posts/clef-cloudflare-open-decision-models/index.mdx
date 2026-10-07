@@ -33,7 +33,7 @@ The open decision model field got its first big cloud platform three weeks after
 
 Clef is not the music symbol, not a file format, and not an LLM you chat with. It is a 27B decision model built on Qwen3.8-27B, and Clef-flash is a 9B version built on Qwen3.5-9B. Both are Apache-2.0, both are on Workers AI, and both are, in Cloudflare's words, "fully Jev-API compatible", which means the swap is one string in code you already wrote.
 
-A word on the field around it, because "Cloudflare invented this" is not the story. Nimble (Bespoke Labs) and Tev1 (Together AI) were open-weight decision models on Ollama from 29 September, and the community Decision Index already had 70 entrants by then, including Decider, Kev, Rune, Winnow and Perplexity's pplx-decider. Liquid AI's d1 and Fastino's GLiDE are decision models behind hosted APIs. What Cloudflare adds is the first credible open-weight pair from a platform big enough to host it for you as well as let you download it, plus vision.
+A word on the field around it, because "Cloudflare invented this" is not the story. Nimble (Bespoke Labs) and Tev1 (Together AI) were open-weight decision models on Ollama from 29 September, and the community Decision Index already had 70 entrants by then, including Decider, Kev, Rune, Winnow and Perplexity's pplx-decider. Liquid AI's d1 and Fastino's GLiDE are decision models behind hosted APIs, and OpenAI previewed its own Decisions API at DevDay on 29 September, powered by gpt-6-luna and priced at $0.10 per million input tokens when it reached public beta on 6 October. What Cloudflare adds is the first credible open-weight pair from a platform big enough to host it for you as well as let you download it, plus vision.
 
 ## What Cloudflare shipped
 
@@ -152,6 +152,7 @@ All index scores below are the community Decision Index 0.2.1 (28 September 2026
 | Decider 2B | 28.97 | 2.3B | 8.1 ms | Apache-2.0 | Cheapest useful gate, one forward pass |
 | Laya | 6.04 | 0.42B | 5.8 ms | Apache-2.0 | Needs fine-tuning on your labels; near-zero zero-shot |
 | GLiNER2.5-Decide | 11.21 | 0.49B | 23.3 ms | Apache-2.0 | CPU-friendly classifier, strong once fine-tuned |
+| OpenAI Decisions API (gpt-6-luna) | Not on the board | Closed, API only | About 150 ms reported, unverified | Proprietary | Frontier model behind a constrained endpoint, reads images, can refuse |
 
 Two reading notes. First, the index is chance-corrected accuracy: each benchmark is mapped to (score minus chance) divided by (1 minus chance) before averaging, with unanswered requests counted as wrong. Speed, cost and calibration are not in it, so a 4B model outranking a 27B model is a real accuracy result on this panel rather than a composite trick; what it cannot tell you is whether the panel looks like your traffic. The composite that does blend speed and cost is JevBench, which has a different board and a sealed test set. Second, several of the highest rows are *techniques* rather than weights, which means you can apply them to a model you already trust instead of adopting a new one.
 
@@ -168,7 +169,7 @@ The decision rules that fall out of all of the above:
 
 ## Where this leaves Jev
 
-Of the scores anyone has actually checked, Jev is still the best on knowledge and the cheapest hosted decision per token, by about 2.1x against Clef-flash and 5.7x against Clef. What it lost in the last two weeks is exclusivity. There is now an open-weight pair from a large platform: downloadable, pinnable, fine-tunable and auditable, with a vision encoder and, in the one test that measured it, identical answers on every repeat call. That matters more than three points of accuracy if you have ever debugged an agent that did something different the second time.
+Of the scores anyone has actually checked, Jev is still the best on knowledge and the cheapest hosted decision per token, by about 2.1x against Clef-flash and 5.7x against Clef. What it lost in the last two weeks is exclusivity. There is now an open-weight pair from a large platform: downloadable, pinnable, fine-tunable and auditable, with a vision encoder and, in the one test that measured it, identical answers on every repeat call. And since 6 October there is a third option, OpenAI's Decisions API, which sells a frontier model behind the same style of typed endpoint at $0.10 per million input tokens without publishing any accuracy or calibration number for it. That matters more than three points of accuracy if you have ever debugged an agent that did something different the second time.
 
 The category also has a new failure mode, and it is not on any leaderboard. A vendor table can be eight points better than the incumbent on the rows the vendor chose, and still be third on self-reports once two other vendors publish their own. Three claims, three leaders, none reproduced. The number that matters is the one you measure on your own labelled cases, which is the argument from my [guide to LLM evals](/blog/llm-evals-for-beginners), now with an industry attached to it.
 

@@ -1,0 +1,167 @@
+---
+date: 07/10/2026
+title: "OpenAI's Decisions API vs Jev and Clef: what the docs actually say"
+description: "OpenAI's Decisions API is in public beta: gpt-6-luna, typed answers, $0.10 per million input tokens. How it compares with Jev and Clef, and what OpenAI has not published."
+image: card.png
+draft: false
+categories:
+  - ai
+  - llms
+  - engineering
+faq:
+  - question: "What is OpenAI's Decisions API?"
+    answer: |
+      It is a dedicated endpoint, POST /v1/decisions, that turns text and images into typed answers instead of generated text. You send an input plus a list of questions, and each answer comes back as one of three types: a predicate (the probability a condition is true), a choice (one value from a list you supply, with probabilities and a confidence), or a score (a probability-weighted average across ordered levels). OpenAI released it in beta on 6 October 2026, with gpt-6-luna as the only supported model, and says general availability is expected in the coming weeks.
+  - question: "How much does the Decisions API cost?"
+    answer: |
+      With gpt-6-luna, input costs $0.10 per million tokens and that is the whole bill: there are no cache-read, cache-write or output charges on this endpoint. Regional processing premiums and long-context multipliers apply above 272K input tokens. For comparison, Jev is $0.042 per million input tokens, Clef-flash is $0.09 and Clef is $0.24. At 500 tokens per decision, 1,000 decisions cost about $0.05 on the Decisions API, $0.021 on Jev, $0.045 on Clef-flash and $0.12 on Clef.
+  - question: "Is the Decisions API faster than Jev?"
+    answer: |
+      OpenAI's published claim is up to 10x faster than GPT-6 Luna through the Responses API, which is a comparison with its own model, not with Jev or Clef. Launch coverage of the DevDay session put the raw figures at roughly 150 ms against 1.6 s, but OpenAI has not published a matched benchmark against either competitor at the time of writing. The first independent comparison I found, in OpenAI's own community thread, reported Jev faster in a conversational loop: about 0.3 s median per turn against 1.6 s for Luna.
+  - question: "Does the Decisions API replace Jev or Clef?"
+    answer: |
+      Not on the evidence published so far. OpenAI has published no accuracy or calibration numbers for the endpoint, no architecture description, and no comparison against Jev or Clef. Jev is the only one of the three with a measured calibration figure on the community Decision Index (ECE 0.074), and Clef is the only one whose weights you can download and pin. What the Decisions API adds is image input at frontier-model quality, a refusal answer type that neither competitor documents, enterprise data controls, and five first-party SDKs.
+  - question: "Can the Decisions API read images?"
+    answer: |
+      Yes. The input accepts a user message with mixed text and image parts, and images must be inline base64 data URLs. Hosted HTTP or HTTPS image URLs and file_id inputs are not supported by this endpoint. That is the clearest capability difference from Jev, which is text and JSON only. Clef also reads images, with up to four per request on Workers AI.
+  - question: "Is the Decisions API generally available?"
+    answer: |
+      No. It is in public beta as of 6 October 2026, open to all developers, and OpenAI's documentation says it expects general availability in the coming weeks. The endpoint supports gpt-6-luna only, and there are no fine-tuning, batch-decision or self-hosting options for it.
+---
+
+The decision model category got its first frontier lab yesterday. OpenAI [released the Decisions API into public beta](https://community.openai.com/t/decisions-api-is-now-available-in-public-beta/1403877) on 6 October 2026 at 20:47 UTC, and unlike the two vendors I have already written about, it published the request schema, the response schema, the price and the data controls on the same day. The announcement itself was a [two-line post from @OpenAIDevs](https://x.com/OpenAIDevs/status/2107573382229188645) and a 72-second video.
+
+This is the third post in a series that started with [Jev and the System One idea](/blog/jev-typesafe-system-one-model) and continued with [Clef, Cloudflare's open decision models](/blog/clef-cloudflare-open-decision-models). Everything below comes from OpenAI's own documentation, its changelog and its developer announcement, read on 7 October 2026, plus the one independent test I could find, clearly labelled as such.
+
+## What OpenAI shipped
+
+From the launch announcement, [OpenAI's API changelog](https://developers.openai.com/api/docs/changelog) and [the Decisions documentation](https://developers.openai.com/api/docs/guides/decisions):
+
+| Fact | Value |
+|---|---|
+| Endpoint | `POST /v1/decisions`, dedicated |
+| Model | `gpt-6-luna` only |
+| Status | Public beta, open to all developers, GA "in the coming weeks" |
+| Question types | `predicate`, `choice`, `score` |
+| Input | Text, or user messages mixing text and images |
+| Images | Inline base64 data URLs only. Hosted URLs and `file_id` are rejected |
+| Answers | Typed, keyed by question `name`, in an `answers` array |
+| Extra answer type | `refusal` |
+| Price | $0.10 per million input tokens, input only |
+| Data controls | Zero Data Retention and HIPAA for eligible customers, US and EEA plus Switzerland residency |
+| SDKs | Python, JavaScript, Go, Ruby and Java, with published minimum versions |
+| Voice | Documented path through the Live API with client delegation |
+
+A request looks like this, trimmed from the documentation's own example:
+
+```json
+{
+  "model": "gpt-6-luna",
+  "input": "I was charged twice for my order.",
+  "questions": [{
+    "type": "choice",
+    "name": "department",
+    "instructions": "Which department should handle this complaint?",
+    "choices": [
+      {"value": "billing", "description": "Payments, invoices, and refunds."},
+      {"value": "technical", "description": "Problems using the product."},
+      {"value": "other", "description": "Requests outside these categories."}
+    ]
+  }]
+}
+```
+
+The answer carries the chosen value, a probability for every option you supplied, and a separate confidence field. The shape will look familiar: a `predicate` is Jev's `noul`, a `choice` is Jev's `choice`, and a `score` is Jev's `score`, down to the probability-weighted average across ordered levels. Underneath the model, [OpenAI's model page](https://developers.openai.com/api/docs/models/gpt-6-luna) says gpt-6-luna supports 1,050,000 tokens of context, takes text and images, and has a knowledge cutoff of 18 May 2026.
+
+## The design bet is the opposite of Jev's
+
+Jev and Clef are purpose-built. They replace the language-model head with something that scores your options directly in a single non-autoregressive pass, which is why they can promise typed output and why Clef can return the same probability on every repeat call.
+
+OpenAI did the other thing. It kept a general reasoning model and wrapped it in a constrained endpoint. The model still reasons, still has a reasoning effort dial, still supports tools and structured outputs on its other endpoints, and still writes text when you call it through the Responses API. On `/v1/decisions` it just answers your questions instead.
+
+That has three consequences worth knowing.
+
+**The published speed claim is about the wrapper, not the model.** The changelog's own wording is "10x faster than the Responses API". The docs say decisions come back "about 10x faster than the Responses API", and the changelog repeats it. Both mean the same model through the generic text endpoint, which is a real saving of the tokens it would otherwise spend writing prose, but it is not a claim about Jev or Clef. Coverage of the DevDay session, where OpenAI previewed the API on 29 September, reported the raw numbers as roughly 150 ms against 1.6 s; I could not verify that against a primary source.
+
+**Calibration is not claimed anywhere.** TypeSafe documents what confidence means and publishes a jaggedness page. The community Decision Index carries a measured ECE of 0.074 for Jev. Cloudflare's rows carry none at all. OpenAI's documentation tells you to pick thresholds using labelled examples from your own application, which is good advice and also an admission that no calibration number ships with the endpoint.
+
+**There is a refusal path.** An answer can come back as type `refusal`, which neither Jev nor Clef documents. Whether that is a safety feature or an availability risk depends on your application, but it is a real difference in the contract: a decision endpoint that can decline is not the same as one that always returns a typed answer.
+
+## Side by side
+
+| | Jev 1.13 | Clef / Clef-flash | OpenAI Decisions API |
+|---|---|---|---|
+| Maker | TypeSafe AI | Cloudflare | OpenAI |
+| Model | `jev-1.13.0`, closed | 27B and 9B, Apache-2.0 | `gpt-6-luna`, closed |
+| Weights | None | Downloadable | None |
+| Question types | Choice, Score, Noul | Choice, Score, Noul | Choice, Score, Predicate |
+| Input | Text and JSON | Text, JSON, images, video | Text and images |
+| Context | 64k per request, 32k state plus longest question | 64k hosted | 1,050,000 tokens, 922,000 max input |
+| Price per million input tokens | $0.042 | $0.24 and $0.09 | $0.10 |
+| Output charge | None | None | None |
+| Refusal path | No | No | Yes |
+| Calibration published | ECE 0.074 on the community board | None on the Cloudflare rows | None |
+| Data controls | ZDR on enterprise, no residency options published | Self-host for residency | ZDR, HIPAA, US and EU residency |
+| Runs on your hardware | No | Yes | No |
+
+Read the middle column of that table carefully, because it is the one that decides most migrations. Clef is the only option you can pin, audit and run inside your own network. Jev is the cheapest per token and the only one with a public calibration measurement. OpenAI is the only one with image input at frontier-model quality, a refusal path and enterprise data controls you can put in a procurement document.
+
+## What it costs
+
+Input only, at 500, 2,000 and 10,000 tokens per decision, computed from each vendor's published price:
+
+| Input per decision | Jev | Clef-flash | OpenAI Decisions | Clef |
+|---|---|---|---|---|
+| 500 tokens (a comment) | $0.021 | $0.045 | $0.05 | $0.12 |
+| 2,000 tokens (a ticket) | $0.084 | $0.18 | $0.20 | $0.48 |
+| 10,000 tokens (a document) | $0.42 | $0.90 | $1.00 | $2.40 |
+
+Per 1,000 decisions. OpenAI lands at about 2.4x Jev and roughly level with Clef-flash. Long-context multipliers apply above 272K tokens, and regional processing adds a premium where it is available.
+
+There is a useful cross-check on these numbers. TypeSafe's own workflow evals, run before the Decisions API existed, list the point they label luna at 66.8% mean accuracy for $0.0033 and 12.9 seconds per case, against Jev at 67.8% for $0.0004 and 0.4 seconds. That is a 1 point accuracy gap at roughly 8x the cost per case. TypeSafe charts models under short names, and luna is OpenAI's, so treat the identification as strong rather than certain, but the shape of the result is consistent with the token prices above.
+
+## What OpenAI has not published
+
+This is the part that matters for anyone deciding today, and it is the reason this post is shorter on verdicts than the last two:
+
+- **No accuracy benchmark.** There is no published comparison against Jev, Clef, or any dataset. The only number is a speed ratio against the same model on a different endpoint.
+- **No calibration data.** No ECE, no Brier score, no reliability curve, no statement about whether the probabilities mean what they say.
+- **No architecture description.** OpenAI has not said whether this is prompting, a trained head, constrained decoding, or something else. Compare Clef's model card, which names the backbone, the head and the training objective.
+- **No decision-specific rate limits.** The model page lists per-tier limits for gpt-6-luna generally, starting at 5,000 requests and 2 million tokens per minute on the Build tier, but the Decisions docs do not publish separate limits for the endpoint.
+
+That is not a criticism of the product. It is a statement about what you can and cannot verify on day two, and it sets up the thing the whole category is now waiting for: someone running the same labelled cases through all three APIs.
+
+## The one independent signal so far
+
+In [OpenAI's own announcement thread](https://community.openai.com/t/decisions-api-is-now-available-in-public-beta/1403877), a developer posted a few hundred questions from word games and one conversational game run against both services. Summarising his report: Jev was more accurate on nuanced judgment calls, where Luna gave roughly three times as many confident wrong answers; narrow factual yes/no checks came out about even, with Luna slightly more often right and slightly less well calibrated; Jev's median conversational turn was about 0.3 seconds against Luna's 1.6 seconds, with Jev showing more slow outliers; and Luna cost 2 to 3x more for the same questions. His own framing was that this is a strong early signal from a few hundred questions, not a benchmark.
+
+The other reply worth noting came from Cloudflare's Sam Saffron, who pointed at image understanding as the interesting part, since Jev still cannot read an image. That is consistent with the table above: images at frontier quality, and no way to check the accuracy of the answers yet.
+
+I have found no larger independent test as of 7 October 2026. The most useful thing you can do this week is create one, and the recipe has not changed since the last post.
+
+## How to test it on your own cases
+
+1. **Take 30 to 100 labelled cases** from your own traffic, weighted toward the edges of the decision, not the easy middle.
+2. **Port one decision, not your architecture**, to all three APIs. The questions are close enough to be near-direct translations: a `noul` or a `predicate` is a yes/no, a `choice` is a `choice`, and a `score` is a `score`. Cloudflare's claim of full Jev API compatibility held on real traffic in Construct's test, so the Clef side is cheap to try.
+3. **Watch for the refusal type.** Log refusals separately from wrong answers, because a refusal is not a probability and should not be thresholded like one.
+4. **Decide what a refusal costs you** before you compare accuracy. A model that declines to answer scores as wrong on a benchmark, and as an escalation in production.
+5. **Measure p95, not the mean.** Every number in every launch table so far has been a median, and the tails are where the surprises live.
+6. **Retune the threshold for each model.** This is the finding from Construct that keeps being confirmed: the same decision wanted a threshold of 0.80 with one model and roughly 0.22 to 0.49 with others. Copying a threshold across models is the most common way to make a good model look bad.
+
+## Where each one fits now
+
+- **Cheapest per decision, with a measured calibration number:** Jev, at $0.042 per million input tokens.
+- **Open weights, version pinning, or data that cannot leave your network:** Clef or Clef-flash, and nothing else in this post.
+- **Image input at frontier quality, or procurement requirements around retention and residency:** the Decisions API. Note that Clef also reads images, so test both if images are the reason you are switching.
+- **Frontier-level judgment inside the decision:** still a general model with structured outputs. The 1 point gap between Jev and Luna on TypeSafe's workflow evals is smaller than the gap between either and the top reasoning models, and none of these three endpoints exists to reason.
+- **A model that will refuse instead of guessing:** only the Decisions API today, and that is a feature to design around rather than a bug.
+
+## What this changes about the category
+
+Three weeks ago I wrote that a decision model trades the generality of text generation for typed output and a calibrated confidence your code can act on, and that the trade was worth it if your workload is a decision rather than a text. That framing survived its first serious test, but the third entrant changed its shape. The guess now is not whether your decision should be a decision model. It is how much you are willing to pay for a decision, and whether you want it made by a small purpose-built model, an open head you host yourself, or a frontier model behind a narrow door.
+
+The category has also quietly become a three-way price war with no shared benchmark. Two vendors published a table they ran themselves, one published a speed ratio against its own model, and the community board holds numbers for 70 open entrants and a single closed API. The only calibration number attached to any of the three headline products comes from that board, for Jev.
+
+If you want the ground truth for your own workload, it is still the boring version: label your cases, run all three, read the probabilities rather than the confidence field, and set the threshold yourself. My [guide to LLM evals](/blog/llm-evals-for-beginners) covers how to do that without fooling yourself.
+
+Everything above was read from primary sources on 7 October 2026: the OpenAI Decisions documentation, the gpt-6-luna model page, the API changelog and the developer announcement, TypeSafe's docs and eval chart, Cloudflare's launch material and model cards, the community Decision Index data, and the developer responses in OpenAI's announcement thread, which are labelled as one developer's early test. Vendor numbers are vendor numbers. The 150 ms figure comes from coverage of the DevDay session and is marked as such.
