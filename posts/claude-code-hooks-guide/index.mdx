@@ -17,7 +17,7 @@ faq:
       The full lifecycle: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest, PermissionDenied, Notification, SubagentStart, SubagentStop, Stop, StopFailure, PreCompact, PostCompact, ConfigChange, CwdChanged, and FileChanged.
   - question: "How do I block a tool call in Claude Code?"
     answer: |
-      Use a PreToolUse hook. Either exit with code 2 and a stderr message, or exit 0 with structured JSON: hookSpecificOutput.permissionDecision set to "deny". Never mix both, Claude Code ignores JSON when you exit 2. A PreToolUse deny blocks the tool even in bypassPermissions mode.
+      Use a PreToolUse hook. Either exit with code 2 and a stderr message, or exit 0 with structured JSON: hookSpecificOutput.permissionDecision set to "deny". Pick one: if you exit 2 the call is blocked whatever JSON you print. Note that PermissionRequest hooks ignore exit code 2 and must return a decision object. A PreToolUse deny blocks the tool even in bypassPermissions mode.
   - question: "What hook handler types does Claude Code support?"
     answer: |
       Five types: command (shell script), http (POST to a URL), mcp_tool (call a connected MCP tool), prompt (single-turn LLM evaluation), and agent (multi-turn verification, experimental). Cursor only supports command and prompt hooks.
@@ -112,7 +112,9 @@ Matchers filter which events reach a handler. `PreToolUse` matchers target tool 
 
 ## Permission decisions and exit codes
 
-For blocking hooks (`PreToolUse`, `PermissionRequest`), Claude Code reads either the exit code or structured JSON on stdout.
+Two events make permission decisions, and they don't speak the same language. `PreToolUse` runs before every matching tool call and can block with an exit code or JSON. `PermissionRequest` runs only when Claude Code is about to show a permission dialog, and it only listens to JSON.
+
+### PreToolUse
 
 **Exit code 2 blocks:**
 
@@ -122,7 +124,7 @@ echo "Blocked: use a safer alternative" >&2
 exit 2
 ```
 
-**Exit 0 with JSON blocks:**
+**Exit 0 with JSON decides:** `permissionDecision` is `allow`, `deny`, `ask`, or `defer`.
 
 ```json
 {
@@ -134,9 +136,44 @@ exit 2
 }
 ```
 
+Use `"ask"` to force the confirmation prompt (the reason is shown to the user) or `"allow"` to skip it. Deny and ask rules in your settings are still evaluated either way.
+
+### PermissionRequest
+
+Exit code 2 does nothing here. The permission flow proceeds unchanged and stderr is discarded. To answer the dialog, exit 0 with a `decision` object:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionRequest",
+    "decision": {
+      "behavior": "deny",
+      "message": "Network installs need manual approval."
+    }
+  }
+}
+```
+
+Allow, optionally rewriting the input:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionRequest",
+    "decision": {
+      "behavior": "allow",
+      "updatedInput": { "command": "npm run lint" }
+    }
+  }
+}
+```
+
+`updatedInput` and `updatedPermissions` work only with `allow`; `message` and `interrupt` work only with `deny`. A matching deny rule still beats a hook's `allow`.
+
 Key rules:
 
-- Never mix both. Claude Code ignores JSON when you exit `2`.
+- Pick one approach per hook. If you exit `2`, the call is blocked no matter what JSON you print, even `"permissionDecision": "allow"`. To return a decision, exit `0`.
+- Other non-zero exit codes are non-blocking errors. Policy hooks should use `exit 2` or JSON, not `exit 1`.
 - When multiple hooks match the same event, Claude Code runs them **in parallel** and merges results.
 - For `PreToolUse` permission decisions, the most restrictive answer wins: `deny` beats `defer` beats `ask` beats `allow`.
 - A `PreToolUse` deny blocks the tool even in `bypassPermissions` mode.
