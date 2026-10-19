@@ -79,6 +79,8 @@ This catalog adapts the failure modes and anti-patterns in [Cobus Greyling's loo
 **Symptom**: Verifier "approves" but `pnpm quality` fails in CI.  
 **Souso mitigation**: Verifier must run `pnpm test` at minimum; for L3, full `pnpm quality`. Souso's pre-push hook already runs format + lint + typecheck + build + tests + matcher eval. The verifier should mirror that, not eyeball diffs.
 
+When there is no verifier to run at all, the alternative is to compare executions instead of judging outputs. [Harness²](/blog/harness2-google-recursive-agent-harness), Google Research's recursive harness framework, diffs a candidate harness's trajectory against a reference run on the same task, which is the only honest signal available when a rubric does not exist.
+
 ## Notification Fatigue (S1 → S2)
 
 **Symptom**: Slack pings every 5 minutes; team mutes the bot.  
